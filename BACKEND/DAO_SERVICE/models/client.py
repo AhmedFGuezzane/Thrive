@@ -1,5 +1,6 @@
 from database import db
 from sqlalchemy.dialects.postgresql import UUID #unique ids
+from sqlalchemy import DateTime
 import uuid
 
 class Client(db.Model):
@@ -11,4 +12,4 @@ class Client(db.Model):
     mot_de_passe = db.Column(db.Text)
     role = db.Column(db.Text)
     actif = db.Column(db.Boolean)
-    derniere_connexion = db.Column(db.Datetime)
+    derniere_connexion = db.Column(DateTime)
