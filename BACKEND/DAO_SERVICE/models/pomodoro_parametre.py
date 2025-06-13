@@ -2,11 +2,11 @@ from database import db
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
+
 class PomodoroParametre(db.Model):
     __tablename__ = 'pomodoro_parametre'
 
     id = db.Column(UUID, primary_key=True, default=uuid.uuid4)
-    seance_etude_id = db.Column(UUID, db.ForeignKey('seance_etude.id'))
     duree_seance = db.Column(db.Integer)
     duree_pause_courte = db.Column(db.Integer)
     duree_pause_longue = db.Column(db.Integer)
