@@ -8,10 +8,13 @@ class AuthDAO:
     @staticmethod
     def get_by_email(email):
         return db.session.query(Client).filter_by(email=email).first()
+    # SELECT CLIENT WHERE EMAIL = EMAIL (params) and SELECT FIRST
+
 
     @staticmethod
     def verify_password(stored_hash, plain_password):
-        return bcrypt.checkpw(plain_password.encode(), stored_hash.encode())
+        return bcrypt.checkpw(plain_password.encode(), stored_hash.encode()) # TRUE OR FALSE
+
 
     #REGISTER METHOD
     @staticmethod

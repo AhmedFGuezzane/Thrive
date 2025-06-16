@@ -37,7 +37,7 @@ def login():
     mot_de_passe = data.get('mot_de_passe')
 
     if not email or not mot_de_passe:
-        return jsonify({"error": "Champs requis manquants"}), 400
+        return jsonify({"error": "Champs requis manquants111"}), 400
 
     result = AuthDAO.login(email, mot_de_passe)
 
