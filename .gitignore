@@ -1,0 +1,39 @@
+# === Global ===
+*.log
+*.pyc
+*.pyo
+__pycache__/
+.env
+.DS_Store
+
+# === Node.js (Frontend) ===
+FRONTEND/client/node_modules/
+FRONTEND/client/dist/
+FRONTEND/client/.env
+FRONTEND/client/.vite/
+
+# === Python virtual environments ===
+**/.venv/
+**/venv/
+**/env/
+
+# === PyCharm / JetBrains IDE ===
+**/.idea/
+*.iml
+
+# === Python Bytecode ===
+**/__pycache__/
+**/*.py[cod]
+
+# === VS Code ===
+.vscode/
+
+# === Backup / temp ===
+*.bak
+*.swp
+*.tmp
+
+# === OS-specific ===
+Thumbs.db
+ehthumbs.db
+desktop.ini
