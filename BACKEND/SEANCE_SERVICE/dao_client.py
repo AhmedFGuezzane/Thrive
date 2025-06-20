@@ -4,7 +4,7 @@ from config import Config
 DAO_URL = Config.DAO_URL
 
 def insert_seance(data):
-    return requests.post(f"{DAO_URL}/seances", json=data)
+    return requests.post(f"{DAO_URL}/seance/seance", json=data)
 
 def update_minuterie(seance_id, payload):
     return requests.patch(f"{DAO_URL}/seances/{seance_id}/minuterie", json=payload)

@@ -23,7 +23,16 @@ def creer_seance():
     payload = request.get_json()
     payload["client_id"] = user_id
     res = insert_seance(payload)
-    return jsonify(res.json()), res.status_code
+    print("DAO response status:", res.status_code)
+    print("DAO response text:", res.text)  # Debug output
+
+    try:
+        return jsonify(res.json()), res.status_code
+    except ValueError:
+        return jsonify({
+            "error": "Invalid JSON returned from DAO",
+            "raw_response": res.text
+        }), res.status_code
 
 @app.route("/seances/<seance_id>/minuterie", methods=["PATCH"])
 @jwt_required()
