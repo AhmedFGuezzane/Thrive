@@ -64,3 +64,32 @@ class SeanceDAO:
         db.session.add(seance)
         db.session.commit()
         return seance
+
+    @staticmethod
+    def modifier_minuterie(seance_id, data):
+        seance = SeanceEtude.query.get(seance_id)
+        if not seance:
+            return None
+
+        pomodoro = seance.pomodoro
+        if pomodoro:
+            for attr, value in data.items():
+                if hasattr(pomodoro, attr):
+                    setattr(pomodoro, attr, value)
+        db.session.commit()
+        return seance
+
+    @staticmethod
+    def changer_statut(seance_id, statut):
+        seance = SeanceEtude.query.get(seance_id)
+        if seance:
+            seance.statut = statut
+            if statut == "terminee":
+                seance.date_fin = datetime.utcnow()
+                seance.est_complete = True
+            db.session.commit()
+        return seance
+
+    @staticmethod
+    def get_seances_by_user(client_id):
+        return SeanceEtude.query.filter_by(client_id=uuid.UUID(client_id)).all()
