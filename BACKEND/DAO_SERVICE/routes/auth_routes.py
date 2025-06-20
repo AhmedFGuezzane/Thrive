@@ -3,6 +3,13 @@ from dao.auth_dao import AuthDAO
 
 auth_bp = Blueprint('auth', __name__)
 
+@auth_bp.route('/client/<client_id>', methods=['GET'])
+def get_client_by_id(client_id):
+    client_data = AuthDAO.get_client_info(client_id)
+    if client_data:
+        return jsonify(client_data), 200
+    return jsonify({"error": "Client introuvable"}), 404
+
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()

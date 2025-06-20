@@ -15,6 +15,21 @@ class AuthDAO:
     def verify_password(stored_hash, plain_password):
         return bcrypt.checkpw(plain_password.encode(), stored_hash.encode()) # TRUE OR FALSE
 
+    @staticmethod
+    def get_client_info(client_id):
+        client = db.session.get(Client, client_id)
+        if not client:
+            return None
+        return {
+            "id": str(client.id),
+            "nom": client.nom,
+            "prenom": client.prenom,
+            "email": client.email,
+            "role": client.role,
+            "actif": client.actif,
+            "derniere_connexion": client.derniere_connexion.isoformat() if client.derniere_connexion else None
+        }
+
 
     #REGISTER METHOD
     @staticmethod
