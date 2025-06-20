@@ -1,0 +1,7 @@
+Flask~=3.1.1
+Flask-SQLAlchemy
+python-dotenv~=1.1.0
+psycopg2-binary
+SQLAlchemy~=2.0.41
+bcrypt~=4.3.0
+dotenv~=0.9.9
