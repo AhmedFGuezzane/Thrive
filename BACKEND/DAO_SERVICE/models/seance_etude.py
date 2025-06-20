@@ -17,3 +17,5 @@ class SeanceEtude(db.Model):
     est_complete = db.Column(db.Boolean)
     interruptions = db.Column(db.Integer)
     nbre_pomodoro_effectues = db.Column(db.Integer)
+
+    pomodoro = db.relationship("PomodoroParametre", backref="seances", uselist=False)
