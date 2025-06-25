@@ -23,8 +23,6 @@ def creer_seance():
     payload = request.get_json()
     payload["client_id"] = user_id
     res = insert_seance(payload)
-    print("DAO response status:", res.status_code)
-    print("DAO response text:", res.text)  # Debug output
 
     try:
         return jsonify(res.json()), res.status_code

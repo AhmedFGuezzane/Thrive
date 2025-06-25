@@ -8,13 +8,45 @@ from models.tache import Tache
 tache_bp = Blueprint('tache', __name__)
 
 
+@tache_bp.route('/debug/task-owner/<uuid:tache_id>', methods=['GET'])
+def debug_task_owner(tache_id):
+    tache = Tache.query.get(tache_id)
+    if not tache:
+        return jsonify({"error": "Task not found"}), 404
+    return jsonify({
+        "task_id": str(tache.id),
+        "client_id": str(tache.client_id)
+    }), 200
+
+
 # --- Helper pour l'autorisation ---
 def authorize_user_for_tache(tache_id, user_id):
-    """Vérifie si l'utilisateur (user_id) a le droit d'accéder à la tâche (tache_id)."""
-    return Tache.query.join(SeanceEtude).filter(
-        Tache.id == tache_id,
-        SeanceEtude.client_id == user_id
-    ).first()
+    tache = Tache.query.get(tache_id)
+    if not tache:
+        return None
+
+    if str(tache.client_id) == user_id:
+        return tache
+
+    if tache.seance_etude_id:
+        seance = SeanceEtude.query.filter_by(id=tache.seance_etude_id, client_id=user_id).first()
+        if seance:
+            return tache
+
+    return None
+
+
+
+@tache_bp.route('/taches', methods=['GET'])
+def get_taches_by_user():
+    user_id = request.headers.get('user-id')
+    if not user_id:
+        return jsonify({"error": "user-id header is required"}), 400
+
+    taches = Tache.query.filter_by(client_id=user_id).all()
+    return jsonify([t.to_dict() for t in taches])
+
+
 
 
 def authorize_user_for_seance(seance_id, user_id):
@@ -25,24 +57,23 @@ def authorize_user_for_seance(seance_id, user_id):
 @tache_bp.route('/add', methods=['POST'])
 def add_tache_route():
     data = request.get_json()
-    user_id = request.headers.get("user-id")
-    seance_etude_id = data.get('seance_etude_id')
+    client_id = data.get("client_id")
+    titre = data.get("titre")
 
-    if not all([user_id, seance_etude_id, data.get('titre')]):
-        return jsonify({"error": "user-id (header), seance_etude_id et titre sont requis"}), 400
+    if not client_id or not titre:
+        return jsonify({"error": "client_id et titre sont requis"}), 400
 
-    # Autorisation
-    if not authorize_user_for_seance(seance_etude_id, user_id):
-        return jsonify({"error": "Séance d'étude introuvable ou accès refusé"}), 403
+    result = TacheDAO.add(data)
 
-    nouvelle_tache = TacheDAO.add(data, seance_etude_id)
-    if "error" in nouvelle_tache:
-        return jsonify(nouvelle_tache), 400
+    if "error" in result:
+        return jsonify({"error": result["error"]}), 500
 
     return jsonify({
         "message": "Tâche ajoutée avec succès",
-        "tache": nouvelle_tache
+        "tache": result
     }), 201
+
+
 
 
 @tache_bp.route('/list/<uuid:seance_etude_id>', methods=['GET'])

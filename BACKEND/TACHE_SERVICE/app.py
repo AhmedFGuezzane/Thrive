@@ -17,6 +17,26 @@ def get_taches():
     result = dao_client.get_all_taches(user_id)
     return jsonify(result.json()), result.status_code
 
+
+@app.route('/taches/seance/<seance_id>', methods=['GET'])
+@jwt_required()
+def get_taches_for_seance(seance_id):
+    user_id = get_jwt_identity()
+    response = dao_client.get_taches_by_seance(user_id, seance_id)
+
+    # Assuming dao_client.get_taches_by_seance returns a (data, status_code) tuple
+    if isinstance(response, tuple):
+        data, status = response
+    else:
+        data, status = response, 200
+
+
+    if status == 200:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), status
+
+
 @app.route("/tache/<tache_id>", methods=["GET"])
 @jwt_required()
 def get_tache(tache_id):
@@ -29,15 +49,26 @@ def get_tache(tache_id):
 def add_tache():
     user_id = get_jwt_identity()
     tache_data = request.get_json()
+    tache_data["client_id"] = user_id
     result = dao_client.add_tache(tache_data, user_id)
-    return jsonify(result.json()), result.status_code
+
+    # ✅ Check if result has JSON, else fallback
+    try:
+        return jsonify(result.json()), result.status_code
+    except Exception:
+        return jsonify({"error": "Invalid JSON response from DAO service", "raw": result.text}), result.status_code
+
 
 @app.route("/tache/<tache_id>", methods=["PUT"])
 @jwt_required()
 def update_tache(tache_id):
     user_id = get_jwt_identity()
+    print(f"[TACHE_SERVICE] User ID from JWT: {user_id}")
     tache_data = request.get_json()
+    print(f"[TACHE_SERVICE] Update data: {tache_data}")
     result = dao_client.update_tache(tache_id, tache_data, user_id)
+    print(f"[TACHE_SERVICE] DAO response status: {result.status_code}")
+    print(f"[TACHE_SERVICE] DAO response body: {result.text}")
     return jsonify(result.json()), result.status_code
 
 @app.route("/tache/<tache_id>", methods=["DELETE"])

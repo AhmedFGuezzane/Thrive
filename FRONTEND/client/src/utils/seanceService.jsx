@@ -1,0 +1,71 @@
+import axios from 'axios';
+import config from '../config'; // Assuming config is one level up from utils
+
+const SEANCE_BASE_URL = config.seanceMicroserviceBaseUrl; // Use the base URL from config
+
+/**
+ * Creates a new seance in the backend.
+ * @param {object} formData The form data containing seance details.
+ * @returns {Promise<object>} A promise that resolves to the newly created seance object.
+ */
+export const createSeance = async (formData) => {
+  try {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) throw new Error("Authentication required");
+
+    const payloadBase64 = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(payloadBase64));
+    const client_id = decodedPayload.sub;
+
+    const date_debut = new Date();
+    const date_fin = new Date(date_debut.getTime() + Number(formData.pomodoro.duree_seance_totale) * 1000);
+
+    const payload = {
+      client_id,
+      type_seance: formData.type_seance,
+      nom: formData.nom,
+      date_debut: date_debut.toISOString(),
+      date_fin: date_fin.toISOString(),
+      statut: "en_cours",
+      est_complete: false,
+      interruptions: 0,
+      nbre_pomodoro_effectues: 0,
+      pomodoro: {
+        ...formData.pomodoro,
+        duree_seance: Number(formData.pomodoro.duree_seance),
+        duree_pause_courte: Number(formData.pomodoro.duree_pause_courte),
+        duree_pause_longue: Number(formData.pomodoro.duree_pause_longue),
+        nbre_pomodoro_avant_pause_longue: Number(formData.pomodoro.nbre_pomodoro_avant_pause_longue),
+        duree_seance_totale: Number(formData.pomodoro.duree_seance_totale)
+      }
+    };
+
+    // Use the variable from config instead of hardcoding
+    const res = await fetch(`${SEANCE_BASE_URL}/seances`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ message: 'Erreur inconnue lors de la création de la séance.' }));
+      throw new Error(errorData.message || 'Erreur lors de la création de la séance.');
+    }
+
+    const result = await res.json();
+
+    const seance = result?.seance || result;
+
+    if (seance?.id) {
+      localStorage.setItem("active_seance_id", seance.id);
+    }
+
+    return seance;
+  } catch (err) {
+    console.error("Erreur lors de la création de la séance:", err);
+    throw err;
+  }
+};
