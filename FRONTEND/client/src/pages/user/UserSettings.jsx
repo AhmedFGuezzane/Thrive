@@ -9,6 +9,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import config from '../../config';
 import SnackbarAlert from '../../components/common/SnackbarAlert';
+import { logout } from '../../utils/accountUtils';
 
 const Settings = () => {
     const theme = useTheme();
@@ -140,14 +141,33 @@ const Settings = () => {
                 <Divider sx={{ my: 3 }} />
                 <Typography variant="h6">Other Actions</Typography>
                 <Box display="flex" flexDirection="column" gap={1} mt={1}>
-                    <Typography variant="body2" sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'underline' }} onClick={() => setShowPasswordForm(true)}>
+                    <Typography
+                        variant="body2"
+                        sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'underline' }}
+                        onClick={() => setShowPasswordForm(true)}
+                    >
                         Change Password
                     </Typography>
-                    <Typography variant="body2" sx={{ cursor: 'pointer', color: theme.palette.warning.main, textDecoration: 'underline' }} onClick={handleDeactivate}>
+                    <Typography
+                        variant="body2"
+                        sx={{ cursor: 'pointer', color: theme.palette.warning.main, textDecoration: 'underline' }}
+                        onClick={handleDeactivate}
+                    >
                         Deactivate Account
                     </Typography>
-                    <Typography variant="body2" sx={{ cursor: 'pointer', color: theme.palette.error.main, textDecoration: 'underline' }} onClick={() => setConfirmDialogOpen(true)}>
+                    <Typography
+                        variant="body2"
+                        sx={{ cursor: 'pointer', color: theme.palette.error.main, textDecoration: 'underline' }}
+                        onClick={() => setConfirmDialogOpen(true)}
+                    >
                         Delete Account
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{ cursor: 'pointer', color: theme.palette.grey[700], textDecoration: 'underline' }}
+                        onClick={logout}
+                    >
+                        Logout
                     </Typography>
                 </Box>
 

@@ -5,8 +5,9 @@ import uuid
 class Tache(db.Model):
     __tablename__ = 'tache'
 
-    id = db.Column(UUID, primary_key=True, default=uuid.uuid4)
-    seance_etude_id = db.Column(UUID, db.ForeignKey('seance_etude.id'))
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    client_id = db.Column(UUID(as_uuid=True), db.ForeignKey('client.id'), nullable=False)
+    seance_etude_id = db.Column(UUID(as_uuid=True), db.ForeignKey('seance_etude.id'), nullable=True)
     titre = db.Column(db.Text)
     description = db.Column(db.Text)
     statut = db.Column(db.Text)
