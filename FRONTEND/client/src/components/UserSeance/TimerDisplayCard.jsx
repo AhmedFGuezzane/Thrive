@@ -10,10 +10,17 @@ import HourglassFullIcon from '@mui/icons-material/HourglassFull';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
+
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
+
+
 export default function TimerDisplayCard() {
   const { phase, timeLeft, timeElapsedTotal, pomodoroConfig, upcomingBreakType } = useContext(TimerContext);
   // --- ADDED useTheme hook for dynamic styling ---
+
   const theme = useTheme();
+const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
+
 
   const formatTime = (totalSeconds) => {
     if (isNaN(totalSeconds) || totalSeconds < 0) return "00:00:00";
@@ -54,10 +61,10 @@ export default function TimerDisplayCard() {
     <Box
       sx={{
         // --- UPDATED to use more opaque dynamic theme colors ---
-        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.7)',
+        backgroundColor: innerBox,
         backdropFilter: 'blur(10px)',
-        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)'}`,
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+        border: `1px solid ${whiteBorder}`,
+        boxShadow: softBoxShadow,
         borderRadius: '16px',
         p: 2, // Reduced padding to make the card smaller
         display: 'flex',
@@ -67,23 +74,19 @@ export default function TimerDisplayCard() {
         textAlign: 'center',
         minHeight: '150px', // Reduced minimum height
         flexGrow: 1,
-        // --- UPDATED: Use dynamic text color for contrast ---
-        color: theme.palette.text.primary,
         height: '100%',
         boxSizing: 'border-box'
       }}
     >
-      {/* --- UPDATED: Icon color for readability in dark mode --- */}
-      {icon && React.cloneElement(icon, { sx: { fontSize: 40, color: theme.palette.text.primary, mb: 1 } })}
-      <Typography variant="body2" fontWeight="bold" sx={{ color: 'text.secondary', mb: 0.5 }}>
+      {icon && React.cloneElement(icon, { sx: { fontSize: 40, color: specialText, mb: 1 } })}
+      <Typography variant="body2" fontWeight="bold" sx={{ color: primaryText, mb: 0.5 }}>
         {title}
       </Typography>
-      {/* --- UPDATED: Main value color for readability in dark mode --- */}
-      <Typography variant="h2" fontWeight="bold" sx={{ color: theme.palette.text.primary, textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
+      <Typography variant="h2" fontWeight="bold" sx={{ color: specialText, textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
         {value}
       </Typography>
       {subtitle && (
-        <Typography variant="body2" fontStyle="italic" sx={{ mt: 1, color: 'text.primary' }}>
+        <Typography variant="body2" fontStyle="italic" sx={{ mt: 1, color: primaryText }}>
           {subtitle}
         </Typography>
       )}
@@ -102,7 +105,7 @@ export default function TimerDisplayCard() {
       }}
     >
       {/* Card 1: Time Left (Session) */}
-      <Box sx={{ flex: '1 1 23rem', minWidth: '150px' }}>
+      <Box sx={{ flex: '1 1 30%', minWidth: '150px' }}>
         <Card
           title="Temps Restant (Séance)"
           value={formatTime(estimatedTimeLeft)}
@@ -111,7 +114,7 @@ export default function TimerDisplayCard() {
       </Box>
       
       {/* Card 2: Time Elapsed (Total) */}
-      <Box sx={{ flex: '1 1 23rem', minWidth: '150px' }}>
+      <Box sx={{ flex: '1 1 30%', minWidth: '150px' }}>
         <Card
           title="Temps Total Écoulé"
           value={formatTime(timeElapsedTotal)}
@@ -120,7 +123,7 @@ export default function TimerDisplayCard() {
       </Box>
       
       {/* Card 3: Time Until Next Phase */}
-      <Box sx={{ flex: '1 1 23rem', minWidth: '150px' }}>
+      <Box sx={{ flex: '1 1 30%', minWidth: '150px' }}>
         <Card
           title={`Temps jusqu'à la prochaine ${getNextPhaseLabel()}`}
           value={getTimeUntilNextPhase()}

@@ -1,7 +1,7 @@
 // src/pages/user/UserSeance.jsx
 
 import React, { useState, useContext } from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { TimerContext } from '../../contexts/TimerContext';
 import SeanceDetailsCard from '../../components/UserSeance/SeanceDetailsCard';
 import TimerDisplayCard from '../../components/UserSeance/TimerDisplayCard';
@@ -13,8 +13,14 @@ import SnackbarAlert from '../../components/common/SnackbarAlert';
 import PhaseTransitionDialog from '../../components/common/PhaseTransitionDialog';
 import { createSeance } from '../../utils/seanceService.jsx';
 import TimerBar from '../../components/common/TimerBar.jsx';
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
+
 
 export default function UserSeance() {
+
+    const theme = useTheme();
+    const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow } = useCustomTheme();
+
     const { activeSeanceId, startSeance, phase, loaded } = useContext(TimerContext);
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -107,60 +113,75 @@ export default function UserSeance() {
             width="98%"
             height="100%"
             mx="auto"
-            bgcolor="rgba(255, 255, 255, 0.25)"
             sx={{
+                backgroundColor: outerBox,
+                backdropFilter: 'blur(8px)',
+                border: `1px solid ${whiteBorder}`,
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
                 borderRadius: '16px',
                 p: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                position: 'relative',
-                overflowY: 'auto',
-                scrollbarWidth: 'none',
-                '&::-webkit-scrollbar': {
-                    display: 'none',
-                },
+                color: theme.palette.text.primary,
+                position: 'relative'
             }}
         >
-            <Box flexGrow={1} display="flex" flexDirection="column" height="100%" width="100%" alignItems="center" justifyContent="center" gap={"1rem"} >
+            <Box flexGrow={1} display="flex" height="100%" width="100%" alignItems="center" justifyContent="center" gap="1rem">
                 {activeSeanceId ? (
                     <>
-                        <Grid container spacing={2} display="flex" sx={{ width: '100%', height: '100%' }}>
-                            <Grid width="72%" height="88%">
-                                <Box
-                                    display="flex"
-                                    flexDirection="column"
-                                    gap={3}
-                                    height="100%"
-                                    sx={{
-                                        p: 2,
-                                        borderRadius: '16px',
-                                        alignItems: 'start',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <TimerDisplayCard />
-                                    <Box display="flex" width="100%" height = "100%" justifyContent="space-between" gap={"1rem"}>
-                                        <TaskStatusTracker />
-                                        <UrgentTasksCard />
-                                    </Box>
+                        {/* Left Column (75%) */}
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            width="75%"
+                            height="100%"
+                            gap={3}
+                            sx={{
+                                borderRadius: '16px',
+                                alignItems: 'start',
+                                justifyContent: 'center',
+                                height: '100%',
+                                boxSizing: 'border-box',
+                            }}
+                        >
+                            <TimerDisplayCard />
+
+                            <Box
+                                display="flex"
+                                width="100%"
+                                height="100%"
+                                gap={2}
+                            >
+                                <TaskStatusTracker />
+                                <UrgentTasksCard />
+                            </Box>
+
+                            {activeSeanceId && (
+                                <Box sx={{ flexShrink: 0, width: '100%', display: 'flex', justifyContent: 'center' }}>
+                                    <TimerBar onCreateClick={handleDialogOpen} config={formData.pomodoro} />
                                 </Box>
-                                {activeSeanceId && (
-                                    <Box sx={{ flexShrink: 0, width: '100%', display: 'flex', justifyContent: 'center' }}>
-                                        <TimerBar onCreateClick={handleDialogOpen} config={formData.pomodoro} />
-                                    </Box>
-                                )}
-                            </Grid>
-                            <Grid width="25%" height="100%">
-                                <SeanceDetailsCard />
-                            </Grid>
-                        </Grid>
+                            )}
+                            
+                        </Box>
+
+                        {/* Right Column (25%) */}
+                        <Box
+                        width="25%"
+                            sx={{
+                                height: '100%',
+                                boxSizing: 'border-box',
+                            }}
+                        >
+                            <SeanceDetailsCard />
+                        </Box>
                     </>
                 ) : (
                     <SeanceInactiveState onCreateSeanceClick={handleDialogOpen} />
                 )}
             </Box>
+
 
             <CreateSeanceDialog
                 open={dialogOpen}

@@ -8,7 +8,8 @@ from dao_client import (
     insert_seance,
     update_minuterie,
     update_seance_statut,
-    get_seances_by_user
+    get_seances_by_user,
+    end_seance
 )
 
 app = Flask(__name__)
@@ -52,6 +53,23 @@ def historique():
     user_id = get_jwt_identity()
     res = get_seances_by_user(user_id)
     return jsonify(res.json()), res.status_code
+
+@app.route("/seances/<seance_id>/terminer", methods=["PATCH"])
+@jwt_required()
+def terminer_seance_endpoint(seance_id):
+    """
+    Endpoint to end a seance.
+    Receives a PATCH request from the frontend and forwards it to the DAO service.
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Données requises pour terminer la séance"}), 400
+
+        res = end_seance(seance_id, data)
+        return jsonify(res.json()), res.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=Config.SEANCE_SERVICE_PORT)

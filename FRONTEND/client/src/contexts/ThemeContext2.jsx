@@ -46,12 +46,14 @@ export function ThemeContextProvider({ children }) {
             text: {
               primary: mode === 'light' ? '#000000' : '#ffffff',
               secondary: mode === 'light' ? '#ffffff' : '#000000',
-              special: mode === 'light' ? '#4a2e00' : '#ffd700',
+              special: mode === 'light' ? '#FF6600' : '#9d4edd',
             },
             color: {
-              primary: mode === 'light' ? '#FF8C00' : '#ffa500',
-              secondary: mode === 'light' ? '#FFA500' : '#ffcc00',
+              primary: mode === 'light' ? '#000000' : '#ffffff',
+              secondary: mode === 'light' ? '#ffffff' : '#000000',
               special: mode === 'light' ? '#FF8C00' : '#9d4edd',
+              white: mode === 'light' ? '#FFFFFF' : '#FFFFFF',
+              black: mode === 'light' ? '#000000' : '#000000',
             },
             button: {
               primary: mode === 'light' ? '#FF8C00' : '#ffa500',
@@ -61,7 +63,7 @@ export function ThemeContextProvider({ children }) {
             border: {
               white: mode === 'light' ? 'rgba(255, 255, 255, 0.57)' : 'rgba(255, 255, 255, 0.42)',
               black: mode === 'light' ? 'rgb(0, 0, 0)' : 'rgb(0, 0, 0)',
-              special: mode === 'light' ? 'rgb(247, 0, 255)' : 'rgb(247, 0, 255)',
+              special: mode === 'light' ? 'rgb(255, 115, 0)' : 'rgb(247, 0, 255)',
             },
             boxShadow : {
                 soft : mode === 'light' ? '0 0px 10px 0 rgba(0, 0, 0, 0.29)' : '0 0 4px 0 rgba(255, 255, 255, 0.29)',

@@ -27,12 +27,7 @@ export default function UserSidebar() {
     setShowUtilityIcons(prev => !prev);
   };
 
-  // Dynamically set colors based on the global theme mode
-  const glassSidebarBg = theme.palette.mode === 'dark' ? 'rgba(205, 80, 255, 0.2)' : 'rgba(240, 248, 255, 0.2)';
-  const glassBorderColor = theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-  const iconColor = theme.palette.mode === 'dark' ? '#e0ffff' : '#4682b4';
-  const buttonBgColor = theme.palette.mode === 'dark' ? 'rgba(205, 80, 255, 0.4)' : 'rgba(255, 192, 203, 0.5)';
-  const buttonHoverBgColor = theme.palette.mode === 'dark' ? 'rgba(205, 80, 255, 0.6)' : 'rgba(255, 192, 203, 0.8)';
+
 
 
   const outerBox = theme.palette.custom.box.outer;

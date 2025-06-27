@@ -1,5 +1,6 @@
-import axios from 'axios';
+// src/utils/seanceService.jsx
 import config from '../config'; // Assuming config is one level up from utils
+// axios is imported in CreateSeanceDialog, but fetch is used in seanceService.jsx. I will stick to fetch for consistency.
 
 const SEANCE_BASE_URL = config.seanceMicroserviceBaseUrl; // Use the base URL from config
 
@@ -66,6 +67,40 @@ export const createSeance = async (formData) => {
     return seance;
   } catch (err) {
     console.error("Erreur lors de la création de la séance:", err);
+    throw err;
+  }
+};
+
+/**
+ * Sends a PATCH request to end a seance.
+ * @param {string} seanceId The ID of the seance to end.
+ * @param {object} seanceData The data to update (e.g., interruptions, nbre_pomodoro_effectues, duree_reelle).
+ * @returns {Promise<object>} A promise that resolves to the updated seance object.
+ */
+export const endSeance = async (seanceId, seanceData) => {
+  try {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) throw new Error("Authentication required");
+
+    const res = await fetch(`${SEANCE_BASE_URL}/seances/${seanceId}/terminer`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(seanceData),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ message: 'Erreur inconnue lors de la fin de la séance.' }));
+      throw new Error(errorData.message || 'Erreur lors de la fin de la séance.');
+    }
+
+    const result = await res.json();
+    return result;
+
+  } catch (err) {
+    console.error("Erreur lors de la fin de la séance:", err);
     throw err;
   }
 };

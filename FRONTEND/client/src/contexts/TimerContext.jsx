@@ -1,5 +1,7 @@
 // src/contexts/TimerContext.jsx
+
 import React, { createContext, useState, useEffect, useRef } from 'react';
+import { endSeance } from '../utils/seanceService';
 
 export const TimerContext = createContext();
 
@@ -10,12 +12,12 @@ export const TimerProvider = ({ children }) => {
   const [timeElapsedTotal, setTimeElapsedTotal] = useState(0);
   const [pomodoroConfig, setPomodoroConfig] = useState(null);
   const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [interruptions, setInterruptions] = useState(0);
   const intervalRef = useRef(null);
   const [upcomingBreakType, setUpcomingBreakType] = useState('courte');
   const [loaded, setLoaded] = useState(false);
 
-  // State to store the active seance ID
-  const [activeSeanceId, setActiveSeanceId] = useState(null); // This is defined
+  const [activeSeanceId, setActiveSeanceId] = useState(null);
 
   const clearTimer = () => {
     if (intervalRef.current) {
@@ -33,12 +35,15 @@ export const TimerProvider = ({ children }) => {
           const newTime = prev - 1;
           if (newTime <= 0) {
             clearTimer();
-            if (phase === 'study') {
-              setPhase('awaiting_break');
-              setPomodoroCount((p) => p + 1);
-            } else if (phase === 'break') {
-              setPhase('awaiting_study');
-            }
+            setPhase((currentPhase) => {
+              if (currentPhase === 'study') {
+                setPomodoroCount((p) => p + 1);
+                return 'awaiting_break';
+              } else if (currentPhase === 'break') {
+                return 'awaiting_study';
+              }
+              return currentPhase;
+            });
             return 0;
           }
           return newTime;
@@ -57,24 +62,24 @@ export const TimerProvider = ({ children }) => {
     setIsPaused(pausedState);
   };
 
-  // UPDATED: startSeance now accepts seanceId
   const startSeance = (config, seanceId) => {
     setPomodoroConfig(config);
     setPomodoroCount(0);
     setTimeElapsedTotal(0);
-    setUpcomingBreakType('courte');
-    setActiveSeanceId(seanceId); // Store the active seance ID
+    setInterruptions(0);
+    setActiveSeanceId(seanceId);
+
+    const isFirstBreakLong = 1 % config.nbre_pomodoro_avant_pause_longue === 0;
+    setUpcomingBreakType(isFirstBreakLong ? 'longue' : 'courte');
+
     beginPhase('study', config.duree_seance);
   };
 
   const startBreak = () => {
     if (!pomodoroConfig) return;
-    const { duree_pause_courte, duree_pause_longue, nbre_pomodoro_avant_pause_longue } = pomodoroConfig;
+    const { duree_pause_courte, duree_pause_longue } = pomodoroConfig;
 
-    const isLong = pomodoroCount % nbre_pomodoro_avant_pause_longue === 0 && pomodoroCount !== 0;
-    setUpcomingBreakType(isLong ? 'longue' : 'courte');
-
-    const duration = isLong ? duree_pause_longue : duree_pause_courte;
+    const duration = upcomingBreakType === 'longue' ? duree_pause_longue : duree_pause_courte;
     beginPhase('break', duration);
   };
 
@@ -85,10 +90,30 @@ export const TimerProvider = ({ children }) => {
       clearTimer();
       return;
     }
+    
+    const nextPomodoroCount = pomodoroCount + 1;
+    const isNextBreakLong = nextPomodoroCount % pomodoroConfig.nbre_pomodoro_avant_pause_longue === 0 && nextPomodoroCount !== 0;
+    setUpcomingBreakType(isNextBreakLong ? 'longue' : 'courte');
+
     beginPhase('study', pomodoroConfig.duree_seance);
   };
 
-  const stopSeance = () => {
+  const stopSeance = async () => {
+    if (activeSeanceId) {
+      try {
+        const seanceData = {
+          duree_reelle: timeElapsedTotal,
+          nbre_pomodoro_effectues: pomodoroCount,
+          interruptions: interruptions,
+          est_complete: true,
+          statut: 'terminee',
+        };
+        const response = await endSeance(activeSeanceId, seanceData);
+        console.log('Séance terminée avec succès:', response);
+      } catch (error) {
+        console.error("Erreur lors de la fin de la séance :", error);
+      }
+    }
     clearTimer();
     setPhase('idle');
     setTimeLeft(0);
@@ -96,14 +121,17 @@ export const TimerProvider = ({ children }) => {
     setPomodoroCount(0);
     setPomodoroConfig(null);
     setTimeElapsedTotal(0);
+    setInterruptions(0);
     setUpcomingBreakType('courte');
-    setActiveSeanceId(null); // Clear the active seance ID
+    setActiveSeanceId(null);
     localStorage.removeItem('timerState');
   };
 
+  // --- MODIFIED: Added incrementInterruptions() here ---
   const pauseTimer = () => {
     clearTimer();
     setIsPaused(true);
+    incrementInterruptions();
   };
 
   const resumeTimer = () => {
@@ -111,12 +139,13 @@ export const TimerProvider = ({ children }) => {
     setIsPaused(false);
   };
 
+  const incrementInterruptions = () => setInterruptions(prev => prev + 1);
+
   useEffect(() => {
     const saved = localStorage.getItem('timerState');
     if (saved) {
       try {
         const data = JSON.parse(saved);
-
         setPhase(data.phase || 'idle');
         setIsPaused(data.isPaused || false);
         setTimeLeft(data.timeLeft || 0);
@@ -124,7 +153,8 @@ export const TimerProvider = ({ children }) => {
         setPomodoroCount(data.pomodoroCount || 0);
         setPomodoroConfig(data.pomodoroConfig || null);
         setUpcomingBreakType(data.upcomingBreakType || 'courte');
-        setActiveSeanceId(data.activeSeanceId || null); // Load activeSeanceId
+        setActiveSeanceId(data.activeSeanceId || null);
+        setInterruptions(data.interruptions || 0);
       } catch (e) {
         console.error('Failed to parse timerState from localStorage', e);
         localStorage.removeItem('timerState');
@@ -143,11 +173,12 @@ export const TimerProvider = ({ children }) => {
         pomodoroCount,
         pomodoroConfig,
         upcomingBreakType,
-        activeSeanceId, // Save activeSeanceId
+        activeSeanceId,
+        interruptions,
       };
       localStorage.setItem('timerState', JSON.stringify(data));
     }
-  }, [phase, isPaused, timeLeft, timeElapsedTotal, pomodoroCount, pomodoroConfig, upcomingBreakType, activeSeanceId, loaded]);
+  }, [phase, isPaused, timeLeft, timeElapsedTotal, pomodoroCount, pomodoroConfig, upcomingBreakType, activeSeanceId, loaded, interruptions]);
 
   useEffect(() => {
     if (loaded && (phase === 'awaiting_break' || phase === 'awaiting_study')) {
@@ -168,14 +199,16 @@ export const TimerProvider = ({ children }) => {
       pomodoroConfig,
       upcomingBreakType,
       loaded,
-      activeSeanceId, // Expose activeSeanceId
-      setActiveSeanceId, // <--- ADDED THIS LINE: Expose setActiveSeanceId
+      activeSeanceId,
+      setActiveSeanceId,
       startSeance,
       stopSeance,
       startBreak,
       resumeStudy,
       pauseTimer,
-      resumeTimer
+      resumeTimer,
+      interruptions,
+      incrementInterruptions,
     }}>
       {children}
     </TimerContext.Provider>

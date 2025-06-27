@@ -11,8 +11,11 @@ import { createSeance } from '../../utils/seanceService.jsx';
 import StudyTips from '../../components/UserHome/StudyTips';
 import ActiveSeanceInfo from '../../components/UserHome/ActiveSeanceInfo';
 
+
+
 export default function UserHome() {
   // Use the global theme hook to access the palette
+
   const theme = useTheme();
 
   // Destructure activeSeanceId from TimerContext
@@ -21,8 +24,17 @@ export default function UserHome() {
   // --- REPLACED HARDCODED COLORS WITH DYNAMIC THEME PALETTE COLORS ---
   // The background for a glassmorphism card should be the 'paper' color from the theme
   const glassHomeBg = theme.palette.background.paper;
+
+
   // The border color should be dynamic for better visibility in light/dark mode
   const glassHomeBorderColor = theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+
+
+  const outerBox = theme.palette.custom.box.outer;
+  const innerBox = theme.palette.custom.box.inner;
+
+  const whiteBorder = theme.palette.custom.border.white;
   // ----------------------------------------------------------------------
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -123,9 +135,9 @@ export default function UserHome() {
       mx="auto"
       sx={{
         // --- UPDATED to use dynamic theme colors ---
-        backgroundColor: glassHomeBg,
+        backgroundColor: outerBox,
         backdropFilter: 'blur(8px)',
-        border: `1px solid ${glassHomeBorderColor}`,
+        border: `1px solid ${whiteBorder}`,
         boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
         borderRadius: '16px',
         p: 3,
@@ -137,7 +149,7 @@ export default function UserHome() {
         position: 'relative'
       }}
     >
-      <Box flexGrow={1} display="flex" flexDirection="row" width="100%" height="88%" gap={2} pb={2}>
+      <Box flexGrow={1} display="flex"  flexDirection="row" width="100%" height="88%" gap={2} pb={2}>
 
         {/* Adjusted Box for TaskList */}
         <Box
@@ -161,8 +173,8 @@ export default function UserHome() {
           <ActiveSeanceInfo
             onCreateSeanceClick={handleDialogOpen}
             // --- Pass the dynamic colors down to the child component ---
-            glassHomeBg={glassHomeBg}
-            glassHomeBorderColor={glassHomeBorderColor}
+            //glassHomeBg="{glassHomeBg}"
+            //glassHomeBorderColor={glassHomeBorderColor}
           />
         </Box>
       </Box>

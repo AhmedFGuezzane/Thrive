@@ -93,3 +93,18 @@ class SeanceDAO:
     @staticmethod
     def get_seances_by_user(client_id):
         return SeanceEtude.query.filter_by(client_id=uuid.UUID(client_id)).all()
+
+    @staticmethod
+    def terminer_seance(seance_id, data):
+        seance = SeanceEtude.query.get(seance_id)
+        if not seance:
+            return None
+
+        seance.date_fin = datetime.utcnow()
+        seance.est_complete = data.get("est_complete", True)
+        seance.interruptions = data.get("interruptions", seance.interruptions)
+        seance.nbre_pomodoro_effectues = data.get("nbre_pomodoro_effectues", seance.nbre_pomodoro_effectues)
+        seance.statut = "terminee"
+
+        db.session.commit()
+        return seance

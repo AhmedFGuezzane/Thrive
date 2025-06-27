@@ -76,3 +76,28 @@ def get_seances_by_user(client_id):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@seance_bp.route('/seance/<seance_id>/terminer', methods=['PATCH'])
+def terminer_seance(seance_id):
+    """
+    Endpoint to end a seance by updating its completion status and final stats.
+    """
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Données requises pour terminer la séance"}), 400
+
+        updated_seance = dao.terminer_seance(seance_id, data)
+        if not updated_seance:
+            return jsonify({"error": "Séance introuvable"}), 404
+
+        return jsonify({
+            "message": "Séance terminée avec succès",
+            "seance_id": str(updated_seance.id),
+            "date_fin": updated_seance.date_fin.isoformat(),
+            "est_complete": updated_seance.est_complete,
+            "interruptions": updated_seance.interruptions,
+            "nbre_pomodoro_effectues": updated_seance.nbre_pomodoro_effectues
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
