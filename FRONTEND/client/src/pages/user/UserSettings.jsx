@@ -92,7 +92,7 @@ const Settings = () => {
         const result = await res.json();
         if (res.ok) {
             showSnackbar(result.message || 'Account deactivated.', 'success');
-            localStorage.removeItem('jwt_token');
+            logout();
         } else {
             showSnackbar(result.error || 'Failed to deactivate.', 'error');
         }
@@ -106,7 +106,7 @@ const Settings = () => {
         const result = await res.json();
         if (res.ok) {
             showSnackbar(result.message || 'Account deleted.', 'success');
-            localStorage.removeItem('jwt_token');
+            logout();
         } else {
             showSnackbar(result.error || 'Deletion failed.', 'error');
         }
@@ -114,13 +114,23 @@ const Settings = () => {
 
     return (
         <Box width="98%" height="100%" mx="1rem">
-            <Box p={3} borderRadius={3} bgcolor="rgba(255,255,255,0.1)" backdropFilter="blur(10px)">
-                <Typography variant="h5" fontWeight="bold">Account Settings</Typography>
+            <Box
+                p={3}
+                borderRadius={3}
+                // --- UPDATED to use dynamic theme color ---
+                bgcolor={theme.palette.background.paper}
+                backdropFilter="blur(10px)"
+            >
+                <Typography variant="h5" fontWeight="bold" color={theme.palette.text.primary}>
+                    Account Settings
+                </Typography>
                 <Divider sx={{ my: 2 }} />
 
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h6">Profile Info</Typography>
-                    <IconButton onClick={() => setEditable(!editable)}><EditIcon /></IconButton>
+                    <Typography variant="h6" color={theme.palette.text.primary}>Profile Info</Typography>
+                    <IconButton onClick={() => setEditable(!editable)}>
+                        <EditIcon sx={{ color: theme.palette.text.secondary }} />
+                    </IconButton>
                 </Box>
 
                 <Grid container spacing={2} mb={2} mt={1}>
@@ -131,7 +141,7 @@ const Settings = () => {
                 {editable && <Button onClick={handleUpdateProfile} variant="contained">Save Changes</Button>}
 
                 <Divider sx={{ my: 3 }} />
-                <Typography variant="h6">Account Metadata</Typography>
+                <Typography variant="h6" color={theme.palette.text.primary}>Account Metadata</Typography>
                 <Grid container spacing={2} mt={1}>
                     <Grid item xs={12} sm={4}><TextField fullWidth label="Role" value={userInfo.role || ''} disabled /></Grid>
                     <Grid item xs={12} sm={4}><TextField fullWidth label="Actif" value={userInfo.actif ? 'Yes' : 'No'} disabled /></Grid>
@@ -139,7 +149,7 @@ const Settings = () => {
                 </Grid>
 
                 <Divider sx={{ my: 3 }} />
-                <Typography variant="h6">Other Actions</Typography>
+                <Typography variant="h6" color={theme.palette.text.primary}>Other Actions</Typography>
                 <Box display="flex" flexDirection="column" gap={1} mt={1}>
                     <Typography
                         variant="body2"
@@ -164,7 +174,7 @@ const Settings = () => {
                     </Typography>
                     <Typography
                         variant="body2"
-                        sx={{ cursor: 'pointer', color: theme.palette.grey[700], textDecoration: 'underline' }}
+                        sx={{ cursor: 'pointer', color: theme.palette.text.secondary, textDecoration: 'underline' }}
                         onClick={logout}
                     >
                         Logout
@@ -173,7 +183,7 @@ const Settings = () => {
 
                 {showPasswordForm && (
                     <Box mt={3}>
-                        <Typography variant="h6">Change Password</Typography>
+                        <Typography variant="h6" color={theme.palette.text.primary}>Change Password</Typography>
                         <Grid container spacing={2} mt={1}>
                             <Grid item xs={12} sm={6}><TextField fullWidth label="Current Password" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} /></Grid>
                             <Grid item xs={12} sm={6}><TextField fullWidth label="New Password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} /></Grid>

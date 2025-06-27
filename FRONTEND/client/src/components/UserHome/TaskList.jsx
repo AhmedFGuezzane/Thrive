@@ -6,7 +6,7 @@ import {
   Button,
   CircularProgress,
   Chip,
-  useTheme,
+  useTheme, // THEME
   Collapse,
   IconButton,
   TextField,
@@ -16,6 +16,7 @@ import {
   MenuItem,
   InputAdornment,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles'; // alpha
 
 import DoneIcon from '@mui/icons-material/Done';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -41,7 +42,6 @@ import { useTaskManagement } from '../../hooks/useTaskManagement';
 import SnackbarAlert from '../../components/common/SnackbarAlert';
 // Import TimerContext to get activeSeanceId
 import { TimerContext } from '../../contexts/TimerContext';
-
 
 export default function TaskList({ seanceId, sx }) {
   const theme = useTheme();
@@ -102,110 +102,114 @@ export default function TaskList({ seanceId, sx }) {
 
 
   const getImportanceDisplay = (importance) => {
+    let bgColor, textColor, icon;
     switch (importance) {
-      case 1:
-        return {
-          label: 'Urgent',
-          bgColor: '#ef5350', // Red
-          textColor: '#ffffff',
-          icon: <KeyboardDoubleArrowUpIcon fontSize="small" />,
-        };
-      case 2:
-        return {
-          label: 'Haute',
-          bgColor: '#ff9800', // Orange
-          textColor: '#ffffff',
-          icon: <KeyboardArrowUpIcon fontSize="small" />,
-        };
-      case 3:
-        return {
-          label: 'Moyenne',
-          bgColor: '#2196f3', // Blue
-          textColor: '#ffffff',
-          icon: <HorizontalRuleIcon fontSize="small" />,
-        };
-      case 4:
-        return {
-          label: 'Basse',
-          bgColor: '#4caf50', // Green
-          textColor: '#ffffff',
-          icon: <KeyboardArrowDownIcon fontSize="small" />,
-        };
-      case 5:
-        return {
-          label: 'Très Basse',
-          bgColor: '#9c27b0', // Purple
-          textColor: '#ffffff',
-          icon: <KeyboardDoubleArrowDownIcon fontSize="small" />,
-        };
+      case 1: // Urgent
+        bgColor = theme.palette.error.main; // Red
+        icon = <KeyboardDoubleArrowUpIcon fontSize="small" />;
+        break;
+      case 2: // Haute
+        bgColor = theme.palette.warning.main; // Orange
+        icon = <KeyboardArrowUpIcon fontSize="small" />;
+        break;
+      case 3: // Moyenne
+        bgColor = theme.palette.info.main; // Blue
+        icon = <HorizontalRuleIcon fontSize="small" />;
+        break;
+      case 4: // Basse
+        bgColor = theme.palette.success.main; // Green
+        icon = <KeyboardArrowDownIcon fontSize="small" />;
+        break;
+      case 5: // Très Basse
+        bgColor = theme.palette.secondary.main; // Purple
+        icon = <KeyboardDoubleArrowDownIcon fontSize="small" />;
+        break;
       default:
-        return {
-          label: 'N/A',
-          bgColor: '#9e9e9e', // Grey
-          textColor: '#ffffff',
-          icon: null,
-        };
+        bgColor = theme.palette.grey[500]; // Grey
+        icon = null;
     }
+    return {
+      label:
+        importance === 1
+          ? 'Urgent'
+          : importance === 2
+          ? 'Haute'
+          : importance === 3
+          ? 'Moyenne'
+          : importance === 4
+          ? 'Basse'
+          : importance === 5
+          ? 'Très Basse'
+          : 'N/A',
+      bgColor,
+      textColor: theme.palette.getContrastText(bgColor),
+      icon,
+    };
   };
 
   const getStatusDisplay = (status) => {
     if (!status) {
       return {
         label: 'Inconnu',
-        bgColor: '#9e9e9e',
-        textColor: '#fff',
+        bgColor: theme.palette.grey[500],
+        textColor: theme.palette.getContrastText(theme.palette.grey[500]),
         icon: null,
       };
     }
     const normalizedStatus = status.trim().toLowerCase();
+    let bgColor, icon;
     switch (normalizedStatus) {
       case 'terminée':
       case 'complétée':
       case 'complete':
-        return {
-          label: 'Complétée',
-          bgColor: '#9c27b0', // Purple for Completed
-          textColor: '#ffffff',
-          icon: <DoneIcon fontSize="small" />,
-        };
+        bgColor = theme.palette.secondary.main; // Purple
+        icon = <DoneIcon fontSize="small" />;
+        break;
       case 'en cours':
       case 'in progress':
-        return {
-          label: 'En cours',
-          bgColor: '#4caf50', // Green for In Progress
-          textColor: '#ffffff',
-          icon: <ScheduleIcon fontSize="small" />,
-        };
+        bgColor = theme.palette.success.main; // Green
+        icon = <ScheduleIcon fontSize="small" />;
+        break;
       case 'en attente':
       case 'pending':
-        return {
-          label: 'En attente',
-          bgColor: '#ffc107', // Amber/Yellow for Pending
-          textColor: '#000000',
-          icon: <HourglassEmptyIcon fontSize="small" />,
-        };
+        bgColor = theme.palette.warning.main; // Amber/Yellow
+        icon = <HourglassEmptyIcon fontSize="small" />;
+        break;
       default:
-        return {
-          label: status,
-          bgColor: '#9e9e9e', // Grey fallback
-          textColor: '#ffffff',
-          icon: null,
-        };
+        bgColor = theme.palette.grey[500]; // Grey fallback
+        icon = null;
     }
+    return {
+      label:
+        normalizedStatus === 'terminée' ||
+        normalizedStatus === 'complétée' ||
+        normalizedStatus === 'complete'
+          ? 'Complétée'
+          : normalizedStatus === 'en cours' || normalizedStatus === 'in progress'
+          ? 'En cours'
+          : normalizedStatus === 'en attente' || normalizedStatus === 'pending'
+          ? 'En attente'
+          : status,
+      bgColor,
+      textColor: theme.palette.getContrastText(bgColor),
+      icon,
+    };
   };
 
 
   // Filter tasks based on search term and dropdowns
-  const filteredTasks = tasks.filter(task => {
-    const matchesSearch = searchTerm === '' ||
-                          task.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (task.description && task.description.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      searchTerm === '' ||
+      task.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (task.description &&
+        task.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesImportance = selectedImportance === '' ||
-                              task.importance === parseInt(selectedImportance);
+    const matchesImportance =
+      selectedImportance === '' || task.importance === parseInt(selectedImportance);
 
-    const matchesStatus = selectedStatus === '' ||
-                          task.statut.toLowerCase() === selectedStatus.toLowerCase();
+    const matchesStatus =
+      selectedStatus === '' || task.statut.toLowerCase() === selectedStatus.toLowerCase();
 
     return matchesSearch && matchesImportance && matchesStatus;
   });
@@ -217,16 +221,17 @@ export default function TaskList({ seanceId, sx }) {
         flexGrow: 1,
         minHeight: 0,
         height: '100%',
-        backgroundColor: 'rgba(255, 240, 245, 0.2)',
+        // --- UPDATED: Main glassmorphism background for a more solid feel ---
+        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)',
         backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`, // Subtle border
+        boxShadow: theme.shadows[2], // Soft shadow
         borderRadius: '12px',
         p: 2,
         display: 'flex',
         flexDirection: 'column',
         gap: 1,
-        color: '#333',
+        color: theme.palette.text.primary,
         ...sx,
       }}
     >
@@ -236,10 +241,11 @@ export default function TaskList({ seanceId, sx }) {
           position: 'sticky',
           top: 0,
           zIndex: 10, // Ensure it's above scrolling content
-          bgcolor: 'rgba(255, 240, 245, 0.8)', // Increased opacity for better distinction
+          // --- UPDATED: Filter bar background color for better visibility ---
+          bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.9)', // Made it more opaque
           backdropFilter: 'blur(10px)', // Slightly less blur to reduce "cluster" effect
-          border: '1px solid rgba(255, 255, 255, 0.5)', // Stronger border
-          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)', // More visible shadow
+          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.2)'}`, // Stronger border
+          boxShadow: theme.shadows[3], // More visible shadow
           borderRadius: '8px', // Slightly smaller border radius than main container
           p: 1.5, // Padding for the filter bar
           mb: 2, // Margin below the sticky bar
@@ -261,21 +267,21 @@ export default function TaskList({ seanceId, sx }) {
           sx={{
             flexGrow: 1,
             minWidth: '150px',
-            bgcolor: 'rgba(255,255,255,0.1)',
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
             borderRadius: '8px',
             '& .MuiOutlinedInput-root': {
               borderRadius: '8px',
-              '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
-              '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-              '&.Mui-focused fieldset': { borderColor: 'rgba(128, 0, 128, 0.7)' },
-              color: '#333',
+              '& fieldset': { borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)' },
+              '&:hover fieldset': { borderColor: theme.palette.primary.main },
+              '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
+              color: theme.palette.text.primary,
             },
-            '& .MuiInputBase-input::placeholder': { color: 'rgba(0,0,0,0.6)' },
+            '& .MuiInputBase-input::placeholder': { color: theme.palette.text.secondary },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: 'rgba(0,0,0,0.5)' }} />
+                <SearchIcon sx={{ color: theme.palette.text.secondary }} />
               </InputAdornment>
             ),
           }}
@@ -287,16 +293,16 @@ export default function TaskList({ seanceId, sx }) {
           size="small"
           sx={{
             minWidth: 120,
-            bgcolor: 'rgba(255,255,255,0.1)',
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
             borderRadius: '8px',
             '& .MuiOutlinedInput-root': {
               borderRadius: '8px',
-              '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
-              '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-              '&.Mui-focused fieldset': { borderColor: 'rgba(128, 0, 128, 0.7)' },
-              color: '#333',
+              '& fieldset': { borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)' },
+              '&:hover fieldset': { borderColor: theme.palette.primary.main },
+              '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
+              color: theme.palette.text.primary,
             },
-            '& .MuiInputLabel-root': { color: 'rgba(0,0,0,0.6)' },
+            '& .MuiInputLabel-root': { color: theme.palette.text.secondary },
             flexShrink: 0,
           }}
         >
@@ -305,6 +311,16 @@ export default function TaskList({ seanceId, sx }) {
             value={selectedImportance}
             onChange={(e) => setSelectedImportance(e.target.value)}
             label="Importance"
+            // --- NEW: Style the dropdown menu popover for better visibility ---
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(10px)',
+                  border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+                },
+              },
+            }}
           >
             <MenuItem value="">Toutes</MenuItem>
             {[1, 2, 3, 4, 5].map((importance) => (
@@ -321,16 +337,16 @@ export default function TaskList({ seanceId, sx }) {
           size="small"
           sx={{
             minWidth: 120,
-            bgcolor: 'rgba(255,255,255,0.1)',
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
             borderRadius: '8px',
             '& .MuiOutlinedInput-root': {
               borderRadius: '8px',
-              '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
-              '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-              '&.Mui-focused fieldset': { borderColor: 'rgba(128, 0, 128, 0.7)' },
-              color: '#333',
+              '& fieldset': { borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)' },
+              '&:hover fieldset': { borderColor: theme.palette.primary.main },
+              '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
+              color: theme.palette.text.primary,
             },
-            '& .MuiInputLabel-root': { color: 'rgba(0,0,0,0.6)' },
+            '& .MuiInputLabel-root': { color: theme.palette.text.secondary },
             flexShrink: 0,
           }}
         >
@@ -339,6 +355,16 @@ export default function TaskList({ seanceId, sx }) {
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
             label="Statut"
+            // --- NEW: Style the dropdown menu popover for better visibility ---
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(10px)',
+                  border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+                },
+              },
+            }}
           >
             <MenuItem value="">Tous</MenuItem>
             <MenuItem value="en cours">En cours</MenuItem>
@@ -351,12 +377,12 @@ export default function TaskList({ seanceId, sx }) {
         <IconButton
           onClick={() => setIsAddTaskDialogOpen(true)}
           sx={{
-            color: 'rgba(128, 0, 128, 0.9)',
-            bgcolor: 'rgba(255,255,255,0.1)',
+            color: theme.palette.primary.main,
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
             borderRadius: '8px',
             p: '8px',
             '&:hover': {
-              bgcolor: 'rgba(255,255,255,0.2)',
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
             },
           }}
         >
@@ -368,17 +394,17 @@ export default function TaskList({ seanceId, sx }) {
           onClick={refreshTasks}
           disabled={loading}
           sx={{
-            color: 'rgba(128, 0, 128, 0.9)',
-            bgcolor: 'rgba(255,255,255,0.1)',
+            color: theme.palette.primary.main,
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
             borderRadius: '8px',
             p: '8px',
             '&:hover': {
-              bgcolor: 'rgba(255,255,255,0.2)',
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
             },
           }}
         >
           {loading ? (
-            <CircularProgress size={20} sx={{ color: 'rgba(128, 0, 128, 0.7)' }} />
+            <CircularProgress size={20} sx={{ color: theme.palette.primary.main }} />
           ) : (
             <RefreshIcon fontSize="small" />
           )}
@@ -401,7 +427,7 @@ export default function TaskList({ seanceId, sx }) {
       >
         {loading && !tasks.length ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-            <CircularProgress sx={{ color: 'rgba(128, 0, 128, 0.7)' }} />
+            <CircularProgress sx={{ color: theme.palette.primary.main }} />
           </Box>
         ) : filteredTasks.length === 0 ? (
           <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', mt: 2 }}>
@@ -416,37 +442,32 @@ export default function TaskList({ seanceId, sx }) {
                 onClick={() => handleExpandClick(task.id)}
                 sx={{
                   p: 3,
-                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)', // Increased opacity
                   borderRadius: '12px',
                   mb: 1.5,
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 1,
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
-                  color: '#333',
+                  border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'}`, // Increased border opacity
+                  boxShadow: theme.shadows[1],
+                  color: theme.palette.text.primary,
                   position: 'relative',
                   overflow: 'hidden',
                   transition: 'all 0.3s ease-in-out',
                   cursor: 'pointer',
                   '&:hover': {
-                    bgcolor: 'rgba(255, 255, 255, 0.15)',
-                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)', // Increased hover opacity
+                    boxShadow: theme.shadows[2],
                     transform: 'translateY(-2px)',
                   },
                   flexShrink: 0,
                 }}
               >
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  width="100%"
-                >
+                <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    color="#333"
+                    color={theme.palette.text.primary}
                     sx={{ flexGrow: 1, mr: 1 }}
                   >
                     {task.titre}
@@ -485,37 +506,40 @@ export default function TaskList({ seanceId, sx }) {
                       />
                     )}
                   </Box>
-                  <IconButton size="small" sx={{ color: '#333', ml: 1 }}>
+                  <IconButton size="small" sx={{ color: theme.palette.text.primary, ml: 1 }}>
                     {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   </IconButton>
                 </Box>
 
                 <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-                  <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                  <Box sx={{ mt: 1, pt: 1, borderTop: `1px solid ${alpha(theme.palette.divider, 0.4)}` }}>
                     {task.description && (
-                      <Typography variant="body2" color="#444" sx={{ mb: 1, whiteSpace: 'pre-wrap' }}>
-                        <Typography component="span" fontWeight="bold" sx={{ color: '#333' }}>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        sx={{ mb: 1, whiteSpace: 'pre-wrap' }}
+                      >
+                        <Typography component="span" fontWeight="bold" sx={{ color: theme.palette.text.primary }}>
                           Description :{' '}
                         </Typography>
                         {task.description}
                       </Typography>
                     )}
-                    <Typography variant="body2" color="#444">
-                      <Typography component="span" fontWeight="bold" sx={{ color: '#333' }}>
+                    <Typography variant="body2" color="textSecondary">
+                      <Typography component="span" fontWeight="bold" sx={{ color: theme.palette.text.primary }}>
                         Autres détails :{' '}
                       </Typography>
                       {task.date_creation &&
                         `Créée le: ${new Date(task.date_creation).toLocaleDateString()} `}
                       {task.date_modification &&
                         `Dernière modification: ${new Date(task.date_modification).toLocaleDateString()}`}
-                      {!task.date_creation && !task.date_modification &&
-                        'Aucune information supplémentaire.'}
+                      {!task.date_creation && !task.date_modification && 'Aucune information supplémentaire.'}
                     </Typography>
                   </Box>
                 </Collapse>
 
                 {task.date_fin && (
-                  <Typography variant="body2" sx={{ fontSize: '0.8rem', color: '#666', mt: 1 }}>
+                  <Typography variant="body2" sx={{ fontSize: '0.8rem', color: theme.palette.text.secondary, mt: 1 }}>
                     Échéance : {new Date(task.date_fin).toLocaleDateString()}
                   </Typography>
                 )}

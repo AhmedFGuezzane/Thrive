@@ -11,8 +11,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Box, // Import Box for layout
+  Box,
+  useTheme, // <-- ADDED useTheme hook
 } from '@mui/material';
+import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility
 import SwitchCard from './SwitchCard'; // Assuming SwitchCard is available
 
 export default function AddTaskDialog({
@@ -24,9 +26,11 @@ export default function AddTaskDialog({
   getImportanceDisplay,
   getStatusDisplay,
   activeSeanceExists, // New prop to determine if active session exists
-  addToActiveSeance,  // New state for the switch
+  addToActiveSeance, // New state for the switch
   onToggleAddToActiveSeance, // New handler for the switch
 }) {
+  // Use the global theme hook to access the palette
+  const theme = useTheme();
 
   return (
     <Dialog
@@ -36,16 +40,19 @@ export default function AddTaskDialog({
       fullWidth
       PaperProps={{
         sx: {
-          backgroundColor: 'rgba(255, 240, 245, 0.9)',
+          // --- UPDATED to use dynamic theme colors for the dialog background ---
+          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
+          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
           borderRadius: '16px',
           boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.15)',
-          color: '#333'
-        }
+          color: theme.palette.text.primary, // <-- Use dynamic text color
+        },
       }}
     >
-      <DialogTitle sx={{ fontWeight: 'bold' }}>Ajouter une nouvelle tâche</DialogTitle>
+      <DialogTitle sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>
+        Ajouter une nouvelle tâche
+      </DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -59,9 +66,19 @@ export default function AddTaskDialog({
           onChange={onNewTaskChange}
           InputProps={{
             disableUnderline: true,
-            sx: { borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: '#333' }
+            sx: {
+              borderRadius: '8px',
+              // --- UPDATED: Use dynamic background and text color ---
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+              color: theme.palette.text.primary,
+            },
           }}
-          InputLabelProps={{ sx: { color: 'rgba(0,0,0,0.6)' } }}
+          InputLabelProps={{
+            sx: {
+              // --- UPDATED: Use dynamic label color ---
+              color: theme.palette.text.secondary,
+            },
+          }}
         />
         <TextField
           margin="dense"
@@ -76,11 +93,31 @@ export default function AddTaskDialog({
           onChange={onNewTaskChange}
           InputProps={{
             disableUnderline: true,
-            sx: { borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: '#333' }
+            sx: {
+              borderRadius: '8px',
+              // --- UPDATED: Use dynamic background and text color ---
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+              color: theme.palette.text.primary,
+            },
           }}
-          InputLabelProps={{ sx: { color: 'rgba(0,0,0,0.6)' } }}
+          InputLabelProps={{
+            sx: {
+              // --- UPDATED: Use dynamic label color ---
+              color: theme.palette.text.secondary,
+            },
+          }}
         />
-        <FormControl fullWidth margin="dense" variant="filled" sx={{ borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', '& .MuiFilledInput-root': { borderRadius: '8px' } }}>
+        <FormControl
+          fullWidth
+          margin="dense"
+          variant="filled"
+          sx={{
+            borderRadius: '8px',
+            // --- UPDATED: Use dynamic background color ---
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+            '& .MuiFilledInput-root': { borderRadius: '8px' },
+          }}
+        >
           <InputLabel>Importance</InputLabel>
           <Select
             name="importance"
@@ -88,7 +125,11 @@ export default function AddTaskDialog({
             onChange={onNewTaskChange}
             label="Importance"
             disableUnderline
-            sx={{ borderRadius: '8px', color: '#333' }}
+            sx={{
+              borderRadius: '8px',
+              // --- UPDATED: Use dynamic text color ---
+              color: theme.palette.text.primary,
+            }}
             inputProps={{ sx: { borderRadius: '8px' } }}
           >
             {[1, 2, 3, 4, 5].map((importance) => (
@@ -98,7 +139,17 @@ export default function AddTaskDialog({
             ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth margin="dense" variant="filled" sx={{ borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', '& .MuiFilledInput-root': { borderRadius: '8px' } }}>
+        <FormControl
+          fullWidth
+          margin="dense"
+          variant="filled"
+          sx={{
+            borderRadius: '8px',
+            // --- UPDATED: Use dynamic background color ---
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+            '& .MuiFilledInput-root': { borderRadius: '8px' },
+          }}
+        >
           <InputLabel>Statut</InputLabel>
           <Select
             name="statut"
@@ -106,7 +157,11 @@ export default function AddTaskDialog({
             onChange={onNewTaskChange}
             label="Statut"
             disableUnderline
-            sx={{ borderRadius: '8px', color: '#333' }}
+            sx={{
+              borderRadius: '8px',
+              // --- UPDATED: Use dynamic text color ---
+              color: theme.palette.text.primary,
+            }}
             inputProps={{ sx: { borderRadius: '8px' } }}
           >
             <MenuItem value="en attente">En attente</MenuItem>
@@ -123,13 +178,24 @@ export default function AddTaskDialog({
           variant="filled"
           value={newTaskData.date_fin}
           onChange={onNewTaskChange}
-          InputLabelProps={{ shrink: true, sx: { color: 'rgba(0,0,0,0.6)' } }}
+          InputLabelProps={{
+            shrink: true,
+            sx: {
+              // --- UPDATED: Use dynamic label color ---
+              color: theme.palette.text.secondary,
+            },
+          }}
           InputProps={{
             disableUnderline: true,
-            sx: { borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: '#333' }
+            sx: {
+              borderRadius: '8px',
+              // --- UPDATED: Use dynamic background and text color ---
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+              color: theme.palette.text.primary,
+            },
           }}
         />
-        
+
         {/* New SwitchCard for associating with active session */}
         <Box mt={2}>
           <SwitchCard
@@ -140,17 +206,20 @@ export default function AddTaskDialog({
             disabled={!activeSeanceExists} // Disable if no active session
           />
         </Box>
-
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} sx={{ color: '#555' }}>Annuler</Button>
+        <Button onClick={onClose} sx={{ color: theme.palette.text.secondary }}>
+          Annuler
+        </Button>
         <Button
           onClick={onAddTask}
           variant="contained"
           sx={{
-            bgcolor: 'rgba(128, 0, 128, 0.5)',
-            '&:hover': { bgcolor: 'rgba(128, 0, 128, 0.7)' },
-            borderRadius: '8px'
+            // --- UPDATED: Use dynamic button colors ---
+            bgcolor: alpha(theme.palette.primary.main, 0.8),
+            '&:hover': { bgcolor: alpha(theme.palette.primary.main, 1) },
+            borderRadius: '8px',
+            color: theme.palette.primary.contrastText,
           }}
         >
           Ajouter Tâche

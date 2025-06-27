@@ -1,9 +1,12 @@
 // src/components/UserHome/StudyTips.jsx
 import React, { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
 export default function StudyTips() {
+  const theme = useTheme();
+
   const studyTips = [
     {
       title: "Technique Pomodoro",
@@ -48,14 +51,14 @@ export default function StudyTips() {
   ];
 
   const [tipIndex, setTipIndex] = useState(0);
-  const tipDuration = 8000; // 8 seconds for each tip
+  const tipDuration = 8000;
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTipIndex((prev) => (prev + 1) % studyTips.length);
     }, tipDuration);
     return () => clearInterval(interval);
-  }, [tipIndex, studyTips.length, tipDuration]);
+  }, [tipIndex, studyTips.length]);
 
   const currentTip = studyTips[tipIndex];
 
@@ -63,77 +66,69 @@ export default function StudyTips() {
     <Box
       flexBasis="25%"
       flexShrink={0}
+      height="100%"
       sx={{
-        // Reverted outer box to previous, lighter glassmorphism style
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255, 255, 255, 0.3)',
+        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)',
+        backdropFilter: 'blur(8px)',
+        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgb(255, 255, 255)'}`,
         borderRadius: '16px',
-        p: 2, // Adjusted padding for the outer box
-        boxShadow: '0 6px 20px rgba(0,0,0,0.12)',
-        color: '#333',
+        p: 3,
+        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+        color: theme.palette.text.primary,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center', // Center content vertically in the outer box
-        alignItems: 'center', // Center content horizontally in the outer box
-        overflow: 'hidden',
-        position: 'relative',
-        height: '100%', // Ensure it fills its allocated flexBasis height
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%'
       }}
     >
-      {/* Translucent box for the tip content - Now matches the sticky filter bar */}
       <Box
         sx={{
-          backgroundColor: 'rgba(255, 240, 245, 0.6)', // Matched the sticky bar's background color
-          backdropFilter: 'blur(10px)', // Matched the sticky bar's backdropFilter
-          border: '1px solid rgba(255, 255, 255, 0.5)', // Matched the sticky bar's border
-          borderRadius: '8px', // Matched the sticky bar's border-radius
-          p: 2, // Adjusted padding inside the translucent box
-          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)', // Matched the sticky bar's boxShadow
+          bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '12px',
+          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(255, 255, 255, 0.8)'}`,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          p: 2,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
           textAlign: 'center',
-          maxWidth: '99%', // Constrain width inside
-          height: '100%', // Ensure it fills the vertical space of its parent (which is aligned center)
+          width: '100%',
         }}
       >
-        {/* Lightbulb Icon */}
         <LightbulbOutlinedIcon
           sx={{
-            fontSize: 35, // Slightly larger icon for prominence
-            color: 'rgba(255, 204, 0, 1)', // More vibrant yellow
-            mb: 1, // Margin below the icon
-            filter: 'drop-shadow(0px 0px 10px rgba(255, 204, 0, 0.7))', // Stronger glow effect
+            fontSize: 35,
+            color: theme.palette.warning.main,
+            mb: 1,
+            filter: `drop-shadow(0px 0px 10px ${alpha(theme.palette.warning.main, 0.7)})`,
           }}
         />
 
-        {/* Tip Title */}
         <Typography
-          variant="h6" // Adjusted for better prominence and modern feel
+          variant="h6"
           fontWeight="bold"
           sx={{
-            color: 'rgba(128, 0, 128, 0.9)', // Richer purple for title
-            mb: 0.5, // Margin below title
-            letterSpacing: '0.5px', // Subtle letter spacing
+            color: theme.palette.mode === 'dark' ? theme.palette.text.primary : '#4a2e00',
+            mb: 0.5,
+            letterSpacing: '0.5px',
           }}
         >
           {currentTip.title}
         </Typography>
 
-        {/* Tip Description */}
         <Typography
-          variant="body2" // Appropriate variant for description
+          variant="body2"
           sx={{
             fontStyle: 'italic',
             lineHeight: 1.4,
-            color: 'rgba(51, 51, 51, 0.85)', // Clearer text for description
+            color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : '#5c3b0f',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
-            WebkitLineClamp: 3, // Limit description to 3 lines
+            WebkitLineClamp: 4,
             WebkitBoxOrient: 'vertical',
+            minHeight: '4.2em',
           }}
         >
           {currentTip.description}

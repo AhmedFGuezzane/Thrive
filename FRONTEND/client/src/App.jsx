@@ -1,4 +1,6 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Box, useTheme } from '@mui/material';
 import './App.css';
 
 import ClientLayout from './layouts/clientLayout/ClientLayout';
@@ -16,39 +18,63 @@ import Contact from './pages/client/Contact';
 import UserHome from './pages/user/UserHome';
 import UserTasks from './pages/user/UserTasks';
 import UserSettings from './pages/user/UserSettings';
+import UserSeance from './pages/user/UserSeance';
 
 function App() {
+  const theme = useTheme();
+
+  // Reference the images directly from the public folder
+  const lightBackground = '/assets/images/user/user_background.jpg';
+  const darkBackground = '/assets/images/user/user_background_dark.jpg'; // Corrected extension
+
+  // Determine which background image to use based on the theme mode
+  const backgroundImage = theme.palette.mode === 'light' ? lightBackground : darkBackground;
+
   return (
-    <Router>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        width: '100%',
+        // --- Dynamic Background Image based on the theme ---
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        transition: 'background-image 0.5s ease-in-out',
+      }}
+    >
+      <Router>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<ClientLayout />}>
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
 
-<Routes>
-  {/* Public routes */}
-  <Route path="/" element={<ClientLayout />}>
-    <Route index element={<Home />} />
-    <Route path="about" element={<About />} />
-    <Route path="login" element={<Login />} />
-    <Route path="register" element={<Register />} />
-    <Route path="contact" element={<Contact />} />
-  </Route>
+          {/* ✅ Admin-protected routes */}
+          <Route element={<PrivateRoute allowedRoles={['admin']} />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              {/* your admin pages here */}
+            </Route>
+          </Route>
 
-  {/* ✅ Admin-protected routes */}
-  <Route element={<PrivateRoute allowedRoles={['admin']} />}>
-    <Route path="/admin" element={<AdminLayout />}>
-      {/* your admin pages here */}
-    </Route>
-  </Route>
-
-  {/* ✅ Client-protected routes */}
-  <Route element={<PrivateRoute allowedRoles={['client']} />}>
-    <Route path="/user" element={<UserLayout />}>
-      <Route path="userHome" element={<UserHome />} />
-      <Route path="userTasks" element={<UserTasks />} />
-      <Route path="userSettings" element={<UserSettings />} />
-    </Route>
-  </Route>
-</Routes>
-
-    </Router>
+          {/* ✅ Client-protected routes */}
+          <Route element={<PrivateRoute allowedRoles={['client']} />}>
+            <Route path="/user" element={<UserLayout />}>
+              <Route path="userHome" element={<UserHome />} />
+              <Route path="userTasks" element={<UserTasks />} />
+              <Route path="userSeance" element={<UserSeance />} />
+              <Route path="userSettings" element={<UserSettings />} />
+            </Route>
+          </Route>
+        </Routes>
+      </Router>
+    </Box>
   );
 }
 
