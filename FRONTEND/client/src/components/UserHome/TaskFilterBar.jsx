@@ -1,62 +1,59 @@
+// src/components/UserHome/TaskFilterBar.jsx
 import React from 'react';
 import {
   Box,
+  CircularProgress,
+  IconButton,
   TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   InputAdornment,
-  IconButton,
-  CircularProgress,
-  useTheme, // <-- ADDED useTheme hook
-} from "@mui/material";
-import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility
+  useTheme,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AddIcon from '@mui/icons-material/Add';
 
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 
-export default function UserTasksFilterBar({
-
-
+export default function TaskFilterBar({
   searchTerm,
   setSearchTerm,
   selectedImportance,
   setSelectedImportance,
-  taskViewMode,
-  setTaskViewMode,
-  activeSeanceExists,
-  onAddTaskClick,
-  onRefreshClick,
+  selectedStatus,
+  setSelectedStatus,
+  refreshTasks,
   loading,
+  setIsAddTaskDialogOpen,
   getImportanceDisplay,
 }) {
-    const theme = useTheme();
-  const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
-  
+  const theme = useTheme();
+const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
 
   return (
     <Box
       sx={{
-        width: '100%',
-        mb: 3,
-        p: 1.5,
-        // --- UPDATED: Main background for a consistent dark glass effect ---
-        bgcolor: middleBox,
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        bgcolor: innerBox,
         backdropFilter: 'blur(10px)',
-        border: `1px solid ${whiteBorder}`,
-        borderRadius: '8px',
+        border: `1px solid ${specialBorder}`,
         boxShadow: softBoxShadow,
+        borderRadius: '8px',
+        p: 1.5,
+        mb: 2,
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'row' },
         gap: 1.5,
         alignItems: 'center',
         flexWrap: 'wrap',
-        flexShrink: 0,
       }}
     >
+      {/* Search TextField */}
       <TextField
         fullWidth={false}
         variant="outlined"
@@ -81,11 +78,13 @@ export default function UserTasksFilterBar({
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon sx={{ color: theme.palette.text.secondary }} />
+              <SearchIcon sx={{ color: primaryColor }} />
             </InputAdornment>
           ),
         }}
       />
+
+      {/* Importance Select */}
       <FormControl
         variant="outlined"
         size="small"
@@ -105,25 +104,30 @@ export default function UserTasksFilterBar({
         }}
       >
         <InputLabel>Importance</InputLabel>
-                <Select
-                  value={selectedImportance}
-                  onChange={(e) => setSelectedImportance(e.target.value)}
-                  label="Importance"
-                  MenuProps={{
-                    PaperProps: {
-                      sx: {
-                        bgcolor: secondaryColor,
-                        backdropFilter: 'blur(10px)',
-                        border: `1px solid ${whiteBorder}`,
-                      },
-                    },
-                  }}
+        <Select
+          value={selectedImportance}
+          onChange={(e) => setSelectedImportance(e.target.value)}
+          label="Importance"
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                bgcolor: secondaryColor,
+                backdropFilter: 'blur(10px)',
+                border: `1px solid ${whiteBorder}`,
+              },
+            },
+          }}
         >
           <MenuItem value="">Toutes</MenuItem>
-          {[1, 2, 3, 4, 5].map((importance) => (<MenuItem key={importance} value={importance}>{getImportanceDisplay(importance).label}</MenuItem>))}
+          {[1, 2, 3, 4, 5].map((importance) => (
+            <MenuItem key={importance} value={importance}>
+              {getImportanceDisplay(importance).label}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 
+      {/* Status Select */}
       <FormControl
         variant="outlined"
         size="small"
@@ -142,11 +146,11 @@ export default function UserTasksFilterBar({
           flexShrink: 0,
         }}
       >
-        <InputLabel>Mode Vue</InputLabel>
+        <InputLabel>Statut</InputLabel>
         <Select
-          value={taskViewMode}
-          onChange={(e) => setTaskViewMode(e.target.value)}
-          label="Mode Vue"
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+          label="Statut"
           MenuProps={{
             PaperProps: {
               sx: {
@@ -157,18 +161,18 @@ export default function UserTasksFilterBar({
             },
           }}
         >
-          <MenuItem value="all_tasks">Toutes les tâches</MenuItem>
-          <MenuItem value="current_seance" disabled={!activeSeanceExists}>
-            Tâches de la séance active
-          </MenuItem>
+          <MenuItem value="">Tous</MenuItem>
+          <MenuItem value="en cours">En cours</MenuItem>
+          <MenuItem value="en attente">En attente</MenuItem>
+          <MenuItem value="terminée">Complétée</MenuItem>
         </Select>
       </FormControl>
 
+      {/* Add Task Button */}
       <IconButton
-        onClick={onAddTaskClick}
+        onClick={() => setIsAddTaskDialogOpen(true)}
         sx={{
           color: specialColor,
-          // --- UPDATED: Icon button background for better visibility ---
           bgcolor: secondaryColor,
           borderRadius: '8px',
           p: '8px',
@@ -180,20 +184,27 @@ export default function UserTasksFilterBar({
       >
         <AddIcon fontSize="small" />
       </IconButton>
+
+      {/* Refresh Button */}
       <IconButton
-        onClick={onRefreshClick}
+        onClick={refreshTasks}
         disabled={loading}
         sx={{
-          color: theme.palette.primary.main,
-          bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+          color: specialColor,
+          bgcolor: secondaryColor,
           borderRadius: '8px',
           p: '8px',
           '&:hover': {
             bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
+            border: `1px solid ${specialColor}`
           },
         }}
       >
-        {loading ? (<CircularProgress size={20} sx={{ color: theme.palette.primary.main }} />) : (<RefreshIcon fontSize="small" />)}
+        {loading ? (
+          <CircularProgress size={20} sx={{ color: specialColor }} />
+        ) : (
+          <RefreshIcon fontSize="small" />
+        )}
       </IconButton>
     </Box>
   );

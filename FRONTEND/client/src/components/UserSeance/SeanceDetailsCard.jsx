@@ -7,13 +7,16 @@ import DisplayCard from '../common/DisplayCard';
 
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
-import TuneIcon from '@mui/icons-material/Tune';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
 
 export default function SeanceDetailsCard() {
   const { pomodoroConfig } = useContext(TimerContext);
-  // --- ADDED useTheme hook for dynamic styling ---
-  const theme = useTheme();
+
+    const theme = useTheme();
+  const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
+  
 
   if (!pomodoroConfig) {
     return null; // Don't render if there's no active seance
@@ -39,16 +42,14 @@ export default function SeanceDetailsCard() {
         borderRadius: '16px',
         p: 3,
         // --- UPDATED to use dynamic theme colors for glassmorphism ---
-        bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+        bgcolor: middleBox ,
         backdropFilter: 'blur(10px)',
-        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'}`,
-        boxShadow: '0 6px 20px rgba(0, 0, 0, 0.1)',
+        border: `1px solid ${whiteBorder}`,
+        boxShadow: softBoxShadow,
         overflowY: 'auto',
         width: '100%',
         height:'100%',
         boxSizing: 'border-box',
-        // --- Added a dynamic color for the text inside ---
-        color: theme.palette.text.primary,
       }}
     >
       <Grid container spacing={3} alignItems="stretch" justifyContent='space-between'>

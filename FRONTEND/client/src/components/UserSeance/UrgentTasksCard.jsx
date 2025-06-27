@@ -5,10 +5,13 @@ import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility
 import { TimerContext } from '../../contexts/TimerContext';
 import { fetchTasksBySeanceId } from '../../utils/taskService.jsx';
 import { getImportanceDisplay } from '../../utils/taskUtils.js';
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
 
 export default function UrgentTasksCard() {
   // --- ADDED useTheme hook for dynamic styling ---
-  const theme = useTheme();
+    const theme = useTheme();
+  const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
+  
 
   const { activeSeanceId } = useContext(TimerContext);
   const [urgentTasks, setUrgentTasks] = useState([]);
@@ -51,18 +54,16 @@ export default function UrgentTasksCard() {
         p: 2,
         borderRadius: '16px',
         // --- UPDATED to use dynamic theme colors for glassmorphism ---
-        bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+        bgcolor: middleBox,
         backdropFilter: 'blur(10px)',
-        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'}`,
-        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-        mt: 1.5,
+        border: `1px solid ${whiteBorder}`,
+        boxShadow: softBoxShadow,
         display: 'flex',
         flexDirection: 'column',
-        // --- Added a dynamic color for the text inside ---
-        color: theme.palette.text.primary,
+
       }}
     >
-      <Typography variant="h6" fontWeight="bold" gutterBottom color={theme.palette.text.primary}>
+      <Typography variant="h6" fontWeight="bold" textAlign="center" gutterBottom color={primaryColor}>
         Tâches Urgentes (Séance Active)
       </Typography>
       {loading ? (
@@ -81,10 +82,11 @@ export default function UrgentTasksCard() {
             flexGrow: 1,
             overflowY: 'auto',
             pr: 1, // Add padding for scrollbar
+            pt : 1.5,
             // --- UPDATED: Dynamic scrollbar colors for both modes ---
             '&::-webkit-scrollbar': { width: '8px' },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+              backgroundColor: "theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'",
               borderRadius: '10px',
             },
             '&::-webkit-scrollbar-thumb:hover': {
@@ -100,10 +102,9 @@ export default function UrgentTasksCard() {
                 p: 1.5,
                 mb: 1,
                 // --- UPDATED to use a more opaque dynamic theme color ---
-                bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+                bgcolor: innerBox,
                 borderRadius: '10px',
-                border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
-                boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                border: `1px solid ${whiteBorder}`,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1.5,
@@ -119,7 +120,7 @@ export default function UrgentTasksCard() {
                   flexShrink: 0,
                 }}
               />
-              <Typography variant="body1" fontWeight="medium" sx={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: theme.palette.text.primary }}>
+              <Typography variant="body1" fontWeight="medium" sx={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: primaryColor }}>
                 {task.titre}
               </Typography>
             </Box>

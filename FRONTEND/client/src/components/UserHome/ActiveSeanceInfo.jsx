@@ -20,9 +20,30 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
+
 export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
+
+    const theme = useTheme();
+      const outerBox = theme.palette.custom.box.outer;
+  const innerBox = theme.palette.custom.box.inner;
+  const middleBox = theme.palette.custom.box.middleBox;
+
+  const primaryColor = theme.palette.custom.color.primary;
+  const specialColor = theme.palette.custom.color.special;
+
+ const specialText = theme.palette.custom.text.special;
+  const secondaryText = theme.palette.custom.text.secondary;
+  const primaryText = theme.palette.custom.text.primary;
+
+  const whiteBorder = theme.palette.custom.border.white;
+  const blackBorder = theme.palette.custom.border.black;
+  const specialBorder = theme.palette.custom.border.special;
+
+  const softBoxShadow = theme.palette.custom.boxShadow.soft;
+
+
   const { pomodoroConfig, timeElapsedTotal, phase, timeLeft } = useContext(TimerContext);
-  const theme = useTheme();
+
   const [currentTimerViewIndex, setCurrentTimerViewIndex] = useState(0);
 
   const formatTime = (totalSeconds) => {
@@ -68,7 +89,7 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
           mb: 0.5,
           textTransform: 'uppercase',
           letterSpacing: 1,
-          color: theme.palette.mode === 'dark' ? theme.palette.text.primary : 'primary.main',
+          color: specialText,
         }}
       >
         {label}
@@ -82,7 +103,7 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
           [theme.breakpoints.down('sm')]: {
             variant: 'h4',
           },
-          color: theme.palette.mode === 'dark' ? theme.palette.text.primary : 'primary.dark',
+          color: specialText,
         }}
       >
         {value}
@@ -92,9 +113,9 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
 
   const InfoPill = ({ label, value, icon }) => (
     <Box sx={{
-      bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+      bgcolor: innerBox,
       backdropFilter: 'blur(8px)',
-      border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.4)'}`,
+      border: `1px solid ${whiteBorder}`,
       borderRadius: '12px',
       p: '10px 15px',
       display: 'flex',
@@ -129,14 +150,14 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
     <Box
       sx={{
         flexGrow: 1,
-        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)',
+        backgroundColor: middleBox,
         backdropFilter: 'blur(8px)',
-        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`,
+        border: `1px solid ${whiteBorder}`,
         borderRadius: '16px',
         p: 2,
         textAlign: 'center',
-        color: theme.palette.text.primary,
-        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+        color: primaryText,
+        boxShadow: softBoxShadow,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -154,11 +175,11 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
           height: '50%',
           gap: 2,
           p: 3,
-          bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+          bgcolor: innerBox,
           backdropFilter: 'blur(10px)',
-          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.2)'}`,
+          border: `1px solid ${whiteBorder}`,
           borderRadius: '12px',
-          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+          boxShadow: softBoxShadow,
           transition: 'all 0.3s ease-in-out',
           '&:hover': {
             boxShadow: '0 6px 15px rgba(0, 0, 0, 0.15)',
@@ -175,8 +196,6 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
             variant="contained"
             onClick={onCreateSeanceClick}
             sx={{
-              bgcolor: 'primary.main',
-              color: 'primary.contrastText',
               fontWeight: 'bold',
               borderRadius: '8px',
               px: 3,
@@ -194,18 +213,16 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
       ) : (
         <>
           <Box sx={{ flexBasis: 'auto', mb: 2 }}>
-            <Typography variant="h5" fontWeight="bold" sx={{ textAlign: 'center', mb: 1 }}>
-              Séance Active: {pomodoroConfig.nom_seance || 'N/A'}
-            </Typography>
+
             <Box sx={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               width: '100%',
-              bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+              bgcolor: innerBox,
               borderRadius: '12px',
-              border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.4)'}`,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              border: `1px solid ${whiteBorder}`,
+              boxShadow: softBoxShadow,
               p: 1.5,
             }}>
               <IconButton onClick={() => setCurrentTimerViewIndex((i) => (i - 1 + timerViews.length) % timerViews.length)}>

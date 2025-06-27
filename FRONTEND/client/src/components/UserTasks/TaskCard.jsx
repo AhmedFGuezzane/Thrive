@@ -1,18 +1,24 @@
 import React from 'react';
-import { Box, Typography, Chip, IconButton } from "@mui/material";
+import { Box, Typography, Chip, IconButton, useTheme } from "@mui/material";
 import { Draggable } from '@hello-pangea/dnd';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
+
 export default function TaskCard({ task, index, onViewDetailsClick, getImportanceDisplay, getStatusDisplay }) {
+
+    const theme = useTheme();
+  const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
+  
   const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
     padding: '12px',
     marginBottom: '12px',
     borderRadius: '8px',
-    background: isDragging ? 'rgba(128, 0, 128, 0.7)' : 'rgba(255, 255, 255, 0.15)',
-    color: isDragging ? '#fff' : '#333',
+    background: isDragging ? specialColor : innerBox,
+    color: isDragging ? primaryText : secondaryText,
     border: isDragging ? '1px solid rgba(255, 255, 255, 0.8)' : '1px solid rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    boxShadow: softBoxShadow,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
@@ -30,8 +36,8 @@ export default function TaskCard({ task, index, onViewDetailsClick, getImportanc
           {...provided.dragHandleProps}
           style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
         >
-          <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
-            <Typography variant="body1" fontWeight="bold" color="#333" sx={{ flexGrow: 1, mr: 1 }}>
+          <Box display="flex"justifyContent="space-between" alignItems="center" width="100%">
+            <Typography variant="body1" fontWeight="bold" color= {primaryText} sx={{ flexGrow: 1, mr: 1 }}>
               {task.titre}
             </Typography>
             <IconButton
@@ -40,7 +46,7 @@ export default function TaskCard({ task, index, onViewDetailsClick, getImportanc
                 event.stopPropagation(); // Prevent drag from triggering view details
                 onViewDetailsClick(task);
               }}
-              sx={{ color: 'rgba(0,0,0,0.6)' }}
+              sx={{ color: '{primaryText}' }}
             >
               <VisibilityIcon fontSize="small" />
             </IconButton>

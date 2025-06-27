@@ -5,10 +5,13 @@ import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility
 import { TimerContext } from '../../contexts/TimerContext';
 import { fetchTasksBySeanceId } from '../../utils/taskService.jsx';
 import { getStatusDisplay } from '../../utils/taskUtils.js';
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
 
 export default function TaskStatusTracker() {
     // --- ADDED useTheme hook for dynamic styling ---
-    const theme = useTheme();
+      const theme = useTheme();
+    const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
+    
 
     const { activeSeanceId } = useContext(TimerContext);
     const [taskCounts, setTaskCounts] = useState({ 'en attente': 0, 'en cours': 0, 'terminée': 0 });
@@ -52,27 +55,28 @@ export default function TaskStatusTracker() {
 
     return (
         <Box
+        bgcolor= {middleBox}
             sx={{
-                width: '24rem',
+                flex: '1 1 30%',
+                width: '30%',
                 height:'98%',
                 p: 2,
                 borderRadius: '16px',
                 // --- UPDATED to use dynamic theme colors for glassmorphism ---
-                bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+                
                 backdropFilter: 'blur(10px)',
-                border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'}`,
-                boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-                mt: 1.5,
+                border: `1px solid ${whiteBorder}`,
+                boxShadow: softBoxShadow,
                 // --- Added a dynamic color for the text inside ---
-                color: theme.palette.text.primary,
+                color: primaryText,
             }}
         >
-            <Typography variant="h6" fontWeight="bold" gutterBottom color={theme.palette.text.primary}>
+            <Typography variant="h6" fontWeight="bold" textAlign="center" gutterBottom color={primaryText}>
                 Progression des tâches
             </Typography>
             {loading ? (
                 <Box display="flex" justifyContent="center" alignItems="center" height="50%">
-                    <CircularProgress size={30} sx={{ color: theme.palette.primary.main }} />
+                    <CircularProgress size={30} sx={{ color: primaryText}} />
                 </Box>
             ) : (
                 <Grid mt={5} display="flex" flexDirection="column" container spacing={2} justifyContent="space-around">
@@ -88,8 +92,8 @@ export default function TaskStatusTracker() {
                                         p: 2,
                                         borderRadius: '12px',
                                         // --- UPDATED to use a more opaque dynamic theme color ---
-                                        bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-                                        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
+                                        bgcolor: innerBox,
+                                        border: `1px solid ${whiteBorder}`,
                                     }}
                                 >
                                     {/* --- UPDATED: Text color for the count is now primary text --- */}

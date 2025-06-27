@@ -7,6 +7,24 @@ import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 export default function StudyTips() {
   const theme = useTheme();
 
+        const outerBox = theme.palette.custom.box.outer;
+    const innerBox = theme.palette.custom.box.inner;
+    const middleBox = theme.palette.custom.box.middleBox;
+  
+    const primaryColor = theme.palette.custom.color.primary;
+    const specialColor = theme.palette.custom.color.special;
+    const secondaryColor = theme.palette.custom.color.secondary;
+  
+   const specialText = theme.palette.custom.text.special;
+    const secondaryText = theme.palette.custom.text.secondary;
+    const primaryText = theme.palette.custom.text.primary;
+  
+    const whiteBorder = theme.palette.custom.border.white;
+    const blackBorder = theme.palette.custom.border.black;
+    const specialBorder = theme.palette.custom.border.special;
+  
+    const softBoxShadow = theme.palette.custom.boxShadow.soft;
+
   const studyTips = [
     {
       title: "Technique Pomodoro",
@@ -68,13 +86,12 @@ export default function StudyTips() {
       flexShrink={0}
       height="100%"
       sx={{
-        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)',
+        backgroundColor: middleBox,
         backdropFilter: 'blur(8px)',
-        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgb(255, 255, 255)'}`,
+        border: `1px solid ${whiteBorder}`,
         borderRadius: '16px',
         p: 3,
-        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
-        color: theme.palette.text.primary,
+        boxShadow: softBoxShadow,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -84,10 +101,10 @@ export default function StudyTips() {
     >
       <Box
         sx={{
-          bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.9)',
+          bgcolor: innerBox,
           borderRadius: '12px',
-          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(255, 255, 255, 0.8)'}`,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          border: `1px solid ${whiteBorder}`,
+          boxShadow: softBoxShadow,
           p: 2,
           display: 'flex',
           flexDirection: 'column',
@@ -99,9 +116,9 @@ export default function StudyTips() {
         <LightbulbOutlinedIcon
           sx={{
             fontSize: 35,
-            color: theme.palette.warning.main,
+            color: specialText,
             mb: 1,
-            filter: `drop-shadow(0px 0px 10px ${alpha(theme.palette.warning.main, 0.7)})`,
+            filter: `drop-shadow(0px 0px 10px ${alpha(specialColor, 0.7)})`,
           }}
         />
 
@@ -109,7 +126,7 @@ export default function StudyTips() {
           variant="h6"
           fontWeight="bold"
           sx={{
-            color: theme.palette.mode === 'dark' ? theme.palette.text.primary : '#4a2e00',
+            color: specialText,
             mb: 0.5,
             letterSpacing: '0.5px',
           }}
@@ -122,7 +139,7 @@ export default function StudyTips() {
           sx={{
             fontStyle: 'italic',
             lineHeight: 1.4,
-            color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : '#5c3b0f',
+            color: primaryText,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
