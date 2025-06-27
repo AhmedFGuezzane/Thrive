@@ -2,10 +2,13 @@
 import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Typography, Button
+  Typography, Button, useTheme
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
+  const theme = useTheme();
+
   const getDialogContent = () => {
     if (phase === 'awaiting_break') {
       return {
@@ -32,9 +35,10 @@ export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
       onClose={onConfirm}
       PaperProps={{
         sx: {
-          backgroundColor: 'rgba(255, 240, 245, 0.7)',
+          // --- UPDATED to use dynamic theme colors for the dialog background ---
+          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(14px)',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
+          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
           borderRadius: '16px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
           px: 3,
@@ -42,12 +46,12 @@ export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
         }
       }}
     >
-      <DialogTitle sx={{ fontWeight: 'bold', color: '#333' }}>
+      <DialogTitle sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>
         {title}
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="body1" sx={{ color: '#444', mb: 2 }}>
+        <Typography variant="body1" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
           {message}
         </Typography>
       </DialogContent>
@@ -57,10 +61,11 @@ export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
           onClick={onConfirm}
           variant="contained"
           sx={{
-            bgcolor: 'rgba(128, 0, 128, 0.5)',
-            '&:hover': { bgcolor: 'rgba(128, 0, 128, 0.7)' },
+            // --- UPDATED to use dynamic button colors ---
+            bgcolor: alpha(theme.palette.primary.main, 0.8),
+            '&:hover': { bgcolor: alpha(theme.palette.primary.main, 1) },
             borderRadius: '10px',
-            color: '#fff',
+            color: theme.palette.primary.contrastText,
             fontWeight: 'bold'
           }}
         >

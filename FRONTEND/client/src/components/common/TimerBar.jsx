@@ -1,6 +1,7 @@
 // src/components/common/TimerBar.jsx
 import React, { useContext } from 'react';
-import { Box, Typography, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
+import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility for translucent colors
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import StopIcon from '@mui/icons-material/Stop';
@@ -10,6 +11,9 @@ import PhaseTransitionDialog from './PhaseTransitionDialog';
 
 // Changed from named export to default export
 export default function TimerBar({ onCreateClick, config }) {
+  // Use the global theme hook to access the palette
+  const theme = useTheme();
+
   const {
     phase,
     isPaused,
@@ -63,9 +67,10 @@ export default function TimerBar({ onCreateClick, config }) {
         height="5.5rem"
         mx="auto"
         sx={{
-          backgroundColor: 'rgba(200, 160, 255, 0.3)',
+          // --- UPDATED: Main glassmorphism styles use dynamic colors ---
+          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.7)',
           backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)'}`,
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
           borderRadius: '12px',
           display: 'flex',
@@ -73,28 +78,28 @@ export default function TimerBar({ onCreateClick, config }) {
           justifyContent: 'space-between',
           px: 3,
           mt: 3,
-          color: '#fff'
+          color: theme.palette.text.primary // Dynamic text color
         }}
       >
         {/* Left: Info */}
         <Box>
           {!isIdle && (
             <>
-              <Typography variant="h6" fontWeight="medium">
+              <Typography variant="h6" fontWeight="medium" sx={{ color: theme.palette.text.primary }}>
                 ⏱ Temps écoulé : {formatTime(timeElapsedTotal)}
               </Typography>
-              <Typography variant="body2" fontStyle="italic" color="rgba(255,255,255,0.8)">
+              <Typography variant="body2" fontStyle="italic" sx={{ color: theme.palette.text.secondary }}>
                 {getPhaseLabel()}
               </Typography>
 
               {phase === 'study' && (
-                <Typography variant="body2" fontStyle="italic" color="rgba(255,255,255,0.6)">
+                <Typography variant="body2" fontStyle="italic" sx={{ color: theme.palette.text.secondary }}>
                   🧘 Prochaine pause {upcomingBreakType} dans : {formatTime(timeLeft)}
                 </Typography>
               )}
 
               {phase === 'break' && (
-                <Typography variant="body2" fontStyle="italic" color="rgba(255,255,255,0.6)">
+                <Typography variant="body2" fontStyle="italic" sx={{ color: theme.palette.text.secondary }}>
                   🟪 Prochaine séance d’étude dans : {formatTime(timeLeft)}
                 </Typography>
               )}
@@ -102,7 +107,7 @@ export default function TimerBar({ onCreateClick, config }) {
           )}
 
           {isIdle && (
-            <Typography variant="body2" fontStyle="italic" color="rgba(255,255,255,0.8)">
+            <Typography variant="body2" fontStyle="italic" sx={{ color: theme.palette.text.secondary }}>
               Aucune séance active. Cliquez pour en créer une.
             </Typography>
           )}
@@ -115,9 +120,9 @@ export default function TimerBar({ onCreateClick, config }) {
               <IconButton
                 onClick={onCreateClick}
                 sx={{
-                  color: '#fff',
-                  bgcolor: 'rgba(128, 0, 128, 0.4)',
-                  '&:hover': { bgcolor: 'rgba(128, 0, 128, 0.6)' },
+                  color: theme.palette.primary.contrastText, // Dynamic icon color
+                  bgcolor: alpha(theme.palette.primary.main, 0.4), // Dynamic button background
+                  '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.6) },
                   borderRadius: '50%',
                   p: 1,
                   ml: 2
@@ -133,9 +138,9 @@ export default function TimerBar({ onCreateClick, config }) {
               <IconButton
                 onClick={isPaused ? resumeTimer : pauseTimer}
                 sx={{
-                  color: '#fff',
-                  bgcolor: 'rgba(128, 0, 128, 0.4)',
-                  '&:hover': { bgcolor: 'rgba(128, 0, 128, 0.6)' },
+                  color: theme.palette.primary.contrastText, // Dynamic icon color
+                  bgcolor: alpha(theme.palette.primary.main, 0.4), // Dynamic button background
+                  '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.6) },
                   borderRadius: '50%',
                   p: 1,
                   ml: 2
@@ -153,9 +158,9 @@ export default function TimerBar({ onCreateClick, config }) {
               <IconButton
                 onClick={stopSeance}
                 sx={{
-                  color: '#fff',
-                  bgcolor: 'rgba(255, 99, 71, 0.4)',
-                  '&:hover': { bgcolor: 'rgba(255, 99, 71, 0.6)' },
+                  color: theme.palette.error.contrastText, // Dynamic icon color
+                  bgcolor: alpha(theme.palette.error.main, 0.4), // Dynamic button background
+                  '&:hover': { bgcolor: alpha(theme.palette.error.main, 0.6) },
                   borderRadius: '50%',
                   p: 1,
                   ml: 1

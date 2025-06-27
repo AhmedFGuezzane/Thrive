@@ -1,28 +1,32 @@
 import { Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 
+// The import path you provided. Make sure it is correct for your file structure.
 import UserSidebar from '../userLayout/UserSidebar';
 import { TimerProvider } from '../../contexts/TimerContext';
 
 export default function UserLayout() {
   return (
     <TimerProvider>
-      <Box width="100vw" height="100vh" sx={{ position: 'relative', overflow: 'hidden' }}>
-        {/* Background Blur Image */}
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundImage: 'url("/assets/images/user/user_background.jpg")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(10px)',
-            zIndex: -1,
-          }}
-        />
+      {/*
+        This top-level Box now acts as a container for your layout,
+        and its background is handled by App.jsx, which sits above it in the component tree.
+      */}
+      <Box
+        width="100vw"
+        height="100vh"
+        sx={{
+          position: 'relative',
+          overflow: 'hidden',
+          display: 'flex', // This flex container holds the foreground layout
+          flexDirection: 'column',
+        }}
+      >
+        {/*
+          I have removed the "Background Blur Image" Box from here.
+          It is no longer needed as the background is set dynamically in App.jsx.
+          This ensures your dark/light mode background works correctly.
+        */}
 
         {/* Foreground Layout */}
         <Box

@@ -1,8 +1,22 @@
 // src/components/UserHome/SeanceDetailsStep.jsx
 import React from 'react';
-import { Box, TextField } from '@mui/material';
+import { Box, TextField, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
 
 export default function SeanceDetailsStep({ formData, handleFormChange }) {
+  const theme = useTheme();
+
+  const textFieldInputPropsSx = {
+    borderRadius: '8px',
+    // --- UPDATED: Use dynamic background and text color ---
+    bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+    color: theme.palette.text.primary,
+  };
+
+  const inputLabelPropsSx = {
+    // --- UPDATED: Use dynamic label color ---
+    color: theme.palette.text.secondary,
+  };
+
   return (
     <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
       <TextField
@@ -15,13 +29,9 @@ export default function SeanceDetailsStep({ formData, handleFormChange }) {
         variant="filled"
         InputProps={{
           disableUnderline: true,
-          sx: {
-            borderRadius: '8px',
-            bgcolor: 'rgba(255,255,255,0.2)',
-            color: '#333'
-          }
+          sx: textFieldInputPropsSx,
         }}
-        InputLabelProps={{ sx: { color: 'rgba(0,0,0,0.6)' } }}
+        InputLabelProps={{ sx: inputLabelPropsSx }}
       />
       <TextField
         fullWidth
@@ -33,13 +43,9 @@ export default function SeanceDetailsStep({ formData, handleFormChange }) {
         variant="filled"
         InputProps={{
           disableUnderline: true,
-          sx: {
-            borderRadius: '8px',
-            bgcolor: 'rgba(255,255,255,0.2)',
-            color: '#333'
-          }
+          sx: textFieldInputPropsSx,
         }}
-        InputLabelProps={{ sx: { color: 'rgba(0,0,0,0.6)' } }}
+        InputLabelProps={{ sx: inputLabelPropsSx }}
       />
     </Box>
   );

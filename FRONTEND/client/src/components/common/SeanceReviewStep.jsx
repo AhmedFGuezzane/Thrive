@@ -1,6 +1,6 @@
 // src/components/UserHome/SeanceReviewStep.jsx
 import React from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
 import DisplayCard from './DisplayCard';
 import ConfirmationItem from './ConfirmationItem';
 
@@ -10,13 +10,16 @@ import TuneIcon from '@mui/icons-material/Tune';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 export default function SeanceReviewStep({ formData }) {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
         mt: 2,
         borderRadius: '12px',
         p: 2,
-        border: '1px solid rgba(255,255,255,0.2)',
+        // --- UPDATED to use a dynamic border color ---
+        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
         maxHeight: '60vh',
         overflowY: 'auto',
         pr: 1.5

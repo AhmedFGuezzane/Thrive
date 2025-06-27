@@ -1,12 +1,15 @@
 // src/components/UserHome/PomodoroConfigStep.jsx
 import React from 'react';
 import {
-  Box, Grid, TextField, Typography, Divider
+  Box, Grid, TextField, Typography, Divider, useTheme
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import SwitchCard from './SwitchCard';
 
 export default function PomodoroConfigStep({ formData, handlePomodoroChange }) {
+  const theme = useTheme();
+
   return (
     <Box component="form" noValidate autoComplete="off" sx={{ mt: 2, maxHeight: '60vh', overflowY: 'auto', pr: 2 }}>
       <Grid container spacing={2}>
@@ -31,18 +34,33 @@ export default function PomodoroConfigStep({ formData, handlePomodoroChange }) {
               variant="filled"
               InputProps={{
                 disableUnderline: true,
-                sx: { borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: '#333' }
+                sx: {
+                  borderRadius: '8px',
+                  // --- UPDATED: Use dynamic background and text color ---
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+                  color: theme.palette.text.primary,
+                }
               }}
-              InputLabelProps={{ sx: { color: 'rgba(0,0,0,0.6)' } }}
+              InputLabelProps={{
+                sx: {
+                  // --- UPDATED: Use dynamic label color ---
+                  color: theme.palette.text.secondary
+                }
+              }}
             />
           </Grid>
         ))}
 
         <Grid item xs={12} sx={{ mt: 2 }}>
-          <Divider sx={{ mb: 2, bgcolor: 'rgba(0,0,0,0.1)' }} />
+          {/* --- UPDATED Divider color to use dynamic theme color --- */}
+          <Divider sx={{ mb: 2, bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)' }} />
           <Box display="flex" alignItems="center" mb={1.5}>
-            <NotificationsActiveIcon sx={{ mr: 1, color: 'rgba(0,0,0,0.7)' }} />
-            <Typography variant="h6" fontWeight="bold">Alertes et Automatisation</Typography>
+            {/* --- UPDATED Icon color to use dynamic theme color --- */}
+            <NotificationsActiveIcon sx={{ mr: 1, color: theme.palette.text.primary }} />
+            {/* --- UPDATED Typography color to use dynamic theme color --- */}
+            <Typography variant="h6" fontWeight="bold" color={theme.palette.text.primary}>
+              Alertes et Automatisation
+            </Typography>
           </Box>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}><SwitchCard label="Démarrage auto" name="auto_demarrage" checked={formData.pomodoro.auto_demarrage} onChange={handlePomodoroChange} /></Grid>
