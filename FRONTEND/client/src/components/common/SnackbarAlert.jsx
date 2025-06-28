@@ -2,9 +2,12 @@
 import React from 'react';
 import { Snackbar, Alert, CircularProgress, Box, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
 import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
+
 
 const SnackbarAlert = ({ open, message, severity, onClose, loading = false }) => {
   const theme = useTheme();
+  const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow } = useCustomTheme();
 
   return (
     <Snackbar
@@ -14,6 +17,9 @@ const SnackbarAlert = ({ open, message, severity, onClose, loading = false }) =>
       autoHideDuration={loading ? null : 4000}
       onClose={onClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      sx={{
+        zIndex: 9999,
+      }}
     >
       <Alert
         onClose={loading ? undefined : onClose} // Disable close button if loading
@@ -22,15 +28,13 @@ const SnackbarAlert = ({ open, message, severity, onClose, loading = false }) =>
         sx={{
           width: '100%',
           // --- UPDATED to use dynamic theme colors for glassmorphism ---
-          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(10px)',
-          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
+          border: `1px solid ${whiteBorder}`,
           borderRadius: '8px',
-          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+          boxShadow: softBoxShadow,
           // --- UPDATED: Use dynamic text color for the entire alert ---
-          color: theme.palette.text.primary,
+          color: primaryText,
           '& .MuiAlert-icon': {
-            color: `${theme.palette.text.primary} !important`, // Use theme color for the icon
+            color: `${primaryText} !important`, // Use theme color for the icon
           },
           '& .MuiAlert-message': {
             color: 'inherit', // Inherit color from parent Alert

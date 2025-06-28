@@ -10,15 +10,37 @@ import SwitchCard from './SwitchCard';
 export default function PomodoroConfigStep({ formData, handlePomodoroChange }) {
   const theme = useTheme();
 
+  // Helper function to convert seconds to minutes for display
+  const secondsToMinutes = (seconds) => {
+    return Math.round(seconds / 60); // Round to nearest minute for display
+  };
+
+  // Helper function to handle change for time fields (convert minutes to seconds internally)
+  const handleTimeChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    // For time-related fields, convert the input minutes to seconds before calling handlePomodoroChange
+    if (['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)) {
+      // Ensure value is a number before multiplying
+      const minutes = Number(value);
+      // Pass the converted value (in seconds) to the parent handler
+      handlePomodoroChange({ target: { name, value: minutes * 60, type: 'number' } });
+    } else {
+      // For other fields, call the original handler directly
+      handlePomodoroChange(e);
+    }
+  };
+
+
   return (
     <Box component="form" noValidate autoComplete="off" sx={{ mt: 2, maxHeight: '60vh', overflowY: 'auto', pr: 2 }}>
       <Grid container spacing={2}>
         {[
-          { label: "Durée Séance (s)", name: "duree_seance" },
-          { label: "Pause Courte (s)", name: "duree_pause_courte" },
-          { label: "Pause Longue (s)", name: "duree_pause_longue" },
+          // --- UPDATED LABELS TO INDICATE MINUTES ---
+          { label: "Durée Séance (min)", name: "duree_seance" },
+          { label: "Pause Courte (min)", name: "duree_pause_courte" },
+          { label: "Pause Longue (min)", name: "duree_pause_longue" },
           { label: "Cycles avant pause longue", name: "nbre_pomodoro_avant_pause_longue" },
-          { label: "Durée Totale (s)", name: "duree_seance_totale" },
+          { label: "Durée Totale (min)", name: "duree_seance_totale" },
           { label: "Nom Séance Pomodoro", name: "nom_seance" },
           { label: "Thème", name: "theme" },
           { label: "Nom Préconfiguration", name: "nom_preconfiguration" },
@@ -28,22 +50,26 @@ export default function PomodoroConfigStep({ formData, handlePomodoroChange }) {
               fullWidth
               label={label}
               name={name}
-              value={formData.pomodoro[name]}
-              onChange={handlePomodoroChange}
+              // --- DISPLAY VALUE IN MINUTES IF IT'S A DURATION FIELD ---
+              value={['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)
+                ? secondsToMinutes(formData.pomodoro[name])
+                : formData.pomodoro[name]}
+              // --- USE handleTimeChange FOR DURATION FIELDS ---
+              onChange={['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)
+                ? handleTimeChange
+                : handlePomodoroChange}
               type={name.startsWith('duree') || name.startsWith('nbre') ? 'number' : 'text'}
               variant="filled"
               InputProps={{
                 disableUnderline: true,
                 sx: {
                   borderRadius: '8px',
-                  // --- UPDATED: Use dynamic background and text color ---
                   bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
                   color: theme.palette.text.primary,
                 }
               }}
               InputLabelProps={{
                 sx: {
-                  // --- UPDATED: Use dynamic label color ---
                   color: theme.palette.text.secondary
                 }
               }}
@@ -52,12 +78,9 @@ export default function PomodoroConfigStep({ formData, handlePomodoroChange }) {
         ))}
 
         <Grid item xs={12} sx={{ mt: 2 }}>
-          {/* --- UPDATED Divider color to use dynamic theme color --- */}
           <Divider sx={{ mb: 2, bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)' }} />
           <Box display="flex" alignItems="center" mb={1.5}>
-            {/* --- UPDATED Icon color to use dynamic theme color --- */}
             <NotificationsActiveIcon sx={{ mr: 1, color: theme.palette.text.primary }} />
-            {/* --- UPDATED Typography color to use dynamic theme color --- */}
             <Typography variant="h6" fontWeight="bold" color={theme.palette.text.primary}>
               Alertes et Automatisation
             </Typography>

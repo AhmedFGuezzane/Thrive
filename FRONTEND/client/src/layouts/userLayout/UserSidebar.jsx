@@ -6,7 +6,7 @@ import TimerIcon from '@mui/icons-material/Timer';
 import SchoolIcon from '@mui/icons-material/School';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import SettingsIcon from '@mui/icons-material/Settings';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseIcon from '@mui/icons-material/Close';
@@ -111,14 +111,14 @@ export default function UserSidebar() {
         {showUtilityIcons && (
           <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
             <Tooltip title="Account" placement="right">
-              <IconButton sx={iconButtonSx}>
+              <IconButton onClick={() => navigate('/user/userAccount')} sx={iconButtonSx}>
                 <AccountCircleIcon fontSize="large" />
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Settings" placement="right">
-              <IconButton onClick={() => navigate('/user/userSettings')} sx={iconButtonSx}>
-                <SettingsIcon fontSize="large" />
+            <Tooltip title="Statistics" placement="right">
+              <IconButton onClick={() => navigate('/user/userStatistique')} sx={iconButtonSx}>
+                <BarChartIcon fontSize="large" />
               </IconButton>
             </Tooltip>
 

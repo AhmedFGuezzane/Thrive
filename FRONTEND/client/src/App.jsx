@@ -17,7 +17,8 @@ import Contact from './pages/client/Contact';
 
 import UserHome from './pages/user/UserHome';
 import UserTasks from './pages/user/UserTasks';
-import UserSettings from './pages/user/UserSettings';
+import UserAccount from './pages/user/UserAccount';
+import UserStatistique from './pages/user/UserStatistique';
 import UserSeance from './pages/user/UserSeance';
 
 function App() {
@@ -69,7 +70,8 @@ function App() {
               <Route path="userHome" element={<UserHome />} />
               <Route path="userTasks" element={<UserTasks />} />
               <Route path="userSeance" element={<UserSeance />} />
-              <Route path="userSettings" element={<UserSettings />} />
+              <Route path="userAccount" element={<UserAccount />} />
+              <Route path="userStatistique" element={<UserStatistique />} />
             </Route>
           </Route>
         </Routes>

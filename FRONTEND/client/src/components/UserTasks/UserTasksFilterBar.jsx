@@ -184,12 +184,14 @@ export default function UserTasksFilterBar({
         onClick={onRefreshClick}
         disabled={loading}
         sx={{
-          color: theme.palette.primary.main,
-          bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+          color: specialColor,
+          // --- UPDATED: Icon button background for better visibility ---
+          bgcolor: secondaryColor,
           borderRadius: '8px',
           p: '8px',
           '&:hover': {
             bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
+            border: `1px solid ${specialColor}`
           },
         }}
       >
