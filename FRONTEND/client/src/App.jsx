@@ -21,14 +21,16 @@ import UserAccount from './pages/user/UserAccount';
 import UserStatistique from './pages/user/UserStatistique';
 import UserSeance from './pages/user/UserSeance';
 
+import GlobalPhaseTransition from './components/common/GlobalPhaseTransition';
+
+// ✅ NEW: Global Snackbar Provider
+import { SnackbarProvider } from './contexts/SnackbarContext';
+
 function App() {
   const theme = useTheme();
 
-  // Reference the images directly from the public folder
   const lightBackground = '/assets/images/user/user_background.jpg';
-  const darkBackground = '/assets/images/user/user_background_dark.jpg'; // Corrected extension
-
-  // Determine which background image to use based on the theme mode
+  const darkBackground = '/assets/images/user/user_background_dark.jpg';
   const backgroundImage = theme.palette.mode === 'light' ? lightBackground : darkBackground;
 
   return (
@@ -38,7 +40,6 @@ function App() {
         flexDirection: 'column',
         minHeight: '100vh',
         width: '100%',
-        // --- Dynamic Background Image based on the theme ---
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -47,34 +48,38 @@ function App() {
       }}
     >
       <Router>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<ClientLayout />}>
-            <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="contact" element={<Contact />} />
-          </Route>
+        <SnackbarProvider>
+          <GlobalPhaseTransition />
 
-          {/* ✅ Admin-protected routes */}
-          <Route element={<PrivateRoute allowedRoles={['admin']} />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              {/* your admin pages here */}
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<ClientLayout />}>
+              <Route index element={<Home />} />
+              <Route path="about" element={<About />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+              <Route path="contact" element={<Contact />} />
             </Route>
-          </Route>
 
-          {/* ✅ Client-protected routes */}
-          <Route element={<PrivateRoute allowedRoles={['client']} />}>
-            <Route path="/user" element={<UserLayout />}>
-              <Route path="userHome" element={<UserHome />} />
-              <Route path="userTasks" element={<UserTasks />} />
-              <Route path="userSeance" element={<UserSeance />} />
-              <Route path="userAccount" element={<UserAccount />} />
-              <Route path="userStatistique" element={<UserStatistique />} />
+            {/* Admin-protected routes */}
+            <Route element={<PrivateRoute allowedRoles={['admin']} />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                {/* your admin pages here */}
+              </Route>
             </Route>
-          </Route>
-        </Routes>
+
+            {/* Client-protected routes */}
+            <Route element={<PrivateRoute allowedRoles={['client']} />}>
+              <Route path="/user" element={<UserLayout />}>
+                <Route path="userHome" element={<UserHome />} />
+                <Route path="userTasks" element={<UserTasks />} />
+                <Route path="userSeance" element={<UserSeance />} />
+                <Route path="userAccount" element={<UserAccount />} />
+                <Route path="userStatistique" element={<UserStatistique />} />
+              </Route>
+            </Route>
+          </Routes>
+        </SnackbarProvider>
       </Router>
     </Box>
   );

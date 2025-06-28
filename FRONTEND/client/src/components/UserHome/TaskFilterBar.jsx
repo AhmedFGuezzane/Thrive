@@ -41,7 +41,7 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
         zIndex: 10,
         bgcolor: innerBox,
         backdropFilter: 'blur(10px)',
-        border: `1px solid ${specialBorder}`,
+        border: `1px solid ${whiteBorder}`,
         boxShadow: softBoxShadow,
         borderRadius: '8px',
         p: 1.5,

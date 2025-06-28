@@ -9,57 +9,85 @@ import SwitchCard from './SwitchCard';
 
 export default function PomodoroConfigStep({ formData, handlePomodoroChange }) {
   const theme = useTheme();
+  const pomodoro = formData.pomodoro;
 
-  // Helper function to convert seconds to minutes for display
-  const secondsToMinutes = (seconds) => {
-    return Math.round(seconds / 60); // Round to nearest minute for display
-  };
+  const secondsToMinutes = (seconds) => Math.round(seconds / 60);
+  const minutesToSeconds = (minutes) => Math.round(Number(minutes) * 60);
 
-  // Helper function to handle change for time fields (convert minutes to seconds internally)
-  const handleTimeChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    // For time-related fields, convert the input minutes to seconds before calling handlePomodoroChange
-    if (['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)) {
-      // Ensure value is a number before multiplying
-      const minutes = Number(value);
-      // Pass the converted value (in seconds) to the parent handler
-      handlePomodoroChange({ target: { name, value: minutes * 60, type: 'number' } });
-    } else {
-      // For other fields, call the original handler directly
-      handlePomodoroChange(e);
+  const getValidationError = (name) => {
+    const s = pomodoro;
+
+    const dureeSeanceMin = secondsToMinutes(s.duree_seance);
+    const pauseCourteMin = secondsToMinutes(s.duree_pause_courte);
+    const pauseLongueMin = secondsToMinutes(s.duree_pause_longue);
+    const dureeTotaleMin = secondsToMinutes(s.duree_seance_totale);
+    const cyclesAvantPauseLongue = s.nbre_pomodoro_avant_pause_longue;
+
+    const minDureeTotale =
+      (s.duree_seance + s.duree_pause_courte) * (cyclesAvantPauseLongue - 1) +
+      s.duree_pause_longue;
+
+    if (name === 'duree_pause_courte' && pauseCourteMin < 5) {
+      return 'Pause courte doit être d’au moins 5 minutes.';
     }
+
+    if (name === 'duree_pause_longue' && pauseLongueMin < pauseCourteMin * 2) {
+      return 'Pause longue doit être au moins 2x la pause courte.';
+    }
+
+    if (
+      ['duree_pause_courte', 'duree_pause_longue'].includes(name) &&
+      secondsToMinutes(s[name]) > dureeSeanceMin
+    ) {
+      return 'La pause ne peut pas être plus longue que la séance.';
+    }
+
+    if (name === 'duree_seance_totale' && s.duree_seance_totale < minDureeTotale) {
+      return `Durée totale doit être ≥ ${(minDureeTotale / 60).toFixed(0)} minutes.`;
+    }
+
+    return '';
   };
 
+  const handleTimeChange = (e) => {
+    const { name, value } = e.target;
+    const minutes = Number(value);
+    handlePomodoroChange({ target: { name, value: minutesToSeconds(minutes), type: 'number' } });
+  };
 
   return (
     <Box component="form" noValidate autoComplete="off" sx={{ mt: 2, maxHeight: '60vh', overflowY: 'auto', pr: 2 }}>
       <Grid container spacing={2}>
         {[
-          // --- UPDATED LABELS TO INDICATE MINUTES ---
           { label: "Durée Séance (min)", name: "duree_seance" },
           { label: "Pause Courte (min)", name: "duree_pause_courte" },
           { label: "Pause Longue (min)", name: "duree_pause_longue" },
           { label: "Cycles avant pause longue", name: "nbre_pomodoro_avant_pause_longue" },
           { label: "Durée Totale (min)", name: "duree_seance_totale" },
           { label: "Nom Séance Pomodoro", name: "nom_seance" },
-          { label: "Thème", name: "theme" },
-          { label: "Nom Préconfiguration", name: "nom_preconfiguration" },
-        ].map(({ label, name }) => (
+          { label: "Thème", name: "theme", disabled: true },
+          { label: "Nom Préconfiguration", name: "nom_preconfiguration", disabled: true },
+        ].map(({ label, name, disabled = false }) => (
           <Grid item xs={12} sm={name.includes('nom') ? 12 : 6} key={name}>
             <TextField
               fullWidth
               label={label}
               name={name}
-              // --- DISPLAY VALUE IN MINUTES IF IT'S A DURATION FIELD ---
-              value={['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)
-                ? secondsToMinutes(formData.pomodoro[name])
-                : formData.pomodoro[name]}
-              // --- USE handleTimeChange FOR DURATION FIELDS ---
-              onChange={['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)
-                ? handleTimeChange
-                : handlePomodoroChange}
+              disabled={disabled}
+              value={
+                ['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)
+                  ? secondsToMinutes(pomodoro[name])
+                  : pomodoro[name]
+              }
+              onChange={
+                ['duree_seance', 'duree_pause_courte', 'duree_pause_longue', 'duree_seance_totale'].includes(name)
+                  ? handleTimeChange
+                  : handlePomodoroChange
+              }
               type={name.startsWith('duree') || name.startsWith('nbre') ? 'number' : 'text'}
               variant="filled"
+              error={!!getValidationError(name)}
+              helperText={getValidationError(name)}
               InputProps={{
                 disableUnderline: true,
                 sx: {
@@ -86,12 +114,27 @@ export default function PomodoroConfigStep({ formData, handlePomodoroChange }) {
             </Typography>
           </Box>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4}><SwitchCard label="Démarrage auto" name="auto_demarrage" checked={formData.pomodoro.auto_demarrage} onChange={handlePomodoroChange} /></Grid>
-            <Grid item xs={12} sm={6} md={4}><SwitchCard label="Alerte sonore" name="alerte_sonore" checked={formData.pomodoro.alerte_sonore} onChange={handlePomodoroChange} /></Grid>
-            <Grid item xs={12} sm={6} md={4}><SwitchCard label="Notification" name="notification" checked={formData.pomodoro.notification} onChange={handlePomodoroChange} /></Grid>
-            <Grid item xs={12} sm={6} md={4}><SwitchCard label="Vibration" name="vibration" checked={formData.pomodoro.vibration} onChange={handlePomodoroChange} /></Grid>
-            <Grid item xs={12} sm={6} md={4}><SwitchCard label="Suivi du temps total" name="suivi_temps_total" checked={formData.pomodoro.suivi_temps_total} onChange={handlePomodoroChange} /></Grid>
+            {[
+              { label: "Démarrage auto", name: "auto_demarrage" },
+              { label: "Alerte sonore", name: "alerte_sonore" },
+              { label: "Notification", name: "notification" },
+              { label: "Vibration", name: "vibration" },
+              { label: "Suivi du temps total", name: "suivi_temps_total" }
+            ].map(({ label, name }) => (
+              <Grid item xs={12} sm={6} md={4} key={name}>
+                <SwitchCard
+                  label={label}
+                  name={name}
+                  checked={pomodoro[name]}
+                  onChange={handlePomodoroChange}
+                  disabled
+                />
+              </Grid>
+            ))}
           </Grid>
+          <Typography variant="body2" fontStyle="italic" color="text.secondary" mt={1}>
+            Ces options seront disponibles prochainement.
+          </Typography>
         </Grid>
       </Grid>
     </Box>

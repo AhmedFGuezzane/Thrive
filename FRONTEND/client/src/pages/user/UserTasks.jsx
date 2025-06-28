@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react'; // <-- ADD useCallback
+import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
 import {
   Box,
   CircularProgress,
@@ -19,7 +19,6 @@ import UserTasksFilterBar from '../../components/UserTasks/UserTasksFilterBar';
 import TaskBoard from '../../components/UserTasks/TaskBoard';
 
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
-
 import { createSeance } from '../../utils/seanceService.jsx';
 
 export default function UserTasks() {
@@ -29,7 +28,6 @@ export default function UserTasks() {
   const { activeSeanceId, startSeance } = useContext(TimerContext);
   const activeSeanceExists = !!activeSeanceId;
 
-  // --- CORRECTED: MEMOIZE THE SNACKBAR FUNCTION WITH useCallback ---
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('info');
@@ -40,16 +38,14 @@ export default function UserTasks() {
     setSnackbarSeverity(severity);
     setSnackbarLoading(loading);
     setSnackbarOpen(true);
-  }, [setSnackbarMessage, setSnackbarSeverity, setSnackbarLoading, setSnackbarOpen]); // Dependencies are the state setters
+  }, []);
 
   const handleSnackbarClose = useCallback((_, reason) => {
     if (reason === 'clickaway') return;
     setSnackbarOpen(false);
     setSnackbarLoading(false);
-  }, [setSnackbarOpen, setSnackbarLoading]);
-  // ----------------------------------------------------------------------
+  }, []);
 
-  // Use the enhanced hook
   const {
     groupedTasks: displayedTasks,
     loading,
@@ -71,6 +67,7 @@ export default function UserTasks() {
     handleCloseTaskDetailsDialog,
     handleUpdateTask,
     handleUpdateTaskStatus,
+    handleDeleteTask, // ✅ ADD THIS
   } = useTaskManagement(activeSeanceId, showSnackbar, 'all_tasks');
 
   const onDragEnd = async (result) => {
@@ -132,11 +129,11 @@ export default function UserTasks() {
 
   const tasksForViewMode = useMemo(() => {
     if (taskViewMode === 'current_seance' && activeSeanceId) {
-        const seanceTasks = Object.keys(displayedTasks).reduce((acc, key) => {
-            acc[key] = displayedTasks[key].filter(task => task.seance_etude_id === activeSeanceId);
-            return acc;
-        }, { 'en attente': [], 'en cours': [], 'terminée': [] });
-        return seanceTasks;
+      const seanceTasks = Object.keys(displayedTasks).reduce((acc, key) => {
+        acc[key] = displayedTasks[key].filter(task => task.seance_etude_id === activeSeanceId);
+        return acc;
+      }, { 'en attente': [], 'en cours': [], 'terminée': [] });
+      return seanceTasks;
     }
     return displayedTasks;
   }, [displayedTasks, taskViewMode, activeSeanceId]);
@@ -231,6 +228,7 @@ export default function UserTasks() {
         onClose={handleCloseTaskDetailsDialog}
         taskDetails={selectedTaskDetails}
         onUpdateTask={handleUpdateTask}
+        handleDeleteTask={handleDeleteTask}  
         getImportanceDisplay={getImportanceDisplay}
         getStatusDisplay={getStatusDisplay}
         showSnackbar={showSnackbar}
