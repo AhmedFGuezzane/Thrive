@@ -195,7 +195,7 @@ export default function TimerBar({ onCreateClick, config }) {
               <IconButton
                 onClick={isPaused ? resumeTimer : pauseTimer}
                 sx={{
-                  color: secondaryText,
+                  color: primaryText,
                   bgcolor: alpha(secondaryColor, 0.4),
                   '&:hover': { bgcolor: alpha(specialColor, 0.6) },
                   borderRadius: '50%',

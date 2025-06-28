@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Box, IconButton, Tooltip, useTheme } from '@mui/material'; // Import useTheme
 import HomeIcon from '@mui/icons-material/Home';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import TimerIcon from '@mui/icons-material/Timer';
 import SchoolIcon from '@mui/icons-material/School';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -90,12 +89,6 @@ export default function UserSidebar() {
         <Tooltip title="Séance d'étude" placement="right">
           <IconButton onClick={() => navigate('/user/userSeance')} sx={iconButtonSx}>
             <SchoolIcon fontSize="large" />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Timer" placement="right">
-          <IconButton sx={iconButtonSx}>
-            <TimerIcon fontSize="large" />
           </IconButton>
         </Tooltip>
 
