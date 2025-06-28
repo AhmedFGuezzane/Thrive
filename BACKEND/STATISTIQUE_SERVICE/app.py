@@ -1,11 +1,13 @@
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from config import Config
+from flask_cors import CORS
 from dao_client import get_seances, get_taches
 from statistique_logic import compute_statistiques
 from dao_client import get_seances, get_taches, save_snapshot
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 app.config.from_object(Config)
 jwt = JWTManager(app)
 

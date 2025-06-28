@@ -2,15 +2,17 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import calendar
 
+
 def compute_statistiques(seances, taches):
     now = datetime.utcnow()
     jours_actifs = set()
     total_pomodoros = 0
 
-    # === Tasks ===
+    # --- Tasks ---
     total_tasks = len(taches)
     completed_tasks = sum(1 for t in taches if t.get("est_terminee"))
-    overdue_tasks = sum(1 for t in taches if not t.get("est_terminee") and t.get("date_fin") and t["date_fin"] < now.isoformat())
+    overdue_tasks = sum(
+        1 for t in taches if not t.get("est_terminee") and t.get("date_fin") and t["date_fin"] < now.isoformat())
     taux_completion = completed_tasks / total_tasks if total_tasks else 0
 
     if taches:
@@ -19,6 +21,18 @@ def compute_statistiques(seances, taches):
         taches_par_jour = total_tasks / days_range
     else:
         taches_par_jour = 0
+
+    # --- ADDED: Calculate task counts by status ---
+    tasks_by_status = defaultdict(int)
+    for tache in taches:
+        status = tache.get("statut", "Autre")
+        # Ensure status is lowercase and handled correctly based on your front-end logic.
+        # Your front-end uses 'en attente', 'en cours', and 'terminée'
+        if status:
+            tasks_by_status[status.lower()] += 1
+        else:
+            tasks_by_status['Autre'] += 1
+    # --------------------------------------------------
 
     # === Seances ===
     for s in seances:
@@ -29,7 +43,7 @@ def compute_statistiques(seances, taches):
     sorted_days = sorted(jours_actifs, reverse=True)
     streak = 1 if sorted_days else 0
     for i in range(1, len(sorted_days)):
-        if (datetime.fromisoformat(sorted_days[i-1]) - datetime.fromisoformat(sorted_days[i])).days == 1:
+        if (datetime.fromisoformat(sorted_days[i - 1]) - datetime.fromisoformat(sorted_days[i])).days == 1:
             streak += 1
         else:
             break
@@ -58,5 +72,8 @@ def compute_statistiques(seances, taches):
         "focus_score": completed_tasks * total_pomodoros,
         "meilleur_jour": meilleur_jour,
         "activite_par_jour_semaine": activite_par_jour,
-        "date_mise_a_jour": now.isoformat()
+        "date_mise_a_jour": now.isoformat(),
+        # --- ADDED THE NEW METRIC ---
+        "tasks_by_status": dict(tasks_by_status),
+        "total_tasks": total_tasks
     }

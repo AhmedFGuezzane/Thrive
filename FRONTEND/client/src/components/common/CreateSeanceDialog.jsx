@@ -10,6 +10,8 @@ import SeanceDetailsStep from './SeanceDetailsStep';
 import PomodoroConfigStep from './PomodoroConfigStep';
 import SeanceReviewStep from './SeanceReviewStep';
 
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
+
 export default function CreateSeanceDialog({
   open,
   onClose,
@@ -21,7 +23,9 @@ export default function CreateSeanceDialog({
   handlePomodoroChange,
   handleSubmit // ✅ this comes from parent (UserHome)
 }) {
-  const theme = useTheme();
+        const theme = useTheme();
+      const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
+      
   const steps = ['Détails de la séance', 'Configuration Pomodoro', 'Confirmation'];
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
@@ -49,16 +53,16 @@ export default function CreateSeanceDialog({
       PaperProps={{
         sx: {
           // --- UPDATED to use dynamic theme colors for the dialog background ---
-          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.95)',
+          
           backdropFilter: 'blur(12px)',
-          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
+          border: `1px solid ${whiteBorder}`,
           borderRadius: '16px',
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.15)',
-          color: theme.palette.text.primary, // <-- Use dynamic text color
+          boxShadow: softBoxShadow,
+          color: primaryText, // <-- Use dynamic text color
         }
       }}
     >
-      <DialogTitle sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>
+      <DialogTitle sx={{ fontWeight: 'bold', textAlign:"center", color: primaryText }}>
         Créer une nouvelle séance
       </DialogTitle>
       <DialogContent>
@@ -68,7 +72,7 @@ export default function CreateSeanceDialog({
               <StepLabel
                 sx={{
                   // --- UPDATED: Ensure stepper labels are readable ---
-                  '.Mui-active': { fontWeight: 'bold', color: theme.palette.text.primary },
+                  '.Mui-active': { fontWeight: 'bold', color: specialText },
                   '.Mui-completed': { fontWeight: 'bold', color: theme.palette.text.primary },
                   '.MuiStepLabel-label': { color: theme.palette.text.primary },
                   '.MuiStepLabel-label.Mui-disabled': { color: theme.palette.text.secondary },
@@ -82,7 +86,7 @@ export default function CreateSeanceDialog({
         {renderStep()}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} sx={{ color: theme.palette.text.secondary }}>
+        <Button onClick={onClose} sx={{ color: specialText }}>
           Annuler
         </Button>
         <Box sx={{ flex: '1 1 auto' }} />
@@ -96,10 +100,10 @@ export default function CreateSeanceDialog({
           onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
           sx={{
             // --- UPDATED: Use dynamic button colors ---
-            bgcolor: alpha(theme.palette.primary.main, 0.8),
-            '&:hover': { bgcolor: alpha(theme.palette.primary.main, 1) },
+            bgcolor: alpha(specialText, 1),
+            '&:hover': { bgcolor: alpha(specialText, 0.8) },
             borderRadius: '8px',
-            color: theme.palette.primary.contrastText,
+            color: secondaryText,
           }}
         >
           {activeStep === steps.length - 1 ? 'Confirmer et Créer' : 'Suivant'}

@@ -101,7 +101,10 @@ export default function UserHome() {
   };
 
   const handleSubmit = async () => {
-    // 1. Show "Creating your session..." progress message
+    // 1. Close the dialog immediately
+    handleDialogClose();
+
+    // 2. Show "Creating your session..." progress message in Snackbar
     showSnackbar('Création de votre session...', 'info', true);
 
     try {
@@ -116,14 +119,16 @@ export default function UserHome() {
         showSnackbar('Session créée, mais ID non reçu. Veuillez rafraîchir.', 'warning');
       }
 
-      // 2. On success, show "Session created successfully!" message
+      // 3. On success, show "Session created successfully!" message
       showSnackbar('Session créée avec succès !', 'success');
 
       startSeance(formData.pomodoro, newSeanceId);
-      handleDialogClose();
+      // Dialog remains closed on success
     } catch (err) {
-      // 3. On error, show "Error creating session" message
+      // 4. On error, show "Error creating session" message
       showSnackbar(`Erreur lors de la création de la session : ${err.message}`, 'error');
+      // 5. Re-open the dialog on failure
+      setDialogOpen(true);
     }
   };
 
@@ -149,7 +154,7 @@ export default function UserHome() {
         position: 'relative'
       }}
     >
-      <Box flexGrow={1} display="flex"  flexDirection="row" width="100%" height="88%" gap={2} pb={2}>
+      <Box flexGrow={1} display="flex" flexDirection="row" width="100%" height="88%" gap={2} pb={2}>
 
         {/* Adjusted Box for TaskList */}
         <Box
