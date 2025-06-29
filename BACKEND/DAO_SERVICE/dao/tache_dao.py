@@ -20,6 +20,7 @@ class TacheDAO:
     @staticmethod
     def add(data):
         try:
+            # CREER OBJET TACHE
             nouvelle_tache = Tache(
                 client_id=data['client_id'],
                 seance_etude_id=data.get('seance_etude_id'),
@@ -34,12 +35,14 @@ class TacheDAO:
                 duree_reelle=data.get('duree_reelle'),
                 priorite=data.get('priorite'),
             )
-            db.session.add(nouvelle_tache)
-            db.session.commit()
-            return nouvelle_tache.to_dict()
+            db.session.add(nouvelle_tache) # WITH SQL ALCHEMY, WE ADD THE NEW TASK TO THE DATABASE
+            db.session.commit() # COMMIT THE CHANGES TO THE DATABASE
+            return nouvelle_tache.to_dict() # WE RETURN THE NEW TASK
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback() # IF ANYTHING, WE ROLLBACK
             return {"error": str(e)}
+
+
 
     @staticmethod
     def update(tache_id, data):
@@ -78,7 +81,7 @@ class TacheDAO:
             tache.seance_etude_id = data.get("seance_etude_id")  # This will set to None if data.get is None
 
         db.session.commit()
-        return tache.to_dict()
+        return tache.to_dict() # RETOURNER LA TACHE A TACHE_ROUTE
 
     @staticmethod
     def delete(tache_id):

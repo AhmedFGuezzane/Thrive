@@ -23,6 +23,8 @@ export const useStatisticsManagement = () => {
 
     const { showSnackbar } = useSnackbar(); // Optional: show feedback
 
+
+    // FETCH STATS - A.G.
     const fetchStatistics = useCallback(async () => {
         setLoading(true);
         setError(null);

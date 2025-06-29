@@ -7,7 +7,8 @@ dao = SeanceDAO()
 @seance_bp.route('/seance', methods=['POST'])
 def creer_seance():
     try:
-        seance = dao.creer_seance(request.json)
+        seance = dao.creer_seance(request.json) # TOOK THAT REQUEST AND SENT IT TO METHOD CALLED CREER SEANCE IN TACHE_DAO AND WILL STORE RESPONSE IN VARIABLE 'SEANCE'
+
         return jsonify({
             "id": str(seance.id),
             "client_id": str(seance.client_id),

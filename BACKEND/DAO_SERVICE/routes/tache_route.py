@@ -108,8 +108,10 @@ def get_tache_route(tache_id):
 
 @tache_bp.route('/update/<uuid:tache_id>', methods=['PUT'])
 def update_tache_route(tache_id):
-    data = request.get_json()
-    user_id = request.headers.get("user-id")
+    data = request.get_json() # RECUPERER DATA
+    user_id = request.headers.get("user-id") # RECUPERER LE USER ID DU HEADER
+
+    # VERIFIER QUE LES INFO SONT DANS LE DATA
     if not user_id or not data:
         return jsonify({"error": "user-id (header) et des données sont requis"}), 400
 
@@ -117,7 +119,9 @@ def update_tache_route(tache_id):
     if not authorize_user_for_tache(tache_id, user_id):
         return jsonify({"error": "Tâche introuvable ou accès refusé"}), 403
 
-    tache_mise_a_jour = TacheDAO.update(tache_id, data)
+    tache_mise_a_jour = TacheDAO.update(tache_id, data) # ON APPELE METHODE UPDATE DANS TACHE_DAO ET ON STOCK REPONSE DANS 'TACHE_MISE_A_JOUR'
+
+    # RENVOI LA REPONSE A TACHE_SERVICE (DAO_CLIENT)
     if tache_mise_a_jour:
         return jsonify({
             "message": "Tâche mise à jour avec succès",

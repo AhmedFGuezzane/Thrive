@@ -114,6 +114,8 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     };
   }, [filteredTasks]);
 
+
+ 
   const handleNewTaskChange = (e) => {
     const { name, value } = e.target;
     setNewTaskData(prev => ({ ...prev, [name]: value }));
@@ -122,39 +124,42 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
   const onToggleAddToActiveSeance = (e) => {
     setAddToActiveSeance(e.target.checked);
   };
-
+// ADD TASK - S.L.
   const handleAddTask = async () => {
     if (!newTaskData.titre) {
-      showSnackbar("Le titre de la tâche est requis.", 'warning');
+      showSnackbar("Le titre de la tâche est requis.", 'warning'); //ALERT
       return;
     }
 
     setIsAddTaskDialogOpen(false);
-    showSnackbar("Ajout de la tâche...", 'info', true);
+    showSnackbar("Ajout de la tâche...", 'info', true); // ALERT
 
     try {
-      const token = localStorage.getItem('jwt_token');
-      if (!token) throw new Error("Authentification requise pour ajouter une tâche.");
+      const token = localStorage.getItem('jwt_token'); // WE GRAB TOKEN FROM LOCALSTORAGE
+      if (!token) throw new Error("Authentification requise pour ajouter une tâche."); // IF NO TOKEN , ERROR
 
-      const payloadBase64 = token.split('.')[1];
+      // DECODE TOKEN AND EXTRACT CLIENT_ID FROM THE TOKEN
+      const payloadBase64 = token.split('.')[1]; 
       const decodedPayload = JSON.parse(atob(payloadBase64));
       const client_id = decodedPayload.sub;
 
+      // CREATE A PAYLOAD WITH THE INFO OF THE TASK 
       const payload = {
-        ...newTaskData,
+        ...newTaskData, // TAKE THE DATA THAT WAS PREVIOUSLY SENT IN THE FORM AND ADD IT TO THIS PAYLOAD
         client_id,
         date_fin: newTaskData.date_fin ? new Date(newTaskData.date_fin).toISOString() : null,
         priorite: newTaskData.importance === 1 ? 'Urgent' : newTaskData.importance === 2 ? 'Haute' : 'Moyenne',
         est_terminee: newTaskData.statut === 'terminée',
       };
 
+      // IF THE CHECK "ADD TO CURRENT SEANCE" WAS CHECKED AND THERE IS AN ACTIVE SEANCE
       if (addToActiveSeance && seanceId) {
-        payload.seance_etude_id = seanceId;
+        payload.seance_etude_id = seanceId; // ADD THE SEANCE ID TO THE PAYLOAD
       }
 
-      await addTaskToBackend(payload);
+      await addTaskToBackend(payload); // SEND THIS PAYLOAD TO ADDTASKTOBACKEND (src/utils/taskService.jsx) AND WAIT FOR A RESPONSE
 
-      showSnackbar('Tâche ajoutée avec succès!', 'success');
+      showSnackbar('Tâche ajoutée avec succès!', 'success'); // AFFICHAGE DE L'ALERTE
       setNewTaskData({ titre: '', description: '', importance: 3, statut: 'en attente', date_fin: '' });
       setAddToActiveSeance(false);
       primaryFetchTasks();
@@ -164,6 +169,7 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
       setIsAddTaskDialogOpen(true);
     }
   };
+
 
   const handleUpdateTaskStatus = async (taskId, newStatus) => {
     setAllUserTasks(prev =>
@@ -179,24 +185,27 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     }
   };
 
+
+  // UPDATE TASK - I.R.
   const handleUpdateTask = async (taskId, updatedData) => {
     try {
-      await updateTaskBackend(taskId, updatedData);
-      showSnackbar("Tâche mise à jour avec succès", "success");
+      await updateTaskBackend(taskId, updatedData); // APPELE UPDATETASKBACKEND DANS (src/utils/taskService) ET ON PASSE EN PARAMETRE TASKID ET LE NOUVEAU DATA 
+      showSnackbar("Tâche mise à jour avec succès", "success"); 
       primaryFetchTasks();
     } catch (error) {
       showSnackbar(`Erreur: ${error.message}`, "error");
     }
   };
 
+  // DELETE TASK - I.R.
   const handleDeleteTask = async (taskId) => {
     showSnackbar("Suppression de la tâche...", "info", true);
     try {
-      await deleteTaskBackend(taskId);
-      showSnackbar("Tâche supprimée avec succès !", "success");
+      await deleteTaskBackend(taskId);  // APPELE DELETETASKBACKEND DANS (src/utils/taskService) ET ON PASSE EN PARAMETRE TASKID
+      showSnackbar("Tâche supprimée avec succès !", "success"); // TACHE SUPPRIME (ALERT)
       primaryFetchTasks();
     } catch (error) {
-      showSnackbar(`Erreur lors de la suppression: ${error.message}`, "error");
+      showSnackbar(`Erreur lors de la suppression: ${error.message}`, "error"); // ERREUR TACHE SUPPRIME (ALERT)
     }
   };
 

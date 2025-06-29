@@ -47,6 +47,7 @@ class SeanceDAO:
         else:
             pomodoro = None
 
+        # WE CREATE AN OBJECT CALLED SEANCE
         seance = SeanceEtude(
             id=uuid.uuid4(),
             client_id=uuid.UUID(data["client_id"]),
@@ -60,9 +61,11 @@ class SeanceDAO:
             nbre_pomodoro_effectues=data.get("nbre_pomodoro_effectues", 0),
             pomodoro_id=pomodoro.id if pomodoro else None
         )
-
+        # PUSH THAT OBJECT TO DATABASE
         db.session.add(seance)
         db.session.commit()
+
+        # RETURN THAT OBJECT
         return seance
 
     @staticmethod
