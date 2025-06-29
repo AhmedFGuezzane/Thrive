@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import { DragDropContext } from '@hello-pangea/dnd';
 
+import { useTranslation } from 'react-i18next';
 import { TimerContext } from '../../contexts/TimerContext';
 import TimerBar from '../../components/common/TimerBar';
 import CreateSeanceDialog from '../../components/common/CreateSeanceDialog';
@@ -23,6 +24,7 @@ import { createSeance } from '../../utils/seanceService.jsx';
 
 export default function UserTasks() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { outerBox, softBoxShadow, whiteBorder } = useCustomTheme();
   
   const { activeSeanceId, startSeance } = useContext(TimerContext);
@@ -67,13 +69,12 @@ export default function UserTasks() {
     handleCloseTaskDetailsDialog,
     handleUpdateTask,
     handleUpdateTaskStatus,
-    handleDeleteTask, // ✅ ADD THIS
+    handleDeleteTask,
   } = useTaskManagement(activeSeanceId, showSnackbar, 'all_tasks');
 
   const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
     if (!destination || (source.droppableId === destination.droppableId && source.index === destination.index)) return;
-
     const finishColumnId = destination.droppableId;
     handleUpdateTaskStatus(draggableId, finishColumnId);
   };
@@ -109,19 +110,19 @@ export default function UserTasks() {
   };
 
   const handleSubmit = async () => {
-    showSnackbar('Création de votre session...', 'info', true);
+    showSnackbar(t('userTasks.snackbar_creating'), 'info', true);
     try {
       const createdSeance = await createSeance(formData);
       let newSeanceId = createdSeance?.id || null;
       if (!newSeanceId) {
         console.warn("Created seance object did not contain an ID directly:", createdSeance);
-        showSnackbar('Session créée, mais ID non reçu. Veuillez rafraîchir.', 'warning');
+        showSnackbar(t('userTasks.snackbar_id_missing'), 'warning');
       }
-      showSnackbar('Session créée avec succès !', 'success');
+      showSnackbar(t('userTasks.snackbar_created'), 'success');
       startSeance(formData.pomodoro, newSeanceId);
       handleDialogClose();
     } catch (err) {
-      showSnackbar(`Erreur lors de la création de la session : ${err.message}`, 'error');
+      showSnackbar(`${t('userTasks.snackbar_error')}: ${err.message}`, 'error');
     }
   };
 
@@ -228,7 +229,7 @@ export default function UserTasks() {
         onClose={handleCloseTaskDetailsDialog}
         taskDetails={selectedTaskDetails}
         onUpdateTask={handleUpdateTask}
-        handleDeleteTask={handleDeleteTask}  
+        handleDeleteTask={handleDeleteTask}
         getImportanceDisplay={getImportanceDisplay}
         getStatusDisplay={getStatusDisplay}
         showSnackbar={showSnackbar}

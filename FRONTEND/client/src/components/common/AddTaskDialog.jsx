@@ -15,6 +15,8 @@ import {
   useTheme,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
+
 import SwitchCard from './SwitchCard';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 import { SnackbarContext } from '../../contexts/SnackbarContext';
@@ -33,6 +35,7 @@ export default function AddTaskDialog({
   loading,
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const {
     innerBox, middleBox, whiteBorder, softBoxShadow,
     primaryText, specialText
@@ -43,7 +46,7 @@ export default function AddTaskDialog({
   return (
     <>
       <Dialog
-        open={open && !loading} // ✅ hide entire dialog if loading
+        open={open && !loading}
         onClose={onClose}
         maxWidth="sm"
         fullWidth
@@ -58,7 +61,7 @@ export default function AddTaskDialog({
         }}
       >
         <DialogTitle textAlign="center" sx={{ fontWeight: 'bold', color: primaryText }}>
-          Ajouter une nouvelle tâche
+          {t("addTask.title")}
         </DialogTitle>
 
         <DialogContent>
@@ -66,7 +69,7 @@ export default function AddTaskDialog({
             autoFocus
             margin="dense"
             name="titre"
-            label="Titre de la tâche"
+            label={t("addTask.fields.title")}
             type="text"
             fullWidth
             variant="filled"
@@ -86,7 +89,7 @@ export default function AddTaskDialog({
           <TextField
             margin="dense"
             name="description"
-            label="Description"
+            label={t("addTask.fields.description")}
             type="text"
             fullWidth
             multiline
@@ -106,7 +109,7 @@ export default function AddTaskDialog({
             InputLabelProps={{ sx: { color: primaryText } }}
           />
           <FormControl fullWidth margin="dense" variant="filled" sx={{ borderRadius: '8px', boxShadow: softBoxShadow }}>
-            <InputLabel>Importance</InputLabel>
+            <InputLabel>{t("addTask.fields.importance")}</InputLabel>
             <Select
               name="importance"
               value={newTaskData.importance}
@@ -135,7 +138,7 @@ export default function AddTaskDialog({
           </FormControl>
 
           <FormControl fullWidth margin="dense" variant="filled" sx={{ borderRadius: '8px', boxShadow: softBoxShadow }}>
-            <InputLabel>Statut</InputLabel>
+            <InputLabel>{t("addTask.fields.status")}</InputLabel>
             <Select
               name="statut"
               value={newTaskData.statut}
@@ -155,16 +158,22 @@ export default function AddTaskDialog({
                 },
               }}
             >
-              <MenuItem value="en attente" sx={{ color: theme.palette.text.primary }}>En attente</MenuItem>
-              <MenuItem value="en cours" sx={{ color: theme.palette.text.primary }}>En cours</MenuItem>
-              <MenuItem value="terminée" sx={{ color: theme.palette.text.primary }}>Complétée</MenuItem>
+              <MenuItem value="en attente" sx={{ color: theme.palette.text.primary }}>
+                {t("statuses.pending")}
+              </MenuItem>
+              <MenuItem value="en cours" sx={{ color: theme.palette.text.primary }}>
+                {t("statuses.in_progress")}
+              </MenuItem>
+              <MenuItem value="terminée" sx={{ color: theme.palette.text.primary }}>
+                {t("statuses.completed")}
+              </MenuItem>
             </Select>
           </FormControl>
 
           <TextField
             margin="dense"
             name="date_fin"
-            label="Date de fin (optionnel)"
+            label={t("addTask.fields.deadline")}
             type="date"
             fullWidth
             variant="filled"
@@ -184,7 +193,7 @@ export default function AddTaskDialog({
 
           <Box mt={2}>
             <SwitchCard
-              label="Ajouter à la séance active"
+              label={t("addTask.fields.addToSeance")}
               name="add_to_active_seance"
               checked={addToActiveSeance}
               onChange={onToggleAddToActiveSeance}
@@ -195,7 +204,7 @@ export default function AddTaskDialog({
 
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={onClose} sx={{ color: specialText }}>
-            Annuler
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={onAddTask}
@@ -207,7 +216,7 @@ export default function AddTaskDialog({
               color: "white",
             }}
           >
-            Ajouter Tâche
+            {t("addTask.add")}
           </Button>
         </DialogActions>
       </Dialog>

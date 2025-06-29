@@ -10,8 +10,9 @@ import {
 import Person from '@mui/icons-material/Person';
 import Email from '@mui/icons-material/Email';
 import Lock from '@mui/icons-material/Lock';
-import config from '../../config';
+
 import SnackbarAlert from '../../components/common/SnackbarAlert';
+import { register } from '../../utils/accountService';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -70,29 +71,18 @@ export default function Register() {
     showSnackbar('Attempting to register...', 'info');
 
     try {
-      const response = await fetch(`${config.authMicroserviceBaseUrl}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          mot_de_passe: password,
-          nom: lastName,
-          prenom: firstName
-        }),
+      await register({
+        email,
+        mot_de_passe: password,
+        nom: lastName,
+        prenom: firstName,
       });
 
-      if (response.ok) {
-        showSnackbar('Registration successful. Awaiting admin validation.', 'success');
-        setTimeout(() => navigate('/'), 2000);
-      } else {
-        const errorData = await response.json();
-        showSnackbar(`Registration failed: ${errorData.message || 'Please try again.'}`, 'error');
-        setPassword('');
-        setVerifyPassword('');
-      }
+      showSnackbar('Registration successful. Awaiting admin validation.', 'success');
+      setTimeout(() => navigate('/'), 2000);
     } catch (err) {
       console.error('Registration error:', err);
-      showSnackbar('Could not connect to server.', 'error');
+      showSnackbar(`Registration failed: ${err.message || 'Please try again.'}`, 'error');
       setPassword('');
       setVerifyPassword('');
     }

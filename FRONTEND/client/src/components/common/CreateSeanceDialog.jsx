@@ -11,6 +11,7 @@ import PomodoroConfigStep from './PomodoroConfigStep';
 import SeanceReviewStep from './SeanceReviewStep';
 
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
+import { useTranslation } from 'react-i18next';
 
 export default function CreateSeanceDialog({
   open,
@@ -21,12 +22,22 @@ export default function CreateSeanceDialog({
   setFormData,
   handleFormChange,
   handlePomodoroChange,
-  handleSubmit // ✅ this comes from parent (UserHome)
+  handleSubmit
 }) {
-        const theme = useTheme();
-      const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
-      
-  const steps = ['Détails de la séance', 'Configuration Pomodoro', 'Confirmation'];
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  const {
+    innerBox, outerBox, middleBox, primaryColor, specialColor,
+    secondaryColor, whiteColor, blackColor, specialText, secondaryText,
+    primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow
+  } = useCustomTheme();
+
+  const steps = [
+    t('createSeance.steps.details'),
+    t('createSeance.steps.config'),
+    t('createSeance.steps.confirm')
+  ];
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
@@ -40,7 +51,7 @@ export default function CreateSeanceDialog({
       case 2:
         return <SeanceReviewStep formData={formData} />;
       default:
-        return 'Étape inconnue';
+        return t('createSeance.unknownStep');
     }
   };
 
@@ -52,18 +63,16 @@ export default function CreateSeanceDialog({
       fullWidth
       PaperProps={{
         sx: {
-          // --- UPDATED to use dynamic theme colors for the dialog background ---
-          
           backdropFilter: 'blur(12px)',
           border: `1px solid ${whiteBorder}`,
           borderRadius: '16px',
           boxShadow: softBoxShadow,
-          color: primaryText, // <-- Use dynamic text color
+          color: primaryText,
         }
       }}
     >
-      <DialogTitle sx={{ fontWeight: 'bold', textAlign:"center", color: primaryText }}>
-        Créer une nouvelle séance
+      <DialogTitle sx={{ fontWeight: 'bold', textAlign: 'center', color: primaryText }}>
+        {t('createSeance.title')}
       </DialogTitle>
       <DialogContent>
         <Stepper activeStep={activeStep} sx={{ pt: 1, pb: 3 }}>
@@ -71,7 +80,6 @@ export default function CreateSeanceDialog({
             <Step key={label}>
               <StepLabel
                 sx={{
-                  // --- UPDATED: Ensure stepper labels are readable ---
                   '.Mui-active': { fontWeight: 'bold', color: specialText },
                   '.Mui-completed': { fontWeight: 'bold', color: theme.palette.text.primary },
                   '.MuiStepLabel-label': { color: theme.palette.text.primary },
@@ -87,26 +95,25 @@ export default function CreateSeanceDialog({
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} sx={{ color: specialText }}>
-          Annuler
+          {t('common.cancel')}
         </Button>
         <Box sx={{ flex: '1 1 auto' }} />
         {activeStep !== 0 && (
           <Button onClick={handleBack} sx={{ mr: 1, color: theme.palette.text.secondary }}>
-            Précédent
+            {t('common.previous')}
           </Button>
         )}
         <Button
           variant="contained"
           onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
           sx={{
-            // --- UPDATED: Use dynamic button colors ---
             bgcolor: alpha(specialText, 1),
             '&:hover': { bgcolor: alpha(specialText, 0.8) },
             borderRadius: '8px',
             color: secondaryText,
           }}
         >
-          {activeStep === steps.length - 1 ? 'Confirmer et Créer' : 'Suivant'}
+          {activeStep === steps.length - 1 ? t('createSeance.confirmAndCreate') : t('common.next')}
         </Button>
       </DialogActions>
     </Dialog>

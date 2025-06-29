@@ -6,8 +6,8 @@ import {
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Lock from '@mui/icons-material/Lock';
 
-import config from '../../config';
 import SnackbarAlert from '../../components/common/SnackbarAlert';
+import { login } from '../../utils/accountService';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -61,26 +61,13 @@ export default function Login() {
     showSnackbar('Tentative de connexion...', 'info');
 
     try {
-      const response = await fetch(`${config.authMicroserviceBaseUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, mot_de_passe: password }),
-      });
+      const { access_token } = await login(email, password);
+      localStorage.setItem('jwt_token', access_token);
 
-      if (response.ok) {
-        const { access_token } = await response.json();
-        localStorage.setItem('jwt_token', access_token);
-
-        showSnackbar('Connexion réussie !', 'success');
-        setTimeout(() => navigate('/user'), 1500);
-      } else {
-        const errorData = await response.json();
-        showSnackbar(`Échec de la connexion : ${errorData.message || 'Identifiants invalides'}`, 'error');
-        setPassword('');
-      }
+      showSnackbar('Connexion réussie !', 'success');
+      setTimeout(() => navigate('/user'), 1500);
     } catch (error) {
-      console.error('Erreur réseau :', error);
-      showSnackbar('Échec de la connexion : problème de serveur.', 'error');
+      showSnackbar(`Échec de la connexion : ${error.message}`, 'error');
       setPassword('');
     }
   };

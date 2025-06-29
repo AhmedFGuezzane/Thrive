@@ -1,4 +1,3 @@
-// src/hooks/useTaskManagement.js
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   addTaskToBackend,
@@ -8,6 +7,10 @@ import {
   updateTask as updateTaskBackend,
   deleteTask as deleteTaskBackend
 } from '../utils/taskService';
+
+const PREFETCH_KEY = "prefetchedTasks";
+const PREFETCH_TIME_KEY = "lastTaskPrefetch";
+const COOLDOWN_MS = 30000;
 
 export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks') => {
   const [allUserTasks, setAllUserTasks] = useState([]);
@@ -39,6 +42,8 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
         fetchedTasks = await fetchAllTasksForUser();
       }
       setAllUserTasks(fetchedTasks ?? []);
+      sessionStorage.setItem(PREFETCH_KEY, JSON.stringify(fetchedTasks));
+      sessionStorage.setItem(PREFETCH_TIME_KEY, Date.now().toString());
     } catch (error) {
       showSnackbar(`Erreur lors de la récupération des tâches: ${error.message}`, 'error');
       setAllUserTasks([]);
@@ -47,7 +52,31 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     }
   }, [fetchMode, seanceId, showSnackbar]);
 
+  const prefetchTasksIfAllowed = useCallback(async () => {
+    const lastPrefetch = parseInt(sessionStorage.getItem(PREFETCH_TIME_KEY), 10) || 0;
+    const now = Date.now();
+
+    if (now - lastPrefetch > COOLDOWN_MS) {
+      try {
+        const fetched = await fetchAllTasksForUser();
+        sessionStorage.setItem(PREFETCH_KEY, JSON.stringify(fetched));
+        sessionStorage.setItem(PREFETCH_TIME_KEY, now.toString());
+      } catch (err) {
+        console.warn("Prefetch failed:", err.message);
+      }
+    }
+  }, []);
+
   useEffect(() => {
+    const cached = sessionStorage.getItem(PREFETCH_KEY);
+    if (cached) {
+      try {
+        setAllUserTasks(JSON.parse(cached));
+      } catch {
+        sessionStorage.removeItem(PREFETCH_KEY);
+      }
+    }
+
     if (fetchMode === 'all_tasks' || (fetchMode === 'by_seance' && seanceId)) {
       primaryFetchTasks();
     }
@@ -208,5 +237,6 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     handleUpdateTaskStatus,
     handleUpdateTask,
     handleDeleteTask,
+    prefetchTasksIfAllowed, // added
   };
 };

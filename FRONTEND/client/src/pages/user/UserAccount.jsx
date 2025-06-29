@@ -5,17 +5,18 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
+import { useTranslation } from 'react-i18next';
 import { useAccountManagement } from '../../hooks/useAccountManagement';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
-import { useSnackbar } from '../../contexts/SnackbarContext'; // ✅ Use global snackbar
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
-// Dialogs
 import ConfirmationDialog from '../../components/common/ConfirmationDialog';
 import ChangePasswordDialog from '../../components/UserAccount/ChangePasswordDialog';
 
 const UserAccount = () => {
   const theme = useTheme();
-  const { showSnackbar } = useSnackbar(); // ✅ Use snackbar context
+  const { t } = useTranslation();
+  const { showSnackbar } = useSnackbar();
   const {
     outerBox, whiteBorder, primaryText, secondaryText, specialColor,
     warningColor, errorColor, primaryColor, whiteColor, specialText
@@ -37,7 +38,7 @@ const UserAccount = () => {
     handleDeactivate,
     handleDelete,
     logout,
-  } = useAccountManagement(showSnackbar); // ✅ Inject showSnackbar
+  } = useAccountManagement(showSnackbar);
 
   const openConfirmation = (actionType) => {
     setActionToConfirm(actionType);
@@ -47,23 +48,12 @@ const UserAccount = () => {
   const handleConfirmAction = () => {
     setConfirmDialogOpen(false);
     switch (actionToConfirm) {
-      case 'changePassword':
-        handleChangePassword();
-        break;
-      case 'deactivate':
-        handleDeactivate();
-        break;
-      case 'delete':
-        handleDelete();
-        break;
-      case 'logout':
-        logout();
-        break;
-      case 'updateProfile':
-        handleUpdateProfile();
-        break;
-      default:
-        break;
+      case 'changePassword': handleChangePassword(); break;
+      case 'deactivate': handleDeactivate(); break;
+      case 'delete': handleDelete(); break;
+      case 'logout': logout(); break;
+      case 'updateProfile': handleUpdateProfile(); break;
+      default: break;
     }
     setActionToConfirm(null);
   };
@@ -72,37 +62,37 @@ const UserAccount = () => {
     switch (actionToConfirm) {
       case 'changePassword':
         return {
-          title: "Confirm Password Change",
-          text: "Are you sure you want to change your password? You will need to log in with the new password.",
-          confirmButtonText: "Change",
+          title: t('account.confirmPasswordChange.title'),
+          text: t('account.confirmPasswordChange.text'),
+          confirmButtonText: t('account.confirmPasswordChange.button'),
           confirmButtonColor: "primary"
         };
       case 'deactivate':
         return {
-          title: "Confirm Account Deactivation",
-          text: "Are you sure you want to deactivate your account? You will be logged out and unable to access it until re-activated.",
-          confirmButtonText: "Deactivate",
+          title: t('account.confirmDeactivate.title'),
+          text: t('account.confirmDeactivate.text'),
+          confirmButtonText: t('account.confirmDeactivate.button'),
           confirmButtonColor: "warning"
         };
       case 'delete':
         return {
-          title: "Confirm Account Deletion",
-          text: "Are you sure you want to permanently delete your account? This action cannot be undone.",
-          confirmButtonText: "Delete",
+          title: t('account.confirmDelete.title'),
+          text: t('account.confirmDelete.text'),
+          confirmButtonText: t('account.confirmDelete.button'),
           confirmButtonColor: "error"
         };
       case 'logout':
         return {
-          title: "Confirm Logout",
-          text: "Are you sure you want to log out of your account?",
-          confirmButtonText: "Logout",
+          title: t('account.confirmLogout.title'),
+          text: t('account.confirmLogout.text'),
+          confirmButtonText: t('account.confirmLogout.button'),
           confirmButtonColor: "inherit"
         };
       case 'updateProfile':
         return {
-          title: "Confirm Profile Update",
-          text: "Are you sure you want to save these profile changes?",
-          confirmButtonText: "Save",
+          title: t('account.confirmUpdate.title'),
+          text: t('account.confirmUpdate.text'),
+          confirmButtonText: t('account.confirmUpdate.button'),
           confirmButtonColor: "primary"
         };
       default:
@@ -114,24 +104,18 @@ const UserAccount = () => {
 
   return (
     <Box width="98%" height="100%" mx="1rem">
-      <Box
-        p={3}
-        borderRadius={3}
-        width="100%"
-        height="100%"
-        sx={{
-          backdropFilter: 'blur(10px)',
-          bgcolor: outerBox,
-          border: `1px solid ${whiteBorder}`,
-        }}
-      >
+      <Box p={3} borderRadius={3} width="100%" height="100%" sx={{
+        backdropFilter: 'blur(10px)',
+        bgcolor: outerBox,
+        border: `1px solid ${whiteBorder}`,
+      }}>
         <Typography variant="h5" fontWeight="bold" color={primaryText}>
-          Account Settings
+          {t('account.title')}
         </Typography>
         <Divider sx={{ my: 2 }} />
 
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6" color={primaryText}>Profile Info</Typography>
+          <Typography variant="h6" color={primaryText}>{t('account.profileInfo')}</Typography>
           <IconButton onClick={() => setEditable(!editable)}>
             <EditIcon sx={{ color: secondaryText }} />
           </IconButton>
@@ -139,146 +123,46 @@ const UserAccount = () => {
 
         <Grid container spacing={2} mb={2} mt={1}>
           <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Nom" value={nom} onChange={(e) => setNom(e.target.value)} disabled={!editable}
-              sx={{
-                '& .MuiInputBase-input': { color: primaryText },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: primaryText },
-                  '&:hover fieldset': { borderColor: whiteBorder },
-                  '&.Mui-focused fieldset': { borderColor: whiteBorder }
-                }
-              }}
-              InputLabelProps={{ style: { color: primaryText }, sx: { '&.Mui-focused': { color: specialColor } } }}
-            />
+            <TextField fullWidth label={t('account.nom')} value={nom} onChange={(e) => setNom(e.target.value)} disabled={!editable}
+              sx={inputStyle(primaryText, whiteBorder)} InputLabelProps={labelStyle(primaryText, specialColor)} />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Prenom" value={prenom} onChange={(e) => setPrenom(e.target.value)} disabled={!editable}
-              sx={{
-                '& .MuiInputBase-input': { color: primaryText },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: primaryText },
-                  '&:hover fieldset': { borderColor: whiteBorder },
-                  '&.Mui-focused fieldset': { borderColor: whiteBorder }
-                }
-              }}
-              InputLabelProps={{ style: { color: primaryText }, sx: { '&.Mui-focused': { color: specialColor } } }}
-            />
+            <TextField fullWidth label={t('account.prenom')} value={prenom} onChange={(e) => setPrenom(e.target.value)} disabled={!editable}
+              sx={inputStyle(primaryText, whiteBorder)} InputLabelProps={labelStyle(primaryText, specialColor)} />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!editable}
-              sx={{
-                '& .MuiInputBase-input': { color: primaryText },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: primaryText },
-                  '&:hover fieldset': { borderColor: whiteBorder },
-                  '&.Mui-focused fieldset': { borderColor: whiteBorder }
-                }
-              }}
-              InputLabelProps={{ style: { color: primaryText }, sx: { '&.Mui-focused': { color: specialColor } } }}
-            />
+            <TextField fullWidth label={t('account.email')} value={email} onChange={(e) => setEmail(e.target.value)} disabled={!editable}
+              sx={inputStyle(primaryText, whiteBorder)} InputLabelProps={labelStyle(primaryText, specialColor)} />
           </Grid>
         </Grid>
 
         {editable && (
           <Button onClick={() => openConfirmation('updateProfile')} variant="contained"
             sx={{ mt: 2, bgcolor: specialColor, color: whiteColor, '&:hover': { bgcolor: primaryColor } }}>
-            Save Changes
+            {t('account.saveChanges')}
           </Button>
         )}
 
         <Divider sx={{ my: 3 }} />
-        <Typography variant="h6" color={primaryText}>Account Metadata</Typography>
+        <Typography variant="h6" color={primaryText}>{t('account.metadata')}</Typography>
         <Grid container spacing={2} mt={1}>
           <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Role" value={userInfo.role || ''} disabled
-              sx={{
-                '& .MuiInputBase-input': { color: primaryText },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: primaryText },
-                  '&:hover fieldset': { borderColor: whiteBorder },
-                  '&.Mui-focused fieldset': { borderColor: whiteBorder }
-                }
-              }}
-              InputLabelProps={{ style: { color: primaryText }, sx: { '&.Mui-focused': { color: specialColor } } }}
-            />
+            <TextField fullWidth label={t('account.role')} value={userInfo.role || ''} disabled
+              sx={inputStyle(primaryText, whiteBorder)} InputLabelProps={labelStyle(primaryText, specialColor)} />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Actif" value={userInfo.actif ? 'Yes' : 'No'} disabled
-              sx={{
-                '& .MuiInputBase-input': { color: primaryText },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: primaryText },
-                  '&:hover fieldset': { borderColor: whiteBorder },
-                  '&.Mui-focused fieldset': { borderColor: whiteBorder }
-                }
-              }}
-              InputLabelProps={{ style: { color: primaryText }, sx: { '&.Mui-focused': { color: specialColor } } }}
-            />
+            <TextField fullWidth label={t('account.active')} value={userInfo.actif ? t('account.yes') : t('account.no')} disabled
+              sx={inputStyle(primaryText, whiteBorder)} InputLabelProps={labelStyle(primaryText, specialColor)} />
           </Grid>
         </Grid>
 
         <Divider sx={{ my: 3 }} />
-        <Typography variant="h6" color={primaryText}>Other Actions</Typography>
+        <Typography variant="h6" color={primaryText}>{t('account.otherActions')}</Typography>
         <Box display="flex" flexDirection="column" gap={1} mt={1}>
-          <Button variant="text" onClick={() => setShowPasswordForm(true)}
-            sx={{
-              justifyContent: 'flex-start',
-              color: primaryText,
-              textTransform: 'none',
-              '&:hover': {
-                color: specialText,
-                textDecoration: 'underline',
-                backgroundColor: 'transparent'
-              }
-            }}
-          >
-            Change Password
-          </Button>
-
-          <Button variant="text" onClick={() => openConfirmation('deactivate')}
-            sx={{
-              justifyContent: 'flex-start',
-              color: primaryText,
-              textTransform: 'none',
-              '&:hover': {
-                color: specialText,
-                textDecoration: 'underline',
-                backgroundColor: 'transparent'
-              }
-            }}
-          >
-            Deactivate Account
-          </Button>
-
-          <Button variant="text" onClick={() => openConfirmation('delete')}
-            sx={{
-              justifyContent: 'flex-start',
-              color: primaryText,
-              textTransform: 'none',
-              '&:hover': {
-                color: specialText,
-                textDecoration: 'underline',
-                backgroundColor: 'transparent'
-              }
-            }}
-          >
-            Delete Account
-          </Button>
-
-          <Button variant="text" onClick={() => openConfirmation('logout')}
-            sx={{
-              justifyContent: 'flex-start',
-              color: primaryText,
-              textTransform: 'none',
-              '&:hover': {
-                color: specialText,
-                textDecoration: 'underline',
-                backgroundColor: 'transparent'
-              }
-            }}
-          >
-            Logout
-          </Button>
+          <ActionButton text={t('account.changePassword')} onClick={() => setShowPasswordForm(true)} />
+          <ActionButton text={t('account.deactivate')} onClick={() => openConfirmation('deactivate')} />
+          <ActionButton text={t('account.delete')} onClick={() => openConfirmation('delete')} />
+          <ActionButton text={t('account.logout')} onClick={() => openConfirmation('logout')} />
         </Box>
 
         <ChangePasswordDialog
@@ -303,5 +187,31 @@ const UserAccount = () => {
     </Box>
   );
 };
+
+const inputStyle = (primary, border) => ({
+  '& .MuiInputBase-input': { color: primary },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': { borderColor: primary },
+    '&:hover fieldset': { borderColor: border },
+    '&.Mui-focused fieldset': { borderColor: border }
+  }
+});
+
+const labelStyle = (primary, focusColor) => ({
+  style: { color: primary },
+  sx: { '&.Mui-focused': { color: focusColor } }
+});
+
+const ActionButton = ({ text, onClick }) => (
+  <Button variant="text" onClick={onClick} sx={{
+    justifyContent: 'flex-start',
+    color: 'inherit',
+    textTransform: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+      backgroundColor: 'transparent'
+    }
+  }}>{text}</Button>
+);
 
 export default UserAccount;

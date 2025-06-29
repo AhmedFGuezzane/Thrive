@@ -2,50 +2,94 @@ import React, { useMemo, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Divider,
   useTheme,
-  CircularProgress,
-  IconButton
+  IconButton,
+  CircularProgress
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 import { useStatisticsManagement } from '../../hooks/useStatisticsManagement';
 import { formatActivityDataForChart } from '../../utils/StatisticsUtils.js';
 import KeyMetricsCard from '../../components/UserStatistique/KeyMetricsCard';
 import ActivityChart from '../../components/UserStatistique/ActivityChart';
 import TaskStatusProgressBar from '../../components/UserStatistique/TaskStatusProgressBar';
-import { useSnackbar } from '../../contexts/SnackbarContext'; // ✅ NEW
+import { useSnackbar } from '../../contexts/SnackbarContext';
+
+// ⏳ Skeletons
+import SkeletonActivityChart from '../../skeleton/SkeletonActivityChart';
+import SkeletonKeyMetricsCard from '../../skeleton/SkeletonKeyMetricsCard';
+import SkeletonTaskStatusProgressBar from '../../skeleton/SkeletonTaskStatusProgressBar';
 
 export default function UserStatistique() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const {
     outerBox, softBoxShadow, whiteBorder,
     primaryText, secondaryText, specialColor
   } = useCustomTheme();
 
-  const { showSnackbar } = useSnackbar(); // ✅ NEW
-  const { stats, loading, error, fetchStatistics } = useStatisticsManagement(showSnackbar); // ✅ PASS CONTEXT
+  const { showSnackbar } = useSnackbar();
+  const { stats, loading, error, fetchStatistics } = useStatisticsManagement(showSnackbar);
 
   const activityChartData = useMemo(() => {
     return formatActivityDataForChart(stats?.activite_par_jour_semaine, theme);
   }, [stats, theme]);
 
   useEffect(() => {
-    if (error) showSnackbar(error, 'error'); // ✅ Snackbar on error
+    if (error) showSnackbar(error, 'error');
   }, [error, showSnackbar]);
 
   let content;
   if (loading) {
     content = (
-      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <CircularProgress sx={{ color: specialColor }} />
+      <Box
+        display="flex"
+        width="100%"
+        flexDirection="column"
+        justifyContent="space-between"
+        gap={3}
+        mt={2}
+        alignItems="center"
+      >
+        <Box width="100%" display="flex" gap={3} alignItems="stretch" flexWrap="wrap">
+          <Box
+            sx={{
+              width: { xs: '100%', md: '50%' },
+              flexGrow: 1,
+              flexBasis: 0,
+              height: '220px',
+              borderRadius: '12px',
+              bgcolor: outerBox,
+              border: `1px solid ${whiteBorder}`,
+              boxShadow: softBoxShadow,
+            }}
+          />
+          <Box
+            sx={{
+              width: { xs: '100%', md: '50%' },
+              flexGrow: 1,
+              flexBasis: 0,
+            }}
+          >
+            <SkeletonActivityChart />
+          </Box>
+        </Box>
+
+        <Box width="100%">
+          <SkeletonTaskStatusProgressBar />
+        </Box>
+
+        <Box width="100%">
+          <SkeletonKeyMetricsCard />
+        </Box>
       </Box>
     );
   } else if (!stats) {
     content = (
       <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Typography color={primaryText}>No statistics available yet.</Typography>
+        <Typography color={primaryText}>{t('stats.no_data')}</Typography>
       </Box>
     );
   } else {
@@ -53,16 +97,13 @@ export default function UserStatistique() {
       <Box
         display="flex"
         width="100%"
-        height="100%"
         flexDirection="column"
         justifyContent="space-between"
-        gap={3}
+        gap={5}
         mt={2}
         alignItems="center"
       >
-        {/* 1. ROW 1: Note + Activity Chart */}
         <Box width="100%" display="flex" gap={3} alignItems="stretch" flexWrap="wrap">
-          {/* Note Box */}
           <Box sx={{
             width: { xs: '100%', md: '50%' },
             flexGrow: 1,
@@ -77,40 +118,29 @@ export default function UserStatistique() {
             boxShadow: softBoxShadow,
           }}>
             <Typography variant="h6" color={primaryText} fontWeight="bold" mb={1}>
-              Note Importante
+              {t('stats.note_title')}
             </Typography>
             <Typography variant="body2" color={primaryText} fontStyle="italic" mb={1}>
-              Les statistiques sont basées sur l'ensemble de vos séances enregistrées.
-              Si certaines séances ont été démarrées par erreur, elles sont également prises en compte.
+              {t('stats.note_1')}
             </Typography>
             <Typography variant="body2" color={primaryText}>
-              Ces données vous aident à visualiser vos habitudes de travail et à identifier les jours où votre concentration est optimale.
-              Utilisez ces informations pour adapter vos objectifs et optimiser votre emploi du temps.
+              {t('stats.note_2')}
             </Typography>
           </Box>
 
-          {/* Activity Chart */}
           <Box sx={{
             width: { xs: '100%', md: '50%' },
             flexGrow: 1,
             flexBasis: 0,
           }}>
-            <ActivityChart
-              title="Activity by Day of the Week"
-              data={activityChartData}
-            />
+            <ActivityChart title={t('stats.chart_title')} data={activityChartData} />
           </Box>
         </Box>
 
-        {/* 2. ROW 2: Task Status Progress Bar */}
         <Box width="100%">
-          <TaskStatusProgressBar
-            data={stats.tasks_by_status}
-            total={stats.total_tasks}
-          />
+          <TaskStatusProgressBar data={stats.tasks_by_status} total={stats.total_tasks} />
         </Box>
 
-        {/* 3. ROW 3: Key Metrics Card */}
         <Box width="100%">
           <KeyMetricsCard stats={stats} />
         </Box>
@@ -129,23 +159,25 @@ export default function UserStatistique() {
         border: `1px solid ${whiteBorder}`,
         boxShadow: softBoxShadow,
         borderRadius: '16px',
-        p: 3,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center',
         color: theme.palette.text.primary,
         position: 'relative',
-        overflowY: 'auto',
+        overflow: 'hidden',
       }}
     >
-      <Typography variant="h5" textAlign="center" mb={2} fontWeight="bold" color={primaryText}>
-        Statistiques
-      </Typography>
+      <Box
+        sx={{
+          flexGrow: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          px: 3,
+          pb: 3,
+        }}
+      >
+        {content}
+      </Box>
 
-      {content}
-
-      {/* Floating Refresh Button */}
       <IconButton
         onClick={fetchStatistics}
         disabled={loading}

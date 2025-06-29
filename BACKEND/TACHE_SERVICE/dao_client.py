@@ -28,4 +28,4 @@ def update_tache(tache_id, tache_data, user_id):
     return requests.put(f"{DAO_URL}/tache/update/{tache_id}", json=tache_data, headers={"user-id": user_id})
 
 def delete_tache(tache_id, user_id):
-    return requests.delete(f"{DAO_URL}/tache/{tache_id}", headers={"user-id": user_id})
+    return requests.delete(f"{DAO_URL}/tache/delete/{tache_id}", headers={"user-id": user_id})

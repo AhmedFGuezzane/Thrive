@@ -1,33 +1,21 @@
+// src/components/UserTasks/TaskDetailsDialog.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Box,
-  Grid,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
-  useTheme,
-  alpha,
-  IconButton
+  Dialog, DialogTitle, DialogContent, DialogActions, Button,
+  Typography, Box, Grid, TextField, FormControl, InputLabel, Select,
+  MenuItem, Checkbox, FormControlLabel, useTheme, alpha, IconButton
 } from '@mui/material';
 
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import TimerIcon from '@mui/icons-material/Timer';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  CalendarToday as CalendarTodayIcon,
+  PriorityHigh as PriorityHighIcon,
+  CheckCircleOutline as CheckCircleOutlineIcon,
+  Timer as TimerIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon
+} from '@mui/icons-material';
 
+import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 import { TimerContext } from '../../contexts/TimerContext';
 import ConfirmationDialog from '../common/ConfirmationDialog';
@@ -42,11 +30,10 @@ export default function TaskDetailsDialog({
   getStatusDisplay,
   showSnackbar,
 }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const {
-    innerBox, outerBox, middleBox, primaryColor, specialColor,
-    secondaryColor, whiteColor, blackColor, specialText, secondaryText,
-    primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow
+    innerBox, middleBox, primaryText, whiteColor, specialColor, whiteBorder, softBoxShadow
   } = useCustomTheme();
 
   const { activeSeanceId } = useContext(TimerContext);
@@ -76,13 +63,9 @@ export default function TaskDetailsDialog({
     setEditedTaskData(prev => ({ ...prev, [name]: newValue }));
   };
 
-  const handleCheckboxChange = (e) => {
-    setIsLinkedToActiveSeance(e.target.checked);
-  };
-
   const handleSave = async () => {
     if (!editedTaskData.titre) {
-      showSnackbar("Le titre de la tâche est requis.", "error");
+      showSnackbar(t("taskDetails.errors.title_required"), "error");
       return;
     }
 
@@ -90,13 +73,13 @@ export default function TaskDetailsDialog({
       const today = new Date().setHours(0, 0, 0, 0);
       const selectedDate = new Date(editedTaskData.date_fin).setHours(0, 0, 0, 0);
       if (selectedDate < today) {
-        showSnackbar("La date de fin ne peut pas être dans le passé.", "error");
+        showSnackbar(t("taskDetails.errors.date_past"), "error");
         return;
       }
     }
 
     try {
-      showSnackbar("Mise à jour de la tâche...", "info", true);
+      showSnackbar(t("taskDetails.snackbar.updating"), "info", true);
       const payload = {
         ...editedTaskData,
         date_fin: editedTaskData.date_fin ? new Date(editedTaskData.date_fin).toISOString() : null,
@@ -107,11 +90,11 @@ export default function TaskDetailsDialog({
         seance_etude_id: isLinkedToActiveSeance ? activeSeanceId : null,
       };
       await onUpdateTask(editedTaskData.id, payload);
-      showSnackbar("Tâche mise à jour !", "success");
+      showSnackbar(t("taskDetails.snackbar.updated"), "success");
       setIsEditMode(false);
       onClose();
     } catch (error) {
-      showSnackbar(`Erreur lors de l'enregistrement: ${error.message}`, "error");
+      showSnackbar(`${t("taskDetails.errors.update_failed")}: ${error.message}`, "error");
     }
   };
 
@@ -121,66 +104,27 @@ export default function TaskDetailsDialog({
       setDeleteDialogOpen(false);
       onClose();
     } catch (error) {
-      showSnackbar(`Erreur lors de la suppression: ${error.message}`, "error");
+      showSnackbar(`${t("taskDetails.errors.delete_failed")}: ${error.message}`, "error");
     }
   };
 
-  if (!taskDetails) return null;
-
-  const inputSx = {
-    borderRadius: '8px',
-    bgcolor: innerBox,
-    color: primaryText,
-    '& .MuiFilledInput-root': {
-      borderRadius: '8px',
-      bgcolor: innerBox,
-      '&:hover': { bgcolor: `${innerBox} !important` },
-      '&.Mui-focused': { bgcolor: `${innerBox} !important` },
-    },
-    disableUnderline: true,
-  };
-
-  const inputLabelSx = {
-    color: primaryText,
-    fontWeight: 'medium',
-  };
-
   const ReadOnlyPill = ({ label, value, icon }) => (
-    <Box
-      sx={{
-        bgcolor: innerBox,
-        backdropFilter: 'blur(5px)',
-        border: whiteBorder,
-        borderRadius: '8px',
-        p: '12px 16px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1,
-        boxShadow: softBoxShadow,
-        color: primaryText,
-        width: '100%',
-        minHeight: '56px',
-        boxSizing: 'border-box',
-        justifyContent: 'flex-start',
-      }}
-    >
-      {icon && React.cloneElement(icon, { sx: { fontSize: 24, color: primaryText, flexShrink: 0 } })}
-      <Typography variant="body2" fontWeight="bold" sx={{ color: primaryText, flexShrink: 0, mr: 0.5 }}>
-        {label}:
-      </Typography>
-      <Typography variant="body1" sx={{ color: primaryText, flexGrow: 1, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        {value}
-      </Typography>
+    <Box sx={{
+      bgcolor: innerBox, border: whiteBorder, borderRadius: '8px',
+      p: '12px 16px', display: 'flex', gap: 1, boxShadow: softBoxShadow,
+      alignItems: 'center', color: primaryText, minHeight: '56px',
+    }}>
+      {icon && React.cloneElement(icon, { sx: { fontSize: 24, color: primaryText } })}
+      <Typography variant="body2" fontWeight="bold">{label}:</Typography>
+      <Typography variant="body1">{value}</Typography>
     </Box>
   );
 
+  if (!taskDetails) return null;
+
   return (
     <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="md"
-        fullWidth
+      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth
         PaperProps={{
           sx: {
             backgroundColor: middleBox,
@@ -189,11 +133,10 @@ export default function TaskDetailsDialog({
             borderRadius: '16px',
             boxShadow: softBoxShadow,
           }
-        }}
-      >
-        <DialogTitle sx={{ fontWeight: 'bold', textAlign: 'center', pb: 1, color: primaryText }}>
-          Modifier la tâche
-          <Typography variant="subtitle1" sx={{ color: primaryText }}>"{taskDetails.titre}"</Typography>
+        }}>
+        <DialogTitle sx={{ textAlign: 'center', color: primaryText }}>
+          {t("taskDetails.title")}
+          <Typography variant="subtitle1">"{taskDetails.titre}"</Typography>
           <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
             <IconButton onClick={() => setIsEditMode(prev => !prev)} sx={{ color: primaryText }}>
               <EditIcon />
@@ -204,161 +147,78 @@ export default function TaskDetailsDialog({
           </Box>
         </DialogTitle>
 
-        <DialogContent
-          dividers
-          sx={{
-            pt: 2,
-            pb: 2,
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: { xs: 2, md: 3 },
-            alignItems: 'flex-start',
-            overflowY: 'auto',
-            color: primaryText,
-          }}
-        >
-          <Box sx={{ flexBasis: { xs: '100%', md: '66%' }, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              name="titre"
-              label="Titre de la tâche"
-              fullWidth
-              variant="filled"
-              value={editedTaskData.titre || ''}
-              onChange={handleFieldChange}
-              disabled={!isEditMode}
-              InputProps={{ disableUnderline: true, sx: inputSx }}
-              InputLabelProps={{ sx: inputLabelSx }}
-            />
-            <TextField
-              name="description"
-              label="Description"
-              fullWidth
-              multiline
-              rows={3}
-              variant="filled"
-              value={editedTaskData.description || ''}
-              onChange={handleFieldChange}
-              disabled={!isEditMode}
-              InputProps={{ disableUnderline: true, sx: inputSx }}
-              InputLabelProps={{ sx: inputLabelSx }}
-            />
+        <DialogContent sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', color: primaryText }}>
+          <Box sx={{ flex: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField name="titre" label={t("taskDetails.fields.title")} variant="filled"
+              fullWidth value={editedTaskData.titre || ''} onChange={handleFieldChange}
+              disabled={!isEditMode} InputProps={{ disableUnderline: true }} />
+
+            <TextField name="description" label={t("taskDetails.fields.description")} variant="filled"
+              fullWidth multiline rows={3} value={editedTaskData.description || ''}
+              onChange={handleFieldChange} disabled={!isEditMode} InputProps={{ disableUnderline: true }} />
 
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth variant="filled" sx={inputSx} disabled={!isEditMode}>
-                  <InputLabel sx={inputLabelSx}>Importance</InputLabel>
-                  <Select
-                    name="importance"
-                    value={editedTaskData.importance || ''}
-                    onChange={handleFieldChange}
-                    disableUnderline
-                    sx={{ color: primaryText }}
-                    MenuProps={{
-                      PaperProps: {
-                        sx: {
-                          backgroundColor: middleBox,
-                          border: `1px solid ${whiteBorder}`,
-                          color: primaryText,
-                        }
-                      }
-                    }}
-                  >
-                    {[1, 2, 3, 4, 5].map((importance) => (
-                      <MenuItem key={importance} value={importance}>
-                        {getImportanceDisplay(importance).label}
+                <FormControl fullWidth variant="filled" disabled={!isEditMode}>
+                  <InputLabel>{t("taskDetails.fields.importance")}</InputLabel>
+                  <Select name="importance" value={editedTaskData.importance || ''}
+                    onChange={handleFieldChange}>
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <MenuItem key={i} value={i}>
+                        {getImportanceDisplay(i).label}
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth variant="filled" sx={inputSx} disabled={!isEditMode}>
-                  <InputLabel sx={inputLabelSx}>Statut</InputLabel>
-                  <Select
-                    name="statut"
-                    value={editedTaskData.statut || ''}
-                    onChange={handleFieldChange}
-                    disableUnderline
-                    sx={{ color: primaryText }}
-                    MenuProps={{
-                      PaperProps: {
-                        sx: {
-                          backgroundColor: middleBox,
-                          border: `1px solid ${whiteBorder}`,
-                          color: primaryText,
-                        }
-                      }
-                    }}
-                  >
-                    <MenuItem value="en attente">En attente</MenuItem>
-                    <MenuItem value="en cours">En cours</MenuItem>
-                    <MenuItem value="terminée">Complétée</MenuItem>
+                <FormControl fullWidth variant="filled" disabled={!isEditMode}>
+                  <InputLabel>{t("taskDetails.fields.status")}</InputLabel>
+                  <Select name="statut" value={editedTaskData.statut || ''} onChange={handleFieldChange}>
+                    <MenuItem value="en attente">{t("task.status.pending")}</MenuItem>
+                    <MenuItem value="en cours">{t("task.status.in_progress")}</MenuItem>
+                    <MenuItem value="terminée">{t("task.status.completed")}</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
             </Grid>
 
-            <TextField
-              name="date_fin"
-              label="Date de fin"
-              type="date"
-              fullWidth
-              variant="filled"
-              value={editedTaskData.date_fin || ''}
-              onChange={handleFieldChange}
-              disabled={!isEditMode}
-              InputLabelProps={{ shrink: true, sx: inputLabelSx }}
-              InputProps={{ disableUnderline: true, sx: inputSx }}
-            />
-            <TextField
-              name="duree_estimee"
-              label="Durée estimée (s)"
-              type="number"
-              fullWidth
-              variant="filled"
-              value={editedTaskData.duree_estimee || ''}
-              onChange={handleFieldChange}
-              disabled={!isEditMode}
-              InputLabelProps={{ sx: inputLabelSx }}
-              InputProps={{ disableUnderline: true, sx: inputSx }}
-            />
+            <TextField name="date_fin" label={t("taskDetails.fields.due_date")} type="date"
+              fullWidth variant="filled" value={editedTaskData.date_fin || ''}
+              onChange={handleFieldChange} disabled={!isEditMode}
+              InputLabelProps={{ shrink: true }} InputProps={{ disableUnderline: true }} />
+
+            <TextField name="duree_estimee" label={t("taskDetails.fields.estimated_duration")}
+              type="number" fullWidth variant="filled" value={editedTaskData.duree_estimee || ''}
+              onChange={handleFieldChange} disabled={!isEditMode}
+              InputProps={{ disableUnderline: true }} />
+
             <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isLinkedToActiveSeance}
-                  onChange={handleCheckboxChange}
-                  disabled={!activeSeanceId || !isEditMode}
-                  sx={{ color: primaryText }}
-                />
-              }
-              label="Ajouter à la séance active"
-              sx={{ color: primaryText, mt: 1 }}
+              control={<Checkbox checked={isLinkedToActiveSeance}
+                onChange={e => setIsLinkedToActiveSeance(e.target.checked)}
+                disabled={!activeSeanceId || !isEditMode} />}
+              label={t("taskDetails.fields.link_to_seance")}
             />
           </Box>
 
-          <Box sx={{ flexBasis: { xs: '100%', md: '33%' }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            <ReadOnlyPill label="Priorité" value={editedTaskData.priorite || 'N/A'} icon={<PriorityHighIcon />} />
-            <ReadOnlyPill label="Est Terminée" value={editedTaskData.est_terminee ? 'Oui' : 'Non'} icon={<CheckCircleOutlineIcon />} />
-            <ReadOnlyPill label="Date de création" value={editedTaskData.date_creation ? new Date(editedTaskData.date_creation).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
-            <ReadOnlyPill label="Date de début" value={editedTaskData.date_debut ? new Date(editedTaskData.date_debut).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
-            <ReadOnlyPill label="Durée Réelle" value={editedTaskData.duree_reelle ? `${editedTaskData.duree_reelle}s` : 'N/A'} icon={<TimerIcon />} />
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <ReadOnlyPill label={t("taskDetails.fields.priority")} value={editedTaskData.priorite || 'N/A'} icon={<PriorityHighIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.is_completed")} value={editedTaskData.est_terminee ? t("general.yes") : t("general.no")} icon={<CheckCircleOutlineIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.creation_date")} value={editedTaskData.date_creation ? new Date(editedTaskData.date_creation).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.start_date")} value={editedTaskData.date_debut ? new Date(editedTaskData.date_debut).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.actual_duration")} value={editedTaskData.duree_reelle ? `${editedTaskData.duree_reelle}s` : 'N/A'} icon={<TimerIcon />} />
           </Box>
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'center', gap: 2 }}>
-          <Button onClick={onClose} sx={{ color: primaryText }}>Annuler</Button>
-          <Button
-            onClick={handleSave}
-            disabled={!isEditMode}
-            variant="contained"
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button onClick={onClose}>{t("general.cancel")}</Button>
+          <Button onClick={handleSave} disabled={!isEditMode} variant="contained"
             sx={{
               bgcolor: alpha(specialColor, 1),
               color: whiteColor,
               '&:hover': { bgcolor: alpha(specialColor, 0.8) },
-              borderRadius: '8px'
-            }}
-          >
-            Enregistrer
+            }}>
+            {t("general.save")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -368,10 +228,10 @@ export default function TaskDetailsDialog({
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={handleDeleteConfirmed}
         content={{
-          title: "Supprimer la tâche",
-          text: "Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action est irréversible.",
-          confirmButtonText: "Supprimer",
-          confirmButtonColor: "error"
+          title: t("taskDetails.delete.title"),
+          text: t("taskDetails.delete.text"),
+          confirmButtonText: t("taskDetails.delete.confirm"),
+          confirmButtonColor: "error",
         }}
       />
     </>
