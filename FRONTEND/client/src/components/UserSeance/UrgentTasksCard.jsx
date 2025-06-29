@@ -1,85 +1,114 @@
-import React from 'react';
-import { Box, Typography, Button, useTheme } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { alpha } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
+// src/components/UserSeance/UrgentTasksCard.jsx
 
-export default function SeanceInactiveState({ onCreateSeanceClick }) {
+import React, { useState, useEffect, useContext } from 'react';
+import { Box, Typography, CircularProgress, Chip, useTheme } from '@mui/material';
+import { TimerContext } from '../../contexts/TimerContext';
+import { fetchTasksBySeanceId } from '../../utils/taskService.jsx';
+import { getImportanceDisplay } from '../../utils/taskUtils.js';
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
+
+export default function UrgentTasksCard() {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const { innerBox, whiteBorder, softBoxShadow, primaryColor } = useCustomTheme();
+  const { activeSeanceId } = useContext(TimerContext);
+  const [urgentTasks, setUrgentTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUrgentTasks = async () => {
+      if (!activeSeanceId) {
+        setUrgentTasks([]);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const allTasks = await fetchTasksBySeanceId(activeSeanceId);
+        const urgentAndPending = allTasks.filter(task => {
+          const isUrgent = task.importance === 1;
+          const isNotCompleted = !['terminée', 'complétée', 'complete'].includes(String(task.statut).toLowerCase());
+          return isUrgent && isNotCompleted;
+        });
+        setUrgentTasks(urgentAndPending);
+      } catch (error) {
+        console.error("Failed to fetch urgent tasks:", error);
+        setUrgentTasks([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUrgentTasks();
+  }, [activeSeanceId]);
 
   return (
     <Box
       sx={{
+        width: '33%',
+        height: '98%',
+        p: 2,
+        borderRadius: '16px',
+        bgcolor: innerBox,
+        backdropFilter: 'blur(10px)',
+        border: `1px solid ${whiteBorder}`,
+        boxShadow: softBoxShadow,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '80vh',
-        width: '65%',
-        maxWidth: '800px',
-        margin: 'auto',
-        gap: 3,
-        p: 5,
-        bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
-        backdropFilter: 'blur(25px) saturate(180%)',
-        border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.2)'}`,
-        borderRadius: '24px',
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
-        transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
-        '&:hover': {
-          boxShadow: '0 12px 48px 0 rgba(0, 0, 0, 0.3)',
-          transform: 'scale(1.02) perspective(1000px) rotateX(2deg)',
-        },
       }}
     >
-      <Typography
-        variant="h3"
-        fontWeight={800}
-        sx={{
-          color: theme.palette.text.primary,
-          textShadow: `0 1px 3px ${alpha(theme.palette.text.primary, 0.6)}`,
-        }}
-      >
-        {t("seanceInactive.title")}
+      <Typography variant="h6" fontWeight="bold" textAlign="center" gutterBottom color={primaryColor}>
+        Tâches Urgentes (Séance Active)
       </Typography>
-      <Typography
-        variant="h5"
-        sx={{
-          color: theme.palette.text.secondary,
-          textAlign: 'center',
-          mb: 2,
-        }}
-      >
-        {t("seanceInactive.subtitle")}
-      </Typography>
-      <Button
-        variant="contained"
-        onClick={onCreateSeanceClick}
-        sx={{
-          background: `linear-gradient(145deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
-          color: theme.palette.primary.contrastText,
-          fontWeight: 'bold',
-          borderRadius: '12px',
-          px: 2.5,
-          py: 1,
-          fontSize: '1rem',
-          boxShadow: `0 4px 15px ${alpha(theme.palette.primary.main, 0.4)}`,
-          transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-          '&:hover': {
-            transform: 'translateY(-3px) scale(1.05)',
-            boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.6)}`,
-            background: `linear-gradient(145deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
-          },
-          '&:active': {
-            transform: 'translateY(-1px) scale(0.98)',
-            boxShadow: `0 2px 10px ${alpha(theme.palette.primary.main, 0.3)}`,
-          },
-        }}
-        startIcon={<AddIcon sx={{ fontSize: '1.25rem' }} />}
-      >
-        {t("seanceInactive.button")}
-      </Button>
+      {loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" flexGrow={1}>
+          <CircularProgress size={30} sx={{ color: theme.palette.primary.main }} />
+        </Box>
+      ) : urgentTasks.length === 0 ? (
+        <Box display="flex" justifyContent="center" alignItems="center" flexGrow={1}>
+          <Typography variant="body2" color="text.secondary">
+            Aucune tâche urgente pour cette séance.
+          </Typography>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            pr: 1, // Add padding for scrollbar
+            pt : 1.5,
+          }}
+        >
+          {urgentTasks.map(task => (
+            <Box
+              key={task.id}
+              sx={{
+                p: 1.5,
+                mb: 1,
+                bgcolor: innerBox,
+                borderRadius: '10px',
+                border: `1px solid ${whiteBorder}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+              }}
+            >
+              <Chip
+                label={getImportanceDisplay(task.importance).label}
+                size="small"
+                sx={{
+                  bgcolor: getImportanceDisplay(task.importance).bgColor,
+                  color: getImportanceDisplay(task.importance).textColor,
+                  fontWeight: 'bold',
+                }}
+              />
+              <Typography variant="body1" fontWeight="medium" sx={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: primaryColor }}>
+                {task.titre}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      )}
     </Box>
   );
 }
