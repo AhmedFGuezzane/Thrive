@@ -1,18 +1,15 @@
+// src/components/UserSeance/TaskStatusTracker.jsx
+
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, CircularProgress, Grid, useTheme } from '@mui/material';
 import { TimerContext } from '../../contexts/TimerContext';
 import { fetchTasksBySeanceId } from '../../utils/taskService.jsx';
 import { getStatusDisplay } from '../../utils/taskUtils.js';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
-import { useTranslation } from 'react-i18next';
 
 export default function TaskStatusTracker() {
   const theme = useTheme();
-  const { t } = useTranslation();
-  const {
-    innerBox, middleBox, whiteBorder, softBoxShadow, primaryText
-  } = useCustomTheme();
-
+  const { innerBox, whiteBorder, softBoxShadow, primaryText } = useCustomTheme();
   const { activeSeanceId } = useContext(TimerContext);
   const [taskCounts, setTaskCounts] = useState({ 'en attente': 0, 'en cours': 0, 'terminée': 0 });
   const [loading, setLoading] = useState(true);
@@ -51,10 +48,10 @@ export default function TaskStatusTracker() {
 
   return (
     <Box
-      bgcolor={middleBox}
+      bgcolor={innerBox}
       sx={{
-        flex: '1 1 30%',
-        width: '30%',
+        flex: '1 1 33%',
+        width: '33%',
         height: '98%',
         p: 2,
         borderRadius: '16px',
@@ -65,7 +62,7 @@ export default function TaskStatusTracker() {
       }}
     >
       <Typography variant="h6" fontWeight="bold" textAlign="center" gutterBottom color={primaryText}>
-        {t('taskStatusTracker.title')}
+        Progression des tâches
       </Typography>
 
       {loading ? (
@@ -93,7 +90,7 @@ export default function TaskStatusTracker() {
                     {taskCounts[status]}
                   </Typography>
                   <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
-                    {t(`taskStatusTracker.${status}`)}
+                    {display.label}
                   </Typography>
                 </Box>
               </Grid>
