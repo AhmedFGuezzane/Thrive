@@ -1,26 +1,19 @@
-// src/components/UserSeance/TimerDisplayCard.jsx
 import React, { useContext } from 'react';
-import { Box, Typography, Grid, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
-import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility
+import { Box, Typography, useTheme } from '@mui/material';
 import { TimerContext } from '../../contexts/TimerContext';
-
-// Import icons for each card
-import ScheduleIcon from '@mui/icons-material/Schedule';
 import HourglassFullIcon from '@mui/icons-material/HourglassFull';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
-
-
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
-
+import { useTranslation } from 'react-i18next';
 
 export default function TimerDisplayCard() {
   const { phase, timeLeft, timeElapsedTotal, pomodoroConfig, upcomingBreakType } = useContext(TimerContext);
-  // --- ADDED useTheme hook for dynamic styling ---
-
   const theme = useTheme();
-const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
-
+  const { t } = useTranslation();
+  const {
+    innerBox, whiteBorder, softBoxShadow, specialText, primaryText
+  } = useCustomTheme();
 
   const formatTime = (totalSeconds) => {
     if (isNaN(totalSeconds) || totalSeconds < 0) return "00:00:00";
@@ -32,12 +25,13 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
 
   const getNextPhaseLabel = () => {
     switch (phase) {
-      case 'study': return `pause (${upcomingBreakType})`;
-      case 'break': return 'étude';
-      case 'awaiting_break': return `pause (${upcomingBreakType})`;
-      case 'awaiting_study': return 'étude';
-      case 'completed': return 'séance';
-      case 'idle': default: return 'phase';
+      case 'study': return t('timerDisplayCard.nextPhase.shortBreak', { type: upcomingBreakType });
+      case 'break': return t('timerDisplayCard.nextPhase.study');
+      case 'awaiting_break': return t('timerDisplayCard.nextPhase.shortBreak', { type: upcomingBreakType });
+      case 'awaiting_study': return t('timerDisplayCard.nextPhase.study');
+      case 'completed': return t('timerDisplayCard.nextPhase.session');
+      case 'idle':
+      default: return t('timerDisplayCard.nextPhase.phase');
     }
   };
 
@@ -46,10 +40,6 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
       case 'study':
       case 'break':
         return formatTime(timeLeft);
-      case 'awaiting_break':
-      case 'awaiting_study':
-      case 'completed':
-      case 'idle':
       default:
         return '--:--:--';
     }
@@ -60,22 +50,21 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
   const Card = ({ title, value, icon, subtitle }) => (
     <Box
       sx={{
-        // --- UPDATED to use more opaque dynamic theme colors ---
         backgroundColor: innerBox,
         backdropFilter: 'blur(10px)',
         border: `1px solid ${whiteBorder}`,
         boxShadow: softBoxShadow,
         borderRadius: '16px',
-        p: 2, // Reduced padding to make the card smaller
+        p: 2,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        minHeight: '150px', // Reduced minimum height
+        minHeight: '150px',
         flexGrow: 1,
         height: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
       }}
     >
       {icon && React.cloneElement(icon, { sx: { fontSize: 40, color: specialText, mb: 1 } })}
@@ -101,31 +90,28 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
         width: '100%',
         height: '30%',
         alignItems: 'stretch',
-        flexWrap: 'wrap', // Allows wrapping on smaller screens
+        flexWrap: 'wrap',
       }}
     >
-      {/* Card 1: Time Left (Session) */}
       <Box sx={{ flex: '1 1 30%', minWidth: '150px' }}>
         <Card
-          title="Temps Restant (Séance)"
+          title={t('timerDisplayCard.remainingTime')}
           value={formatTime(estimatedTimeLeft)}
           icon={<HourglassTopIcon />}
         />
       </Box>
-      
-      {/* Card 2: Time Elapsed (Total) */}
+
       <Box sx={{ flex: '1 1 30%', minWidth: '150px' }}>
         <Card
-          title="Temps Total Écoulé"
+          title={t('timerDisplayCard.elapsedTime')}
           value={formatTime(timeElapsedTotal)}
           icon={<HourglassFullIcon />}
         />
       </Box>
-      
-      {/* Card 3: Time Until Next Phase */}
+
       <Box sx={{ flex: '1 1 30%', minWidth: '150px' }}>
         <Card
-          title={`Temps jusqu'à la prochaine ${getNextPhaseLabel()}`}
+          title={`${t('timerDisplayCard.untilNext')} ${getNextPhaseLabel()}`}
           value={getTimeUntilNextPhase()}
           icon={<FastForwardIcon />}
         />

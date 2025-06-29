@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { TimerContext } from '../../contexts/TimerContext';
+import { useTranslation } from 'react-i18next';
 
 import TimerIcon from '@mui/icons-material/Timer';
 import HourglassFullIcon from '@mui/icons-material/HourglassFull';
@@ -20,9 +21,8 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
-
 export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
-
+  const { t } = useTranslation();
   const theme = useTheme();
   const outerBox = theme.palette.custom.box.outer;
   const innerBox = theme.palette.custom.box.inner;
@@ -36,11 +36,7 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
   const primaryText = theme.palette.custom.text.primary;
 
   const whiteBorder = theme.palette.custom.border.white;
-  const blackBorder = theme.palette.custom.border.black;
-  const specialBorder = theme.palette.custom.border.special;
-
   const softBoxShadow = theme.palette.custom.boxShadow.soft;
-
 
   const { pomodoroConfig, timeElapsedTotal, phase, timeLeft } = useContext(TimerContext);
 
@@ -55,22 +51,30 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
   };
 
   const getNextPhaseInfo = () => {
-    if (!pomodoroConfig) return { label: 'N/A', value: '00:00:00' };
+    if (!pomodoroConfig) return { label: t('activeSeance.status.na'), value: '00:00:00' };
     switch (phase) {
-      case 'study': return { label: 'Prochaine Pause dans', value: formatTime(timeLeft) };
-      case 'break': return { label: 'Prochaine Étude dans', value: formatTime(timeLeft) };
-      case 'awaiting_break': return { label: 'Prêt pour', value: 'La Pause' };
-      case 'awaiting_study': return { label: 'Prêt pour', value: "L'Étude" };
-      case 'completed': return { label: 'Statut', value: 'Terminée' };
+      case 'study': return { label: t('activeSeance.status.next_break'), value: formatTime(timeLeft) };
+      case 'break': return { label: t('activeSeance.status.next_study'), value: formatTime(timeLeft) };
+      case 'awaiting_break': return { label: t('activeSeance.status.ready_for'), value: t('activeSeance.status.break') };
+      case 'awaiting_study': return { label: t('activeSeance.status.ready_for'), value: t('activeSeance.status.study') };
+      case 'completed': return { label: t('activeSeance.status.status'), value: t('activeSeance.status.done') };
       case 'idle':
-      default: return { label: 'Inactif', value: '00:00:00' };
+      default: return { label: t('activeSeance.status.idle'), value: '00:00:00' };
     }
   };
 
   const timerViews = [
-    { label: "Temps Total Écoulé", value: formatTime(timeElapsedTotal), icon: <HourglassFullIcon /> },
-    { label: "Temps Restant (Séance)", value: formatTime(pomodoroConfig ? pomodoroConfig.duree_seance_totale - timeElapsedTotal : 0), icon: <ScheduleIcon /> },
-    { label: getNextPhaseInfo().label, value: getNextPhaseInfo().value, icon: getNextPhaseInfo().label.includes('Prêt') ? <PlayCircleOutlineIcon /> : <TimerIcon /> }
+    { label: t('activeSeance.timer.elapsed'), value: formatTime(timeElapsedTotal), icon: <HourglassFullIcon /> },
+    {
+      label: t('activeSeance.timer.remaining_total'),
+      value: formatTime(pomodoroConfig ? pomodoroConfig.duree_seance_totale - timeElapsedTotal : 0),
+      icon: <ScheduleIcon />
+    },
+    {
+      label: getNextPhaseInfo().label,
+      value: getNextPhaseInfo().value,
+      icon: getNextPhaseInfo().label.includes(t('activeSeance.status.ready_for')) ? <PlayCircleOutlineIcon /> : <TimerIcon />
+    }
   ];
 
   const BigTimerDisplay = ({ label, value }) => (
@@ -122,7 +126,6 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
       alignItems: 'center',
       gap: 1.5,
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-      color: 'text.primary',
       width: '100%',
       minHeight: '50px',
     }}>
@@ -187,10 +190,10 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
           },
         }}>
           <Typography variant="h5" fontWeight="bold">
-            Aucune séance active
+            {t('activeSeance.no_active')}
           </Typography>
           <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
-            Commencez une nouvelle session pour suivre votre progression !
+            {t('activeSeance.no_active_sub')}
           </Typography>
           <Button
             variant="contained"
@@ -198,23 +201,22 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
             sx={{
               fontWeight: 'bold',
               borderRadius: '8px',
-              bgcolor: alpha(specialText,1),
+              bgcolor: alpha(specialText, 1),
               px: 3,
               py: 1.2,
               '&:hover': {
-                bgcolor: alpha(specialText,0.8),
+                bgcolor: alpha(specialText, 0.8),
                 transform: 'scale(1.05)',
               },
               transition: 'all 0.3s ease-in-out',
             }}
           >
-            Créer une séance
+            {t('activeSeance.create_button')}
           </Button>
         </Box>
       ) : (
         <>
           <Box sx={{ flexBasis: 'auto', mb: 2 }}>
-
             <Box sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -238,18 +240,18 @@ export default function ActiveSeanceInfo({ onCreateSeanceClick }) {
 
           <Box justifyContent="space-between" width="100%" display="flex" sx={{ overflowY: 'auto', pr: 1, mb: 2 }}>
             <Grid container width="100%" display="flex" justifyContent="center" spacing={1.5}>
-              <Grid item width="40%"><InfoPill label="Thème" value={pomodoroConfig.theme || 'N/A'} icon={<EventNoteIcon />} /></Grid>
-              <Grid item width="40%"><InfoPill label="Durée Étude" value={formatTime(pomodoroConfig.duree_seance)} icon={<TimerIcon />} /></Grid>
-              <Grid item width="40%"><InfoPill label="Durée Pause Courte" value={formatTime(pomodoroConfig.duree_pause_courte)} icon={<TimerIcon />} /></Grid>
-              <Grid item width="40%"><InfoPill label="Durée Pause Longue" value={formatTime(pomodoroConfig.duree_pause_longue)} icon={<TimerIcon />} /></Grid>
-              <Grid item width="40%"><InfoPill label="Cycles avant Pause Longue" value={pomodoroConfig.nbre_pomodoro_avant_pause_longue} icon={<LoopIcon />} /></Grid>
-              <Grid item width="40%"><InfoPill label="Durée Totale de la Séance" value={formatTime(pomodoroConfig.duree_seance_totale)} icon={<HourglassFullIcon />} /></Grid>
+              <Grid item width="40%"><InfoPill label={t('activeSeance.theme')} value={pomodoroConfig.theme || 'N/A'} icon={<EventNoteIcon />} /></Grid>
+              <Grid item width="40%"><InfoPill label={t('activeSeance.study_duration')} value={formatTime(pomodoroConfig.duree_seance)} icon={<TimerIcon />} /></Grid>
+              <Grid item width="40%"><InfoPill label={t('activeSeance.short_break')} value={formatTime(pomodoroConfig.duree_pause_courte)} icon={<TimerIcon />} /></Grid>
+              <Grid item width="40%"><InfoPill label={t('activeSeance.long_break')} value={formatTime(pomodoroConfig.duree_pause_longue)} icon={<TimerIcon />} /></Grid>
+              <Grid item width="40%"><InfoPill label={t('activeSeance.cycles_before_long')} value={pomodoroConfig.nbre_pomodoro_avant_pause_longue} icon={<LoopIcon />} /></Grid>
+              <Grid item width="40%"><InfoPill label={t('activeSeance.total_duration')} value={formatTime(pomodoroConfig.duree_seance_totale)} icon={<HourglassFullIcon />} /></Grid>
             </Grid>
           </Box>
 
           <Box sx={{ flexBasis: 'auto', p: 1, pt: 0, mt: 'auto' }}>
             <Typography variant="caption" color="text.disabled" sx={{ textAlign: 'center' }}>
-              Plus de détails à venir...
+              {t('activeSeance.more_coming')}
             </Typography>
           </Box>
         </>

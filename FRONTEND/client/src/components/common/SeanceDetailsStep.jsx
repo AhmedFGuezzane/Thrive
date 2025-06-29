@@ -1,19 +1,19 @@
 // src/components/UserHome/SeanceDetailsStep.jsx
 import React from 'react';
-import { Box, TextField, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
+import { Box, TextField, useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export default function SeanceDetailsStep({ formData, handleFormChange }) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const textFieldInputPropsSx = {
     borderRadius: '8px',
-    // --- UPDATED: Use dynamic background and text color ---
     bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
     color: theme.palette.text.primary,
   };
 
   const inputLabelPropsSx = {
-    // --- UPDATED: Use dynamic label color ---
     color: theme.palette.text.secondary,
   };
 
@@ -22,7 +22,7 @@ export default function SeanceDetailsStep({ formData, handleFormChange }) {
       <TextField
         fullWidth
         margin="normal"
-        label="Type de séance"
+        label={t("seanceForm.type_seance")}
         name="type_seance"
         value={formData.type_seance}
         onChange={handleFormChange}
@@ -36,7 +36,7 @@ export default function SeanceDetailsStep({ formData, handleFormChange }) {
       <TextField
         fullWidth
         margin="normal"
-        label="Nom de la séance"
+        label={t("seanceForm.nom")}
         name="nom"
         value={formData.nom}
         onChange={handleFormChange}

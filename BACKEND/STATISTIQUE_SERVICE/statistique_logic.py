@@ -12,27 +12,27 @@ def compute_statistiques(seances, taches):
     total_tasks = len(taches)
     completed_tasks = sum(1 for t in taches if t.get("est_terminee"))
     overdue_tasks = sum(
-        1 for t in taches if not t.get("est_terminee") and t.get("date_fin") and t["date_fin"] < now.isoformat())
+        1 for t in taches if not t.get("est_terminee") and t.get("date_fin") and t["date_fin"] < now.isoformat()
+    )
     taux_completion = completed_tasks / total_tasks if total_tasks else 0
 
     if taches:
-        first_task_date = min(datetime.fromisoformat(t["date_creation"]) for t in taches if t.get("date_creation"))
+        first_task_date = min(
+            datetime.fromisoformat(t["date_creation"]) for t in taches if t.get("date_creation")
+        )
         days_range = max(1, (now - first_task_date).days)
         taches_par_jour = total_tasks / days_range
     else:
         taches_par_jour = 0
 
-    # --- ADDED: Calculate task counts by status ---
+    # --- Task status breakdown ---
     tasks_by_status = defaultdict(int)
     for tache in taches:
         status = tache.get("statut", "Autre")
-        # Ensure status is lowercase and handled correctly based on your front-end logic.
-        # Your front-end uses 'en attente', 'en cours', and 'terminée'
         if status:
             tasks_by_status[status.lower()] += 1
         else:
-            tasks_by_status['Autre'] += 1
-    # --------------------------------------------------
+            tasks_by_status["Autre"] += 1
 
     # === Seances ===
     for s in seances:
@@ -40,6 +40,7 @@ def compute_statistiques(seances, taches):
             jours_actifs.add(s["date_debut"][:10])
         total_pomodoros += s.get("nbre_pomodoro_effectues", 0)
 
+    # --- Compute streak ---
     sorted_days = sorted(jours_actifs, reverse=True)
     streak = 1 if sorted_days else 0
     for i in range(1, len(sorted_days)):
@@ -48,6 +49,7 @@ def compute_statistiques(seances, taches):
         else:
             break
 
+    # --- Activity per weekday ---
     weekday_counts = defaultdict(int)
     for s in seances:
         if s.get("date_debut"):
@@ -62,6 +64,17 @@ def compute_statistiques(seances, taches):
     meilleur_jour = max(activite_par_jour.items(), key=lambda x: x[1])[0] if activite_par_jour else None
     derniere_date = max((s["date_debut"] for s in seances if s.get("date_debut")), default=None)
 
+    # --- Focus score logic (normalized to 0–100) ---
+    if completed_tasks > 0 and total_tasks > 0:
+        average_pomodoros_per_task = total_pomodoros / total_tasks
+        raw_focus_score = completed_tasks * average_pomodoros_per_task
+
+        # Define your "ideal max" raw score for normalization
+        ideal_max_focus_score = 60  # Adjust this based on real app data
+        normalized_focus_score = round(min(100, (raw_focus_score / ideal_max_focus_score) * 100), 2)
+    else:
+        normalized_focus_score = 0
+
     return {
         "nbre_taches_completees": completed_tasks,
         "taux_completion_taches": round(taux_completion, 2),
@@ -69,11 +82,10 @@ def compute_statistiques(seances, taches):
         "nbre_taches_retard": overdue_tasks,
         "nbre_jours_consecutifs_actifs": streak,
         "derniere_date_active": derniere_date,
-        "focus_score": completed_tasks * total_pomodoros,
+        "focus_score": normalized_focus_score,
         "meilleur_jour": meilleur_jour,
         "activite_par_jour_semaine": activite_par_jour,
         "date_mise_a_jour": now.isoformat(),
-        # --- ADDED THE NEW METRIC ---
         "tasks_by_status": dict(tasks_by_status),
-        "total_tasks": total_tasks
+        "total_tasks": total_tasks,
     }

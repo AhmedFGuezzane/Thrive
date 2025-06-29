@@ -1,3 +1,4 @@
+// src/components/common/GlobalPhaseTransition.jsx
 import React, { useContext } from 'react';
 import { TimerContext } from '../../contexts/TimerContext';
 import PhaseTransitionDialog from './PhaseTransitionDialog';
@@ -18,6 +19,10 @@ export default function GlobalPhaseTransition() {
   };
 
   return (
-    <PhaseTransitionDialog open={showDialog} phase={phase} onConfirm={handleDialogConfirm} />
+    <PhaseTransitionDialog
+      open={showDialog}
+      phase={phase}
+      onConfirm={handleDialogConfirm}
+    />
   );
 }

@@ -6,33 +6,30 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import StopIcon from '@mui/icons-material/Stop';
 import AddIcon from '@mui/icons-material/Add';
+
 import { TimerContext } from '../../contexts/TimerContext';
 import PhaseTransitionDialog from './PhaseTransitionDialog';
 import StopTimerConfirmDialog from './StopTimerConfirmDialog';
-import SnackbarAlert from './SnackbarAlert'; // <-- Import SnackbarAlert
+import SnackbarAlert from './SnackbarAlert';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
+import { useTranslation } from 'react-i18next';
 
 export default function TimerBar({ onCreateClick, config }) {
   const theme = useTheme();
-  const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow } = useCustomTheme();
+  const { t } = useTranslation();
 
   const {
-    phase,
-    isPaused,
-    timeLeft,
-    timeElapsedTotal,
-    upcomingBreakType,
-    startBreak,
-    resumeStudy,
-    stopSeance, // This is the function we'll enhance
-    pauseTimer,
-    resumeTimer,
-    loaded,
+    innerBox, whiteBorder, specialText, specialColor,
+    secondaryColor, primaryText
+  } = useCustomTheme();
+
+  const {
+    phase, isPaused, timeLeft, timeElapsedTotal,
+    upcomingBreakType, startBreak, resumeStudy,
+    stopSeance, pauseTimer, resumeTimer, loaded
   } = useContext(TimerContext);
 
   const [openStopConfirmDialog, setOpenStopConfirmDialog] = useState(false);
-
-  // --- NEW STATE FOR SNACKBAR ALERT ---
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -50,12 +47,13 @@ export default function TimerBar({ onCreateClick, config }) {
 
   const getPhaseLabel = () => {
     switch (phase) {
-      case 'study': return '🟪 Phase : étude';
-      case 'break': return upcomingBreakType === 'longue' ? '🟩 Phase : pause longue' : '🟦 Phase : pause courte';
-      case 'awaiting_break': return '⏸ Phase : en attente de pause';
-      case 'awaiting_study': return '⏸ Phase : en attente de reprise';
-      case 'completed': return '✅ Phase : terminée';
-      case 'idle': default: return null;
+      case 'study': return t('timer.phase.study');
+      case 'break': return upcomingBreakType === 'longue' ? t('timer.phase.longBreak') : t('timer.phase.shortBreak');
+      case 'awaiting_break': return t('timer.phase.awaitingBreak');
+      case 'awaiting_study': return t('timer.phase.awaitingStudy');
+      case 'completed': return t('timer.phase.completed');
+      case 'idle':
+      default: return null;
     }
   };
 
@@ -63,7 +61,6 @@ export default function TimerBar({ onCreateClick, config }) {
   const isStudy = phase === 'study';
   const isBreak = phase === 'break';
   const isComplete = phase === 'completed';
-
   const showPhaseTransitionDialog = loaded && (phase === 'awaiting_break' || phase === 'awaiting_study');
 
   const handlePhaseTransitionDialogConfirm = () => {
@@ -71,52 +68,17 @@ export default function TimerBar({ onCreateClick, config }) {
     else if (phase === 'awaiting_study') resumeStudy();
   };
 
-  const handleStopButtonClick = () => {
-    setOpenStopConfirmDialog(true);
-  };
-
-  const handleStopDialogClose = () => {
-    setOpenStopConfirmDialog(false);
-  };
-
-  // --- MODIFIED handleStopDialogConfirm TO USE SNACKBAR ---
   const handleStopDialogConfirm = async () => {
-    setOpenStopConfirmDialog(false); // Close the confirmation dialog immediately
-
-    setSnackbar({
-      open: true,
-      message: 'Arrêt de la séance en cours...',
-      severity: 'info',
-      loading: true,
-    });
+    setOpenStopConfirmDialog(false);
+    setSnackbar({ open: true, message: t('timer.snackbar.stopping'), severity: 'info', loading: true });
 
     try {
-      // Assuming stopSeance is an async function or you'd wrap it in a Promise
-      await Promise.resolve(stopSeance()); // Wrap stopSeance in Promise.resolve if it's not async
-
-      setSnackbar({
-        open: true,
-        message: 'Séance arrêtée avec succès !',
-        severity: 'success',
-        loading: false,
-      });
+      await Promise.resolve(stopSeance());
+      setSnackbar({ open: true, message: t('timer.snackbar.stopped'), severity: 'success', loading: false });
     } catch (error) {
-      console.error("Erreur lors de l'arrêt de la séance:", error);
-      setSnackbar({
-        open: true,
-        message: "Échec de l'arrêt de la séance. Veuillez réessayer.",
-        severity: 'error',
-        loading: false,
-      });
+      console.error("Erreur arrêt séance:", error);
+      setSnackbar({ open: true, message: t('timer.snackbar.error'), severity: 'error', loading: false });
     }
-  };
-
-  // Handler to close the snackbar
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbar(prev => ({ ...prev, open: false }));
   };
 
   return (
@@ -138,42 +100,38 @@ export default function TimerBar({ onCreateClick, config }) {
           color: primaryText
         }}
       >
-        {/* Left: Info */}
+        {/* Left Info */}
         <Box>
-          {!isIdle && (
+          {!isIdle ? (
             <>
               <Typography variant="h6" fontWeight="medium" sx={{ color: primaryText }}>
-                Temps écoulé : {formatTime(timeElapsedTotal)}
+                {t('timer.elapsed')}: {formatTime(timeElapsedTotal)}
               </Typography>
               <Typography variant="body2" fontStyle="italic" sx={{ color: primaryText }}>
                 {getPhaseLabel()}
               </Typography>
-
-              {phase === 'study' && (
+              {isStudy && (
                 <Typography variant="body2" fontStyle="italic" sx={{ color: primaryText }}>
-                  Prochaine pause {upcomingBreakType} dans : {formatTime(timeLeft)}
+                  {t('timer.nextShortBreakIn')} {formatTime(timeLeft)}
                 </Typography>
               )}
-
-              {phase === 'break' && (
+              {isBreak && (
                 <Typography variant="body2" fontStyle="italic" sx={{ color: primaryText }}>
-                  Prochaine séance d’étude dans : {formatTime(timeLeft)}
+                  {t('timer.nextStudyIn')} {formatTime(timeLeft)}
                 </Typography>
               )}
             </>
-          )}
-
-          {isIdle && (
+          ) : (
             <Typography variant="body2" fontStyle="italic" sx={{ color: primaryText }}>
-              Aucune séance active. Cliquez pour en créer une.
+              {t('timer.noActiveSession')}
             </Typography>
           )}
         </Box>
 
-        {/* Right: Controls */}
+        {/* Controls */}
         <Box display="flex" alignItems="center">
           {isIdle && (
-            <Tooltip title="Créer une séance">
+            <Tooltip title={t('timer.actions.create')}>
               <IconButton
                 onClick={onCreateClick}
                 sx={{
@@ -191,7 +149,7 @@ export default function TimerBar({ onCreateClick, config }) {
           )}
 
           {(isStudy || isBreak) && (
-            <Tooltip title={isPaused ? 'Reprendre' : 'Pause'}>
+            <Tooltip title={t(isPaused ? 'timer.actions.resume' : 'timer.actions.pause')}>
               <IconButton
                 onClick={isPaused ? resumeTimer : pauseTimer}
                 sx={{
@@ -203,17 +161,15 @@ export default function TimerBar({ onCreateClick, config }) {
                   ml: 2
                 }}
               >
-                {isPaused
-                  ? <PlayArrowIcon fontSize="large" />
-                  : <PauseIcon fontSize="large" />}
+                {isPaused ? <PlayArrowIcon fontSize="large" /> : <PauseIcon fontSize="large" />}
               </IconButton>
             </Tooltip>
           )}
 
           {!isIdle && !isComplete && (
-            <Tooltip title="Arrêter la séance">
+            <Tooltip title={t('timer.actions.stop')}>
               <IconButton
-                onClick={handleStopButtonClick}
+                onClick={() => setOpenStopConfirmDialog(true)}
                 sx={{
                   color: theme.palette.error.contrastText,
                   bgcolor: alpha(theme.palette.error.main, 0.4),
@@ -230,21 +186,24 @@ export default function TimerBar({ onCreateClick, config }) {
         </Box>
       </Box>
 
-      <PhaseTransitionDialog open={showPhaseTransitionDialog} phase={phase} onConfirm={handlePhaseTransitionDialogConfirm} />
+      <PhaseTransitionDialog
+        open={showPhaseTransitionDialog}
+        phase={phase}
+        onConfirm={handlePhaseTransitionDialogConfirm}
+      />
 
       <StopTimerConfirmDialog
         open={openStopConfirmDialog}
-        onClose={handleStopDialogClose}
+        onClose={() => setOpenStopConfirmDialog(false)}
         onConfirm={handleStopDialogConfirm}
       />
 
-      {/* --- RENDER THE SNACKBAR ALERT --- */}
       <SnackbarAlert
         open={snackbar.open}
         message={snackbar.message}
         severity={snackbar.severity}
         loading={snackbar.loading}
-        onClose={handleSnackbarClose}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
       />
     </>
   );

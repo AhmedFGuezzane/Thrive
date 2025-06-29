@@ -1,0 +1,425 @@
+{
+  "session": {
+    "creating": "Creating your session...",
+    "success": "Session created successfully!",
+    "missing_id": "Session created, but ID not received. Please refresh.",
+    "error": "Error creating session: {{message}}"
+  },
+  "account": {
+    "title": "Account Settings",
+    "profileInfo": "Profile Information",
+    "nom": "Last Name",
+    "prenom": "First Name",
+    "email": "Email",
+    "saveChanges": "Save Changes",
+    "metadata": "Account Metadata",
+    "role": "Role",
+    "active": "Active",
+    "yes": "Yes",
+    "no": "No",
+    "otherActions": "Other Actions",
+    "changePassword": "Change Password",
+    "deactivate": "Deactivate Account",
+    "delete": "Delete Account",
+    "logout": "Log Out",
+    "confirmPasswordChange": {
+      "title": "Confirm Password Change",
+      "text": "Are you sure you want to change your password? You will need to log in again with the new one.",
+      "button": "Change"
+    },
+    "confirmDeactivate": {
+      "title": "Confirm Account Deactivation",
+      "text": "Are you sure you want to deactivate your account? You will be logged out and will not be able to access it until it is reactivated.",
+      "button": "Deactivate"
+    },
+    "confirmDelete": {
+      "title": "Confirm Account Deletion",
+      "text": "Are you sure you want to permanently delete your account? This action is irreversible.",
+      "button": "Delete"
+    },
+    "confirmLogout": {
+      "title": "Confirm Log Out",
+      "text": "Are you sure you want to log out of your account?",
+      "button": "Log Out"
+    },
+    "confirmUpdate": {
+      "title": "Confirm Profile Update",
+      "text": "Are you sure you want to save these profile changes?",
+      "button": "Save"
+    }
+  },
+  "stats": {
+    "no_data": "No statistics available at the moment.",
+    "note_title": "Important Note",
+    "note_1": "Statistics are based on all your recorded sessions. If some sessions were started by mistake, they are also taken into account.",
+    "note_2": "This data helps you visualize your work habits and identify the days when your concentration is optimal. Use this information to adapt your goals and optimize your schedule.",
+    "chart_title": "Activity by Day of the Week"
+  },
+  "userTasks": {
+    "snackbar_creating": "Creating your session...",
+    "snackbar_id_missing": "Session created, but ID not received. Please refresh.",
+    "snackbar_created": "Session created successfully!",
+    "snackbar_error": "Error creating the session"
+  },
+  "activeSeance": {
+    "no_active": "No active session",
+    "no_active_sub": "Start a new session to track your progress!",
+    "create_button": "Create a session",
+    "more_coming": "More details coming soon...",
+    "theme": "Theme",
+    "study_duration": "Study Duration",
+    "short_break": "Short Break Duration",
+    "long_break": "Long Break Duration",
+    "cycles_before_long": "Cycles before Long Break",
+    "total_duration": "Total Session Duration",
+    "timer": {
+      "elapsed": "Total Elapsed Time",
+      "remaining_total": "Remaining Time (Session)"
+    },
+    "status": {
+      "next_break": "Next Break in",
+      "next_study": "Next Study in",
+      "ready_for": "Ready for",
+      "break": "Break",
+      "study": "Study",
+      "done": "Done",
+      "status": "Status",
+      "idle": "Idle",
+      "na": "N/A"
+    }
+  },
+  "studyTips": {
+    "list": [
+      {
+        "title": "Pomodoro Technique",
+        "description": "Use the Pomodoro Technique to stay focused without burning out. Work in intense intervals followed by short breaks."
+      },
+      {
+        "title": "Clear Goals",
+        "description": "Set clear and achievable goals before each study session. This gives you direction and motivates you."
+      },
+      {
+        "title": "Music for Concentration",
+        "description": "Listen to soft or ambient music. Certain frequencies can improve your concentration and block out distractions."
+      },
+      {
+        "title": "Regular Breaks",
+        "description": "Take a break every 25 minutes to recharge your brain. Short breaks improve retention and reduce fatigue."
+      },
+      {
+        "title": "Deep Breathing",
+        "description": "Breathe deeply and relax before you start. Good breathing oxygenates your brain and calms your mind."
+      },
+      {
+        "title": "Eliminate Distractions",
+        "description": "Put your phone on airplane mode, close unnecessary tabs. A distraction-free environment is key for intense focus."
+      },
+      {
+        "title": "Take Notes by Hand",
+        "description": "Take notes by hand to better retain information. The physical act of writing activates different areas of the brain."
+      },
+      {
+        "title": "Reward Yourself",
+        "description": "Reward yourself after a good study session. This reinforces positive habits and makes learning more enjoyable."
+      },
+      {
+        "title": "Peak Hours",
+        "description": "Study during the hours you are naturally most concentrated. Identify your circadian rhythm to optimize your sessions."
+      },
+      {
+        "title": "Hydration",
+        "description": "Drink water regularly to stay alert. Dehydration can affect your concentration and cognitive performance."
+      }
+    ]
+  },
+  "taskFilter": {
+    "search_placeholder": "Search task...",
+    "importance": "Importance",
+    "status": "Status",
+    "all": "All",
+    "in_progress": "In Progress",
+    "pending": "Pending",
+    "completed": "Completed"
+  },
+  "taskItem": {
+    "importance": "Importance",
+    "status": "Status",
+    "due": "Due",
+    "description": "Description",
+    "details": "Other details",
+    "created": "Created on",
+    "updated": "Last modified",
+    "no_info": "No additional information."
+  },
+  "taskList": {
+    "no_tasks": "No tasks linked to the active session.",
+    "no_seance": "No active session. Please start a session to view associated tasks."
+  },
+  "seanceDetails": {
+    "durations": "Durations",
+    "study": "Session",
+    "short_break": "Short break",
+    "long_break": "Long break",
+    "total_duration": "Total duration",
+    "details": "Details",
+    "type": "Session type",
+    "name": "Session name",
+    "preset_name": "Preset name",
+    "theme": "Theme",
+    "automation": "Alerts and Automation",
+    "auto_start": "Auto start",
+    "sound_alert": "Sound alert",
+    "notification": "Notification",
+    "vibration": "Vibration",
+    "track_time": "Track total time"
+  },
+  "seanceInactive": {
+    "title": "No active session",
+    "subtitle": "Start a new session to track your progress!",
+    "button": "Create a session"
+  },
+  "taskStatusTracker": {
+    "title": "Task progress",
+    "en attente": "Pending",
+    "en cours": "In Progress",
+    "terminée": "Completed"
+  },
+  "timerDisplayCard": {
+    "remainingTime": "Remaining Time (Session)",
+    "elapsedTime": "Total Elapsed Time",
+    "untilNext": "Time until next",
+    "nextPhase": {
+      "shortBreak": "break ({{type}})",
+      "study": "study",
+      "session": "session",
+      "phase": "phase"
+    }
+  },
+  "activityChart": {
+    "no_data": "No activity data available.",
+    "tooltip": "Activity"
+  },
+  "taskStatus": {
+    "title": "Task Status",
+    "no_tasks": "No tasks to display.",
+    "completed": "Completed",
+    "in_progress": "In Progress",
+    "pending": "Pending",
+    "other": "Other",
+    "total": "Total tasks"
+  },
+  "filterBar": {
+    "search_placeholder": "Search for a task...",
+    "importance": "Importance",
+    "all": "All",
+    "view_mode": "View",
+    "all_tasks": "All tasks",
+    "active_seance_tasks": "Active session tasks"
+  },
+  "taskDetails": {
+    "title": "Edit Task",
+    "fields": {
+      "title": "Task Title",
+      "description": "Description",
+      "importance": "Importance",
+      "status": "Status",
+      "due_date": "Due Date",
+      "estimated_duration": "Estimated Duration (s)",
+      "priority": "Priority",
+      "is_completed": "Is Completed",
+      "creation_date": "Creation Date",
+      "start_date": "Start Date",
+      "actual_duration": "Actual Duration",
+      "link_to_seance": "Add to active session"
+    },
+    "snackbar": {
+      "updating": "Updating task...",
+      "updated": "Task updated!",
+      "link_to_seance": "Add to active session"
+    },
+    "errors": {
+      "title_required": "Task title is required.",
+      "date_past": "Due date cannot be in the past.",
+      "update_failed": "Error saving",
+      "delete_failed": "Error deleting"
+    },
+    "delete": {
+      "title": "Delete Task",
+      "text": "Are you sure you want to delete this task? This action is irreversible.",
+      "confirm": "Delete"
+    }
+  },
+  "task": {
+    "status": {
+      "pending": "Pending",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    }
+  },
+  "general": {
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "taskCard": {
+    "importance": "Importance",
+    "viewDetails": "View details"
+  },
+  "taskBoard": {
+    "sort": "Sort by importance",
+    "sortByImportance": "Sort by importance ({{order}})",
+    "empty": "No tasks here.",
+    "columns": {
+      "todo": "To Do",
+      "inprogress": "In Progress",
+      "done": "Completed"
+    }
+  },
+  "addTask": {
+    "title": "Add a new task",
+    "add": "Add Task",
+    "fields": {
+      "title": "Task Title",
+      "description": "Description",
+      "importance": "Importance",
+      "status": "Status",
+      "deadline": "Deadline (optional)",
+      "addToSeance": "Add to active session"
+    }
+  },
+  "statuses": {
+    "pending": "Pending",
+    "in_progress": "In Progress",
+    "completed": "Completed"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "confirmation": {
+    "deleteTaskTitle": "Delete Task",
+    "deleteTaskText": "Are you sure you want to delete this task? This action is irreversible.",
+    "deleteTaskConfirm": "Delete"
+  },
+  "confirmationItem": {
+    "labels": {
+      "titre": "Title",
+      "description": "Description",
+      "importance": "Importance",
+      "statut": "Status",
+      "date_fin": "Due Date",
+      "add_to_active_seance": "Add to active session"
+    },
+    "values": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    }
+  },
+  "createSeance": {
+    "title": "Create a new session",
+    "steps": {
+      "details": "Session Details",
+      "config": "Pomodoro Configuration",
+      "confirm": "Confirmation"
+    },
+    "confirmAndCreate": "Confirm and Create",
+    "unknownStep": "Unknown step"
+  },
+  "pomodoro": {
+    "duration_study": "Study Duration (min)",
+    "short_break": "Short Break (min)",
+    "long_break": "Long Break (min)",
+    "cycles_before_long_break": "Cycles before long break",
+    "total_duration": "Total Duration (min)",
+    "session_name": "Pomodoro Session Name",
+    "theme": "Theme",
+    "preset_name": "Preset Name",
+    "alerts_and_automation": "Alerts and Automation",
+    "auto_start": "Auto start",
+    "sound_alert": "Sound alert",
+    "notification": "Notification",
+    "vibration": "Vibration",
+    "track_total_time": "Track total time",
+    "soon_available": "These options will be available soon."
+  },
+  "validation": {
+    "short_break_min": "Short break must be at least 5 minutes.",
+    "long_break_ratio": "Long break must be at least 2x the short break.",
+    "break_longer_than_study": "The break cannot be longer than the study session.",
+    "total_duration_min": "Total duration must be ≥ {{min}} minutes."
+  },
+  "phaseDialog": {
+    "awaiting_break": {
+      "title": "🎓 Study complete",
+      "message": "You have completed your session. Do you want to start your break?",
+      "button": "Start break"
+    },
+    "awaiting_study": {
+      "title": "🧘 Break complete",
+      "message": "Come back strong! Ready for the next study session?",
+      "button": "Resume study"
+    }
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "defaultMessage": "Unknown error. Please reload the application."
+  },
+  "timer": {
+    "elapsed": "Elapsed time",
+    "phase": {
+      "study": "🟪 Phase: Study",
+      "shortBreak": "🟦 Phase: Short break",
+      "longBreak": "🟩 Phase: Long break",
+      "awaitingBreak": "⏸ Phase: Awaiting break",
+      "awaitingStudy": "⏸ Phase: Awaiting resume",
+      "completed": "✅ Phase: Completed"
+    },
+    "nextShortBreakIn": "Next break in:",
+    "nextStudyIn": "Next study session in:",
+    "noActiveSession": "No active session. Click to create one.",
+    "actions": {
+      "create": "Create a session",
+      "pause": "Pause",
+      "resume": "Resume",
+      "stop": "Stop session"
+    },
+    "snackbar": {
+      "stopping": "Stopping the current session...",
+      "stopped": "Session stopped successfully!",
+      "error": "Failed to stop session. Please try again."
+    }
+  },
+  "seanceForm": {
+    "type_seance": "Session type",
+    "nom": "Session name"
+  },
+  "seanceReview": {
+    "details": {
+      "title": "Session Details",
+      "type": "Session type",
+      "nom": "Session name"
+    },
+    "durations": {
+      "title": "Durations",
+      "seance": "Session",
+      "courte": "Short break",
+      "longue": "Long break"
+    },
+    "config": {
+      "title": "Configuration",
+      "cycles": "Cycles",
+      "theme": "Theme Name",
+      "preconfig": "Pre-configuration"
+    },
+    "alertes": {
+      "title": "Alerts and Automation",
+      "auto_demarrage": "Automatic start",
+      "alerte_sonore": "Sound alert",
+      "notification": "Notification",
+      "vibration": "Vibration",
+      "suivi_temps_total": "Total time tracking"
+    }
+  }
+}

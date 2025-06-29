@@ -1,4 +1,3 @@
-// src/components/UserHome/TaskFilterBar.jsx
 import React from 'react';
 import {
   Box,
@@ -16,6 +15,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AddIcon from '@mui/icons-material/Add';
 
+import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 
 export default function TaskFilterBar({
@@ -31,7 +31,11 @@ export default function TaskFilterBar({
   getImportanceDisplay,
 }) {
   const theme = useTheme();
-const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow} = useCustomTheme();
+  const { t } = useTranslation();
+  const {
+    innerBox, secondaryColor, primaryText, primaryColor,
+    specialColor, whiteBorder, softBoxShadow
+  } = useCustomTheme();
 
   return (
     <Box
@@ -53,12 +57,11 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
         flexWrap: 'wrap',
       }}
     >
-      {/* Search TextField */}
       <TextField
         fullWidth={false}
         variant="outlined"
         size="small"
-        placeholder="Rechercher tâche..."
+        placeholder={t('taskFilter.search_placeholder')}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         sx={{
@@ -68,9 +71,11 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
           borderRadius: '8px',
           '& .MuiOutlinedInput-root': {
             borderRadius: '8px',
-            '& fieldset': { borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)' },
-            '&:hover fieldset':  {borderColor: specialColor },
-            '&.Mui-focused fieldset': {borderColor: specialColor },
+            '& fieldset': {
+              borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'
+            },
+            '&:hover fieldset': { borderColor: specialColor },
+            '&.Mui-focused fieldset': { borderColor: specialColor },
             color: primaryText,
           },
           '& .MuiInputBase-input::placeholder': { color: primaryColor },
@@ -84,7 +89,6 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
         }}
       />
 
-      {/* Importance Select */}
       <FormControl
         variant="outlined"
         size="small"
@@ -94,20 +98,20 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
           borderRadius: '8px',
           '& .MuiOutlinedInput-root': {
             borderRadius: '8px',
-            '& fieldset': { borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)' },
-            '&:hover fieldset': {borderColor: specialColor },
-            '&.Mui-focused fieldset': {borderColor: specialColor },
+            '& fieldset': {
+              borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'
+            },
+            '&:hover fieldset': { borderColor: specialColor },
+            '&.Mui-focused fieldset': { borderColor: specialColor },
             color: primaryColor,
           },
-          '& .MuiInputLabel-root': {borderColor: specialColor },
-          flexShrink: 0,
         }}
       >
-        <InputLabel>Importance</InputLabel>
+        <InputLabel>{t('taskFilter.importance')}</InputLabel>
         <Select
           value={selectedImportance}
           onChange={(e) => setSelectedImportance(e.target.value)}
-          label="Importance"
+          label={t('taskFilter.importance')}
           MenuProps={{
             PaperProps: {
               sx: {
@@ -118,7 +122,7 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
             },
           }}
         >
-          <MenuItem value="">Toutes</MenuItem>
+          <MenuItem value="">{t('taskFilter.all')}</MenuItem>
           {[1, 2, 3, 4, 5].map((importance) => (
             <MenuItem key={importance} value={importance}>
               {getImportanceDisplay(importance).label}
@@ -127,7 +131,6 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
         </Select>
       </FormControl>
 
-      {/* Status Select */}
       <FormControl
         variant="outlined"
         size="small"
@@ -137,20 +140,20 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
           borderRadius: '8px',
           '& .MuiOutlinedInput-root': {
             borderRadius: '8px',
-            '& fieldset': { borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)' },
-            '&:hover fieldset': {borderColor: specialColor },
-            '&.Mui-focused fieldset': {borderColor: specialColor },
+            '& fieldset': {
+              borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)'
+            },
+            '&:hover fieldset': { borderColor: specialColor },
+            '&.Mui-focused fieldset': { borderColor: specialColor },
             color: primaryColor,
           },
-          '& .MuiInputLabel-root': {borderColor: specialColor },
-          flexShrink: 0,
         }}
       >
-        <InputLabel>Statut</InputLabel>
+        <InputLabel>{t('taskFilter.status')}</InputLabel>
         <Select
           value={selectedStatus}
           onChange={(e) => setSelectedStatus(e.target.value)}
-          label="Statut"
+          label={t('taskFilter.status')}
           MenuProps={{
             PaperProps: {
               sx: {
@@ -161,14 +164,13 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
             },
           }}
         >
-          <MenuItem value="">Tous</MenuItem>
-          <MenuItem value="en cours">En cours</MenuItem>
-          <MenuItem value="en attente">En attente</MenuItem>
-          <MenuItem value="terminée">Complétée</MenuItem>
+          <MenuItem value="">{t('taskFilter.all')}</MenuItem>
+          <MenuItem value="en cours">{t('taskFilter.in_progress')}</MenuItem>
+          <MenuItem value="en attente">{t('taskFilter.pending')}</MenuItem>
+          <MenuItem value="terminée">{t('taskFilter.completed')}</MenuItem>
         </Select>
       </FormControl>
 
-      {/* Add Task Button */}
       <IconButton
         onClick={() => setIsAddTaskDialogOpen(true)}
         sx={{
@@ -185,7 +187,6 @@ const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColo
         <AddIcon fontSize="small" />
       </IconButton>
 
-      {/* Refresh Button */}
       <IconButton
         onClick={refreshTasks}
         disabled={loading}

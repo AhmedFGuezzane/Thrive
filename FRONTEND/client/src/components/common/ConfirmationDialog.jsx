@@ -1,14 +1,16 @@
+// src/components/common/ConfirmationDialog.jsx
 import React from 'react';
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
+import { useTranslation } from 'react-i18next';
 
 /**
  * A reusable confirmation dialog component.
@@ -19,54 +21,55 @@ import { useCustomTheme } from '../../hooks/useCustomeTheme';
  * @param {object} props.content - An object containing dialog content (title, text, button text, color).
  */
 export default function ConfirmationDialog({ open, onClose, onConfirm, content }) {
-    const { outerBox,middleBox, whiteBorder, primaryText, secondaryText, specialColor, specialText } = useCustomTheme();
+  const {
+    whiteBorder,
+    primaryText,
+    specialText
+  } = useCustomTheme();
 
-    return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            // Style the dialog's paper (the background)
-            PaperProps={{
-                sx: {
-                    backdropFilter: 'blur(10px)',
-                    border: `1px solid ${whiteBorder}`,
-                }
-            }}
+  const { t } = useTranslation();
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          backdropFilter: 'blur(10px)',
+          border: `1px solid ${whiteBorder}`,
+        }
+      }}
+    >
+      <DialogTitle sx={{ color: primaryText, fontWeight: 'bold' }}>
+        {t(content.title)}
+      </DialogTitle>
+
+      <DialogContent>
+        <DialogContentText sx={{ color: primaryText }}>
+          {t(content.text)}
+        </DialogContentText>
+      </DialogContent>
+
+      <DialogActions sx={{ p: 2, gap: 1, justifyContent: 'flex-end' }}>
+        <Button onClick={onClose} sx={{ color: primaryText }}>
+          {t("common.cancel")}
+        </Button>
+        <Button
+          onClick={onConfirm}
+          color={content.confirmButtonColor || 'primary'}
+          variant="contained"
+          sx={{
+            bgcolor: alpha(specialText, 1),
+            color: primaryText,
+            '&:hover': {
+              bgcolor: alpha(specialText, 0.8),
+              opacity: 0.9,
+            }
+          }}
         >
-            <DialogTitle sx={{ color: primaryText, fontWeight: 'bold' }}>
-                {content.title}
-            </DialogTitle>
-            
-            <DialogContent>
-                <DialogContentText sx={{ color: primaryText }}>
-                    {content.text}
-                </DialogContentText>
-            </DialogContent>
-            
-            <DialogActions sx={{ p: 2, gap: 1, justifyContent: 'flex-end' }}>
-                <Button 
-                    onClick={onClose}
-                    sx={{ color: primaryText }}
-                >
-                    Cancel
-                </Button>
-                <Button 
-                    onClick={onConfirm} 
-                    color={content.confirmButtonColor}
-                    variant="contained"
-                    sx={{
-                        bgcolor: alpha(specialText,1), // Use the dynamically mapped color
-                        color: primaryText,      // Set the text color
-                        '&:hover': {
-                            // You can even style the hover state
-                            bgcolor: alpha(specialText,0.8), // Keep the same color on hover or change it
-                            opacity: 0.9,
-                        }
-                    }}
-                >
-                    {content.confirmButtonText}
-                </Button>
-            </DialogActions>
-        </Dialog>
-    );
+          {t(content.confirmButtonText)}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
