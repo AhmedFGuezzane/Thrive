@@ -25,7 +25,7 @@ def add_tache(tache_data, user_id):
     return requests.post(f"{DAO_URL}/tache/add", json=tache_data, headers={"user-id": user_id})
 
 def update_tache(tache_id, tache_data, user_id):
-    return requests.put(f"{DAO_URL}/tache/update/{tache_id}", json=tache_data, headers={"user-id": user_id})
+    return requests.put(f"{DAO_URL}/tache/update/{tache_id}", json=tache_data, headers={"user-id": user_id}) # APPELER LA ROUTE UPDATE DANS DAO_SERVICE ET RETOURNER REPONSE A APP.PY
 
 def delete_tache(tache_id, user_id):
-    return requests.delete(f"{DAO_URL}/tache/delete/{tache_id}", headers={"user-id": user_id})
+    return requests.delete(f"{DAO_URL}/tache/delete/{tache_id}", headers={"user-id": user_id}) # APPELER LA ROUTE DELETE DANS DAO_SERVICE ET RETOURNER REPONSE A APP.PY

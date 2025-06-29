@@ -26,11 +26,14 @@ export const useSeanceManagement = () => {
     }
   }, []);
 
+  // ADD SEANCE HOOK - D.O.
   const addSeance = async (formData) => {
     try {
+
+      // APPELER METHODE CREATESEANCE DE SEANCESERVIE DANS (src/utils/seanceService), ENVOYER LES DONNEE DU FORMULAIRE ET STOCKER REPONSE DANS CONST NEWSEANCE
       const newSeance = await createSeance(formData);
-      setSeances((prev) => [...prev, newSeance]);
-      return newSeance;
+      setSeances((prev) => [...prev, newSeance]); // STOCKER LES INFORMATIONS DE LA SEANCE (TIMER, ETC) DANS LE LOCALSTORAGE
+      return newSeance; // RETOURNER LA SEANCE
     } catch (err) {
       throw err;
     }
@@ -60,6 +63,7 @@ export const useSeanceManagement = () => {
     }
   };
 
+  
   return {
     seances,
     loading,

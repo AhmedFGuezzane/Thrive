@@ -57,8 +57,12 @@ export async function fetchTaskById(tacheId) {
   return await response.json();
 }
 
-// ✅ Create new task
+//CREATE TASK - S.L.
+/* ---------------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------------------------------------------------------- */
 export async function addTaskToBackend(taskData) {
+
+  // WE SEND A POST REQUEST WITH THE TASKDATA AS BODY, THE TOKEN AS HEADER -- WE STORE THE RESPONSE IN CONST RESPONSE 
   const response = await fetch(`${BASE_URL}/tache`, {
     method: "POST",
     headers: getAuthHeaders(),
@@ -73,8 +77,12 @@ export async function addTaskToBackend(taskData) {
   return await response.json();
 }
 
-// ✅ Update full task (PUT)
+// UPDATE TASK - I.R.
+/* ---------------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------------------------------------------------------- */
+
 export async function updateTask(tacheId, updatedData) {
+  // ON ENVOI UNE REQUETE (PUT) A TACHE_SERVICE ET ON STOCK LA REPONSE DANS CONST RESPONSE
   const response = await fetch(`${BASE_URL}/tache/${tacheId}`, {
     method: "PUT",
     headers: getAuthHeaders(),
@@ -86,12 +94,16 @@ export async function updateTask(tacheId, updatedData) {
     throw new Error(error.message || "Erreur lors de la mise à jour de la tâche.");
   }
 
-  return await response.json();
+  return await response.json(); // RENVOI A USETASKMANAGEMENT
 }
+/* ---------------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------------------------------------------------------- */
 
-// ✅ Update only task status (PATCH-like, via PUT)
+
 export async function updateTaskStatus(tacheId, newStatus) {
-  const response = await fetch(`${BASE_URL}/tache/${tacheId}`, {
+
+  // ENVOYER REQUETE PUT A TACHE_SERVICE AVEC LE TACHE ID, TOKEN ET BODY
+  const response = await fetch(`${BASE_URL}/tache/${tacheId}`, { 
     method: "PUT",
     headers: getAuthHeaders(),
     body: JSON.stringify({ statut: newStatus }),
@@ -105,8 +117,15 @@ export async function updateTaskStatus(tacheId, newStatus) {
   return await response.json();
 }
 
-// ✅ Delete a task
+
+
+
+// DELETE TASK - I.R.
+/* ---------------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------------------------------------------------------- */
+
 export async function deleteTask(tacheId) {
+  // ON ENVOI UNE REQUETE (DELETE) A TACHE_SERVICE ET ON STOCK LA REPONSE DANS CONST RESPONSE
   const response = await fetch(`${BASE_URL}/tache/${tacheId}`, {
     method: "DELETE",
     headers: getAuthHeaders(),
@@ -117,5 +136,9 @@ export async function deleteTask(tacheId) {
     throw new Error(error.message || "Erreur lors de la suppression de la tâche.");
   }
 
-  return await response.json();
+  return await response.json(); // RENVOI A USETASKMANAGEMENT
 }
+
+
+/* ---------------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------------------------------------------------------- */

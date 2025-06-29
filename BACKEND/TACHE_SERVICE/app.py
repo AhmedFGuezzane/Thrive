@@ -45,7 +45,7 @@ def get_tache(tache_id):
     return jsonify(result.json()), result.status_code
 
 @app.route("/tache", methods=["POST"])
-@jwt_required()
+@jwt_required() # PROTECTED BY JWT
 def add_tache():
     user_id = get_jwt_identity()
     tache_data = request.get_json()
@@ -62,14 +62,10 @@ def add_tache():
 @app.route("/tache/<tache_id>", methods=["PUT"])
 @jwt_required()
 def update_tache(tache_id):
-    user_id = get_jwt_identity()
-    print(f"[TACHE_SERVICE] User ID from JWT: {user_id}")
-    tache_data = request.get_json()
-    print(f"[TACHE_SERVICE] Update data: {tache_data}")
-    result = dao_client.update_tache(tache_id, tache_data, user_id)
-    print(f"[TACHE_SERVICE] DAO response status: {result.status_code}")
-    print(f"[TACHE_SERVICE] DAO response body: {result.text}")
-    return jsonify(result.json()), result.status_code
+    user_id = get_jwt_identity() # GET ID FROM TOKEN
+    tache_data = request.get_json() # GET TASK DATA FROM REQUEST
+    result = dao_client.update_tache(tache_id, tache_data, user_id) # CALL METHOD UPDATE_TACHE IN DAO_CLIENT AND STORE RESPONSE IN 'RESULT'
+    return jsonify(result.json()), result.status_code # RENVOYER 'RESULT' VERS TASKSERVICE IN FRONTEND
 
 @app.route("/tache/<tache_id>", methods=["DELETE"])
 @jwt_required()
