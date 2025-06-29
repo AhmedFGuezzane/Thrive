@@ -5,23 +5,25 @@ import {
   Typography, Button, useTheme
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const getDialogContent = () => {
     if (phase === 'awaiting_break') {
       return {
-        title: '🎓 Étude terminée',
-        message: 'Tu as complété ta séance. Veux-tu commencer ta pause ?',
-        button: 'Commencer la pause'
+        title: t('phaseDialog.awaiting_break.title'),
+        message: t('phaseDialog.awaiting_break.message'),
+        button: t('phaseDialog.awaiting_break.button')
       };
     }
     if (phase === 'awaiting_study') {
       return {
-        title: '🧘 Pause terminée',
-        message: 'Reviens en force ! Prêt pour la prochaine séance d’étude ?',
-        button: 'Reprendre l’étude'
+        title: t('phaseDialog.awaiting_study.title'),
+        message: t('phaseDialog.awaiting_study.message'),
+        button: t('phaseDialog.awaiting_study.button')
       };
     }
     return { title: '', message: '', button: '' };
@@ -35,7 +37,6 @@ export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
       onClose={onConfirm}
       PaperProps={{
         sx: {
-          // --- UPDATED to use dynamic theme colors for the dialog background ---
           backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(14px)',
           border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
@@ -61,7 +62,6 @@ export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
           onClick={onConfirm}
           variant="contained"
           sx={{
-            // --- UPDATED to use dynamic button colors ---
             bgcolor: alpha(theme.palette.primary.main, 0.8),
             '&:hover': { bgcolor: alpha(theme.palette.primary.main, 1) },
             borderRadius: '10px',

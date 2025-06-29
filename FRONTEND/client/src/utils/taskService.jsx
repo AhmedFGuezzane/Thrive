@@ -5,7 +5,7 @@ const BASE_URL = config.tacheMicroserviceBaseUrl;
 
 // Get token from localStorage
 function getAuthHeaders() {
-  const token = localStorage.getItem("jwt_token"); // fixed here
+  const token = localStorage.getItem("jwt_token");
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,

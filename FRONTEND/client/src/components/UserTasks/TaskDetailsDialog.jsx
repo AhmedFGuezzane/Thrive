@@ -1,47 +1,46 @@
+// src/components/UserTasks/TaskDetailsDialog.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Box,
-  Grid,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Checkbox,
-  FormControlLabel,
+  Dialog, DialogTitle, DialogContent, DialogActions, Button,
+  Typography, Box, Grid, TextField, FormControl, InputLabel, Select,
+  MenuItem, Checkbox, FormControlLabel, useTheme, alpha, IconButton
 } from '@mui/material';
 
-// Import icons
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import LoopIcon from '@mui/icons-material/Loop';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import TimerIcon from '@mui/icons-material/Timer';
+import {
+  CalendarToday as CalendarTodayIcon,
+  PriorityHigh as PriorityHighIcon,
+  CheckCircleOutline as CheckCircleOutlineIcon,
+  Timer as TimerIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon
+} from '@mui/icons-material';
 
-// Import TimerContext
+import { useTranslation } from 'react-i18next';
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
 import { TimerContext } from '../../contexts/TimerContext';
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 export default function TaskDetailsDialog({
   open,
   onClose,
   taskDetails,
-  onUpdateTask, // This prop handles the actual update and should trigger snackbar from parent
+  onUpdateTask,
+  handleDeleteTask,
   getImportanceDisplay,
   getStatusDisplay,
-  showSnackbar, // <--- NEW PROP: Pass showSnackbar from parent
+  showSnackbar,
 }) {
-  const { activeSeanceId } = useContext(TimerContext);
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const {
+    innerBox, middleBox, primaryText, whiteColor, specialColor, whiteBorder, softBoxShadow
+  } = useCustomTheme();
 
+  const { activeSeanceId } = useContext(TimerContext);
   const [editedTaskData, setEditedTaskData] = useState({});
   const [isLinkedToActiveSeance, setIsLinkedToActiveSeance] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (taskDetails) {
@@ -53,34 +52,34 @@ export default function TaskDetailsDialog({
         duree_estimee: taskDetails.duree_estimee || '',
         duree_reelle: taskDetails.duree_reelle || '',
       });
-
       setIsLinkedToActiveSeance(taskDetails.seance_etude_id === activeSeanceId && !!activeSeanceId);
+      setIsEditMode(false);
     }
   }, [taskDetails, activeSeanceId]);
 
   const handleFieldChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
-    setEditedTaskData(prev => ({
-      ...prev,
-      [name]: newValue
-    }));
-  };
-
-  const handleCheckboxChange = (e) => {
-    setIsLinkedToActiveSeance(e.target.checked);
+    setEditedTaskData(prev => ({ ...prev, [name]: newValue }));
   };
 
   const handleSave = async () => {
     if (!editedTaskData.titre) {
-      showSnackbar("Le titre de la tâche est requis.", "error"); // <--- CHANGED: Use showSnackbar
+      showSnackbar(t("taskDetails.errors.title_required"), "error");
       return;
     }
 
-    try {
-      // Show "Updating task..." message
-      showSnackbar("Mise à jour de la tâche...", "info", true); // <--- NEW: Progress message
+    if (editedTaskData.date_fin) {
+      const today = new Date().setHours(0, 0, 0, 0);
+      const selectedDate = new Date(editedTaskData.date_fin).setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        showSnackbar(t("taskDetails.errors.date_past"), "error");
+        return;
+      }
+    }
 
+    try {
+      showSnackbar(t("taskDetails.snackbar.updating"), "info", true);
       const payload = {
         ...editedTaskData,
         date_fin: editedTaskData.date_fin ? new Date(editedTaskData.date_fin).toISOString() : null,
@@ -90,234 +89,151 @@ export default function TaskDetailsDialog({
         duree_reelle: editedTaskData.duree_reelle ? Number(editedTaskData.duree_reelle) : null,
         seance_etude_id: isLinkedToActiveSeance ? activeSeanceId : null,
       };
-
-      await onUpdateTask(editedTaskData.id, payload); // onUpdateTask will handle its own success/error snackbar
-      onClose(); // Close dialog on success
+      await onUpdateTask(editedTaskData.id, payload);
+      showSnackbar(t("taskDetails.snackbar.updated"), "success");
+      setIsEditMode(false);
+      onClose();
     } catch (error) {
-      // onUpdateTask should handle error, but if something fails BEFORE onUpdateTask is called, or onUpdateTask doesn't rethrow
-      // this catch block might still be relevant if onUpdateTask itself doesn't use the snackbar.
-      // However, ideally, onUpdateTask (in UserTasks.jsx) would manage its own error states, including the snackbar.
-      // For now, keep it as a fallback:
-      showSnackbar(`Erreur lors de l'enregistrement: ${error.message}`, "error"); // <--- CHANGED: Use showSnackbar
-      console.error("Erreur lors de l'enregistrement de la tâche:", error);
+      showSnackbar(`${t("taskDetails.errors.update_failed")}: ${error.message}`, "error");
     }
   };
 
-  if (!taskDetails) return null;
-
-  const inputSx = {
-    borderRadius: '8px',
-    bgcolor: 'rgba(255,255,255,0.2)',
-    color: '#333',
-    '& .MuiFilledInput-root': {
-      borderRadius: '8px',
-      bgcolor: 'rgba(255,255,255,0.2)',
-      '&:hover': { bgcolor: 'rgba(255,255,255,0.3) !important' },
-      '&.Mui-focused': { bgcolor: 'rgba(255,255,255,0.2) !important' },
-    },
-    disableUnderline: true,
-  };
-  const inputLabelSx = {
-    color: 'rgba(0,0,0,0.6)',
-    fontWeight: 'medium',
+  const handleDeleteConfirmed = async () => {
+    try {
+      await handleDeleteTask(editedTaskData.id);
+      setDeleteDialogOpen(false);
+      onClose();
+    } catch (error) {
+      showSnackbar(`${t("taskDetails.errors.delete_failed")}: ${error.message}`, "error");
+    }
   };
 
   const ReadOnlyPill = ({ label, value, icon }) => (
-    <Box
-      sx={{
-        bgcolor: 'rgba(255,255,255,0.15)',
-        backdropFilter: 'blur(5px)',
-        border: '1px solid rgba(255,255,255,0.3)',
-        borderRadius: '8px',
-        p: '12px 16px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        color: '#444',
-        width: '100%',
-        minHeight: '56px',
-        boxSizing: 'border-box',
-        justifyContent: 'flex-start',
-      }}
-    >
-      {icon && React.cloneElement(icon, { sx: { fontSize: 24, color: 'rgba(0,0,0,0.6)', flexShrink: 0 } })}
-      <Typography variant="body2" fontWeight="bold" sx={{ color: 'rgba(0,0,0,0.6)', flexShrink: 0, mr: 0.5 }}>
-        {label}:
-      </Typography>
-      <Typography variant="body1" sx={{ color: '#333', flexGrow: 1, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        {value}
-      </Typography>
+    <Box sx={{
+      bgcolor: innerBox, border: whiteBorder, borderRadius: '8px',
+      p: '12px 16px', display: 'flex', gap: 1, boxShadow: softBoxShadow,
+      alignItems: 'center', color: primaryText, minHeight: '56px',
+    }}>
+      {icon && React.cloneElement(icon, { sx: { fontSize: 24, color: primaryText } })}
+      <Typography variant="body2" fontWeight="bold">{label}:</Typography>
+      <Typography variant="body1">{value}</Typography>
     </Box>
   );
 
+  if (!taskDetails) return null;
+
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-      PaperProps={{
-        sx: {
-          backgroundColor: 'rgba(255, 240, 245, 0.9)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          borderRadius: '16px',
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.15)',
-          color: '#333',
-        }
-      }}
-    >
-      <DialogTitle sx={{ fontWeight: 'bold', textAlign: 'center', pb: 1, color: '#333' }}>
-        Modifier la tâche
-        <Typography variant="subtitle1" color="text.secondary">"{taskDetails.titre}"</Typography>
-      </DialogTitle>
-      <DialogContent
-        dividers
-        sx={{
-          pt: 2,
-          pb: 2,
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: { xs: 2, md: 3 },
-          alignItems: 'flex-start',
-          overflowY: 'auto',
-        }}
-      >
-        <Box sx={{ flexBasis: { xs: '100%', md: 'calc(66.66% - 16px)' }, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <TextField
-            margin="normal"
-            name="titre"
-            label="Titre de la tâche"
-            type="text"
-            fullWidth
-            variant="filled"
-            value={editedTaskData.titre || ''}
-            onChange={handleFieldChange}
-            InputProps={{ disableUnderline: true, sx: inputSx }}
-            InputLabelProps={{ sx: inputLabelSx }}
-          />
-          <TextField
-            margin="normal"
-            name="description"
-            label="Description"
-            type="text"
-            fullWidth
-            multiline
-            rows={3}
-            variant="filled"
-            value={editedTaskData.description || ''}
-            onChange={handleFieldChange}
-            InputProps={{ disableUnderline: true, sx: inputSx }}
-            InputLabelProps={{ sx: inputLabelSx }}
-          />
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth
+        PaperProps={{
+          sx: {
+            backgroundColor: middleBox,
+            backdropFilter: 'blur(30px)',
+            border: `1px solid ${whiteBorder}`,
+            borderRadius: '16px',
+            boxShadow: softBoxShadow,
+          }
+        }}>
+        <DialogTitle sx={{ textAlign: 'center', color: primaryText }}>
+          {t("taskDetails.title")}
+          <Typography variant="subtitle1">"{taskDetails.titre}"</Typography>
+          <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
+            <IconButton onClick={() => setIsEditMode(prev => !prev)} sx={{ color: primaryText }}>
+              <EditIcon />
+            </IconButton>
+            <IconButton onClick={() => setDeleteDialogOpen(true)} sx={{ color: primaryText }}>
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
 
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth margin="normal" variant="filled" sx={inputSx}>
-                <InputLabel>Importance</InputLabel>
-                <Select
-                  name="importance"
-                  value={editedTaskData.importance || ''}
-                  onChange={handleFieldChange}
-                  label="Importance"
-                  disableUnderline
-                  sx={{ color: '#333' }}
-                  inputProps={{ sx: { borderRadius: '8px' } }}
-                >
-                  {[1, 2, 3, 4, 5].map((importance) => (
-                    <MenuItem key={importance} value={importance}>
-                      {getImportanceDisplay(importance).label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth margin="normal" variant="filled" sx={inputSx}>
-                <InputLabel>Statut</InputLabel>
-                <Select
-                  name="statut"
-                  value={editedTaskData.statut || ''}
-                  onChange={handleFieldChange}
-                  label="Statut"
-                  disableUnderline
-                  sx={{ color: '#333' }}
-                  inputProps={{ sx: { borderRadius: '8px' } }}
-                >
-                  <MenuItem value="en attente">En attente</MenuItem>
-                  <MenuItem value="en cours">En cours</MenuItem>
-                  <MenuItem value="terminée">Complétée</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
+        <DialogContent sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', color: primaryText }}>
+          <Box sx={{ flex: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField name="titre" label={t("taskDetails.fields.title")} variant="filled"
+              fullWidth value={editedTaskData.titre || ''} onChange={handleFieldChange}
+              disabled={!isEditMode} InputProps={{ disableUnderline: true }} />
 
-          <TextField
-            margin="normal"
-            name="date_fin"
-            label="Date de fin (optionnel)"
-            type="date"
-            fullWidth
-            variant="filled"
-            value={editedTaskData.date_fin || ''}
-            onChange={handleFieldChange}
-            InputLabelProps={{ shrink: true, sx: inputLabelSx }}
-            InputProps={{ disableUnderline: true, sx: inputSx }}
-          />
-          <TextField
-            margin="normal"
-            name="duree_estimee"
-            label="Durée Estimée (s)"
-            type="number"
-            fullWidth
-            variant="filled"
-            value={editedTaskData.duree_estimee || ''}
-            onChange={handleFieldChange}
-            InputLabelProps={{ sx: inputLabelSx }}
-            InputProps={{ disableUnderline: true, sx: inputSx }}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isLinkedToActiveSeance}
-                onChange={handleCheckboxChange}
-                name="link_to_active_seance"
-                disabled={!activeSeanceId || (taskDetails.seance_etude_id === activeSeanceId && isLinkedToActiveSeance)} // Disable if already linked to this active seance and checked
-                sx={{ color: 'rgba(128, 0, 128, 0.7)' }}
-              />
-            }
-            label="Ajouter à la séance active"
+            <TextField name="description" label={t("taskDetails.fields.description")} variant="filled"
+              fullWidth multiline rows={3} value={editedTaskData.description || ''}
+              onChange={handleFieldChange} disabled={!isEditMode} InputProps={{ disableUnderline: true }} />
+
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="filled" disabled={!isEditMode}>
+                  <InputLabel>{t("taskDetails.fields.importance")}</InputLabel>
+                  <Select name="importance" value={editedTaskData.importance || ''}
+                    onChange={handleFieldChange}>
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <MenuItem key={i} value={i}>
+                        {getImportanceDisplay(i).label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="filled" disabled={!isEditMode}>
+                  <InputLabel>{t("taskDetails.fields.status")}</InputLabel>
+                  <Select name="statut" value={editedTaskData.statut || ''} onChange={handleFieldChange}>
+                    <MenuItem value="en attente">{t("task.status.pending")}</MenuItem>
+                    <MenuItem value="en cours">{t("task.status.in_progress")}</MenuItem>
+                    <MenuItem value="terminée">{t("task.status.completed")}</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            <TextField name="date_fin" label={t("taskDetails.fields.due_date")} type="date"
+              fullWidth variant="filled" value={editedTaskData.date_fin || ''}
+              onChange={handleFieldChange} disabled={!isEditMode}
+              InputLabelProps={{ shrink: true }} InputProps={{ disableUnderline: true }} />
+
+            <TextField name="duree_estimee" label={t("taskDetails.fields.estimated_duration")}
+              type="number" fullWidth variant="filled" value={editedTaskData.duree_estimee || ''}
+              onChange={handleFieldChange} disabled={!isEditMode}
+              InputProps={{ disableUnderline: true }} />
+
+            <FormControlLabel
+              control={<Checkbox checked={isLinkedToActiveSeance}
+                onChange={e => setIsLinkedToActiveSeance(e.target.checked)}
+                disabled={!activeSeanceId || !isEditMode} />}
+              label={t("taskDetails.fields.link_to_seance")}
+            />
+          </Box>
+
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <ReadOnlyPill label={t("taskDetails.fields.priority")} value={editedTaskData.priorite || 'N/A'} icon={<PriorityHighIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.is_completed")} value={editedTaskData.est_terminee ? t("general.yes") : t("general.no")} icon={<CheckCircleOutlineIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.creation_date")} value={editedTaskData.date_creation ? new Date(editedTaskData.date_creation).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.start_date")} value={editedTaskData.date_debut ? new Date(editedTaskData.date_debut).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
+            <ReadOnlyPill label={t("taskDetails.fields.actual_duration")} value={editedTaskData.duree_reelle ? `${editedTaskData.duree_reelle}s` : 'N/A'} icon={<TimerIcon />} />
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button onClick={onClose}>{t("general.cancel")}</Button>
+          <Button onClick={handleSave} disabled={!isEditMode} variant="contained"
             sx={{
-              color: 'rgba(0,0,0,0.7)',
-              mt: 1,
-              '& .MuiTypography-root': { fontWeight: 'medium' }
-            }}
-          />
-        </Box>
+              bgcolor: alpha(specialColor, 1),
+              color: whiteColor,
+              '&:hover': { bgcolor: alpha(specialColor, 0.8) },
+            }}>
+            {t("general.save")}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        <Box sx={{ flexBasis: { xs: '100%', md: 'calc(33.33% - 16px)' }, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          <ReadOnlyPill label="Priorité" value={editedTaskData.priorite || 'N/A'} icon={<PriorityHighIcon />} />
-          <ReadOnlyPill label="Est Terminée" value={editedTaskData.est_terminee ? 'Oui' : 'Non'} icon={<CheckCircleOutlineIcon />} />
-          <ReadOnlyPill label="Date de création" value={editedTaskData.date_creation ? new Date(editedTaskData.date_creation).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
-          <ReadOnlyPill label="Date de début" value={editedTaskData.date_debut ? new Date(editedTaskData.date_debut).toLocaleDateString() : 'N/A'} icon={<CalendarTodayIcon />} />
-          <ReadOnlyPill label="Durée Réelle" value={editedTaskData.duree_reelle ? `${editedTaskData.duree_reelle}s` : 'N/A'} icon={<TimerIcon />} />
-        </Box>
-      </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'center', gap: 2 }}>
-        <Button onClick={onClose} sx={{ color: '#555' }}>Annuler</Button>
-        <Button
-          onClick={handleSave}
-          variant="contained"
-          sx={{
-            bgcolor: 'rgba(128, 0, 128, 0.5)',
-            '&:hover': { bgcolor: 'rgba(128, 0, 128, 0.7)' },
-            borderRadius: '8px'
-          }}
-        >
-          Enregistrer
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <ConfirmationDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDeleteConfirmed}
+        content={{
+          title: t("taskDetails.delete.title"),
+          text: t("taskDetails.delete.text"),
+          confirmButtonText: t("taskDetails.delete.confirm"),
+          confirmButtonColor: "error",
+        }}
+      />
+    </>
   );
 }

@@ -1,0 +1,424 @@
+{
+  "session": {
+    "creating": "Creando tu sesión...",
+    "success": "¡Sesión creada con éxito!",
+    "missing_id": "Sesión creada, pero no se recibió el ID. Por favor, actualiza.",
+    "error": "Error al crear la sesión: {{message}}"
+  },
+  "account": {
+    "title": "Configuración de la cuenta",
+    "profileInfo": "Información del perfil",
+    "nom": "Apellido",
+    "prenom": "Nombre",
+    "email": "Correo electrónico",
+    "saveChanges": "Guardar cambios",
+    "metadata": "Metadatos de la cuenta",
+    "role": "Rol",
+    "active": "Activo",
+    "yes": "Sí",
+    "no": "No",
+    "otherActions": "Otras acciones",
+    "changePassword": "Cambiar la contraseña",
+    "deactivate": "Desactivar la cuenta",
+    "delete": "Eliminar la cuenta",
+    "logout": "Cerrar sesión",
+    "confirmPasswordChange": {
+      "title": "Confirmar cambio de contraseña",
+      "text": "¿Estás seguro de que quieres cambiar tu contraseña? Deberás iniciar sesión de nuevo con la nueva.",
+      "button": "Cambiar"
+    },
+    "confirmDeactivate": {
+      "title": "Confirmar la desactivación de la cuenta",
+      "text": "¿Estás seguro de que quieres desactivar tu cuenta? Se cerrará tu sesión y no podrás volver a acceder hasta que se reactive.",
+      "button": "Desactivar"
+    },
+    "confirmDelete": {
+      "title": "Confirmar la eliminación de la cuenta",
+      "text": "¿Estás seguro de que quieres eliminar tu cuenta de forma permanente? Esta acción es irreversible.",
+      "button": "Eliminar"
+    },
+    "confirmLogout": {
+      "title": "Confirmar cierre de sesión",
+      "text": "¿Estás seguro de que quieres cerrar la sesión de tu cuenta?",
+      "button": "Cerrar sesión"
+    },
+    "confirmUpdate": {
+      "title": "Confirmar actualización del perfil",
+      "text": "¿Estás seguro de que quieres guardar estos cambios en el perfil?",
+      "button": "Guardar"
+    }
+  },
+  "stats": {
+    "no_data": "No hay estadísticas disponibles por el momento.",
+    "note_title": "Nota importante",
+    "note_1": "Las estadísticas se basan en todas tus sesiones registradas. Si algunas sesiones se iniciaron por error, también se tienen en cuenta.",
+    "note_2": "Estos datos te ayudan a visualizar tus hábitos de trabajo e identificar los días en los que tu concentración es óptima. Utiliza esta información para adaptar tus objetivos y optimizar tu horario.",
+    "chart_title": "Actividad por día de la semana"
+  },
+  "userTasks": {
+    "snackbar_creating": "Creando tu sesión...",
+    "snackbar_id_missing": "Sesión creada, pero no se recibió el ID. Por favor, actualiza.",
+    "snackbar_created": "¡Sesión creada con éxito!",
+    "snackbar_error": "Error al crear la sesión"
+  },
+  "activeSeance": {
+    "no_active": "Ninguna sesión activa",
+    "no_active_sub": "¡Inicia una nueva sesión para seguir tu progreso!",
+    "create_button": "Crear una sesión",
+    "more_coming": "Más detalles próximamente...",
+    "theme": "Tema",
+    "study_duration": "Duración del estudio",
+    "short_break": "Duración de la pausa corta",
+    "long_break": "Duración de la pausa larga",
+    "cycles_before_long": "Ciclos antes de la pausa larga",
+    "total_duration": "Duración total de la sesión",
+    "timer": {
+      "elapsed": "Tiempo total transcurrido",
+      "remaining_total": "Tiempo restante (sesión)"
+    },
+    "status": {
+      "next_break": "Próxima pausa en",
+      "next_study": "Próximo estudio en",
+      "ready_for": "Listo para",
+      "break": "La pausa",
+      "study": "El estudio",
+      "done": "Terminada",
+      "status": "Estado",
+      "idle": "Inactivo",
+      "na": "N/A"
+    }
+  },
+  "studyTips": {
+    "list": [
+      {
+        "title": "Técnica Pomodoro",
+        "description": "Utiliza la técnica Pomodoro para mantenerte concentrado sin agotarte. Trabaja en intervalos intensos seguidos de pausas cortas."
+      },
+      {
+        "title": "Objetivos claros",
+        "description": "Fíjate objetivos claros y alcanzables antes de cada sesión de estudio. Esto te da una dirección y te motiva."
+      },
+      {
+        "title": "Música para la concentración",
+        "description": "Escucha música suave o ambiental. Ciertas frecuencias pueden mejorar tu concentración y bloquear las distracciones."
+      },
+      {
+        "title": "Pausas regulares",
+        "description": "Toma un descanso cada 25 minutos para recargar tu cerebro. Las pausas cortas mejoran la retención y reducen la fatiga."
+      },
+      {
+        "title": "Respiración profunda",
+        "description": "Respira profundamente y relájate antes de empezar. Una buena respiración oxigena tu cerebro y calma tu mente."
+      },
+      {
+        "title": "Elimina las distracciones",
+        "description": "Pon tu teléfono en modo avión, cierra las pestañas innecesarias. Un entorno sin distracciones es clave para un enfoque intenso."
+      },
+      {
+        "title": "Toma notas a mano",
+        "description": "Toma notas a mano para retener mejor la información. El acto físico de escribir activa diferentes zonas del cerebro."
+      },
+      {
+        "title": "Recompénsate",
+        "description": "Recompénsate después de una buena sesión de estudio. Esto refuerza los hábitos positivos y hace que el aprendizaje sea más agradable."
+      },
+      {
+        "title": "Horas punta",
+        "description": "Estudia en las horas en las que estés naturalmente más concentrado. Identifica tu ritmo circadiano para optimizar tus sesiones."
+      },
+      {
+        "title": "Hidratación",
+        "description": "Bebe agua regularmente para mantenerte alerta. La deshidratación puede afectar tu concentración y tu rendimiento cognitivo."
+      }
+    ]
+  },
+  "taskFilter": {
+    "search_placeholder": "Buscar tarea...",
+    "importance": "Importancia",
+    "status": "Estado",
+    "all": "Todas",
+    "in_progress": "En curso",
+    "pending": "Pendiente",
+    "completed": "Completada"
+  },
+  "taskItem": {
+    "importance": "Importancia",
+    "status": "Estado",
+    "due": "Fecha límite",
+    "description": "Descripción",
+    "details": "Otros detalles",
+    "created": "Creada el",
+    "updated": "Última modificación",
+    "no_info": "No hay información adicional."
+  },
+  "taskList": {
+    "no_tasks": "No hay tareas vinculadas a la sesión activa.",
+    "no_seance": "No hay ninguna sesión activa. Inicia una sesión para ver las tareas asociadas."
+  },
+  "seanceDetails": {
+    "durations": "Duraciones",
+    "study": "Sesión",
+    "short_break": "Pausa corta",
+    "long_break": "Pausa larga",
+    "total_duration": "Duración total",
+    "details": "Detalles",
+    "type": "Tipo de sesión",
+    "name": "Nombre de la sesión",
+    "preset_name": "Nombre de la preconfiguración",
+    "theme": "Tema",
+    "automation": "Alertas y automatización",
+    "auto_start": "Inicio automático",
+    "sound_alert": "Alerta sonora",
+    "notification": "Notificación",
+    "vibration": "Vibración",
+    "track_time": "Seguimiento del tiempo total"
+  },
+  "seanceInactive": {
+    "title": "Ninguna sesión activa",
+    "subtitle": "¡Inicia una nueva sesión para seguir tu progreso!",
+    "button": "Crear una sesión"
+  },
+  "taskStatusTracker": {
+    "title": "Progreso de las tareas",
+    "en attente": "Pendiente",
+    "en cours": "En curso",
+    "terminée": "Terminada"
+  },
+  "timerDisplayCard": {
+    "remainingTime": "Tiempo restante (sesión)",
+    "elapsedTime": "Tiempo total transcurrido",
+    "untilNext": "Tiempo hasta la próxima",
+    "nextPhase": {
+      "shortBreak": "pausa ({{type}})",
+      "study": "estudio",
+      "session": "sesión",
+      "phase": "fase"
+    }
+  },
+  "activityChart": {
+    "no_data": "No hay datos de actividad disponibles.",
+    "tooltip": "Actividad"
+  },
+  "taskStatus": {
+    "title": "Estado de las tareas",
+    "no_tasks": "No hay tareas para mostrar.",
+    "completed": "Completada",
+    "in_progress": "En curso",
+    "pending": "Pendiente",
+    "other": "Otros",
+    "total": "Tareas totales"
+  },
+  "filterBar": {
+    "search_placeholder": "Buscar una tarea...",
+    "importance": "Importancia",
+    "all": "Todas",
+    "view_mode": "Vista",
+    "all_tasks": "Todas las tareas",
+    "active_seance_tasks": "Tareas de la sesión activa"
+  },
+  "taskDetails": {
+    "title": "Modificar la tarea",
+    "fields": {
+      "title": "Título de la tarea",
+      "description": "Descripción",
+      "importance": "Importancia",
+      "status": "Estado",
+      "due_date": "Fecha de finalización",
+      "estimated_duration": "Duración estimada (s)",
+      "priority": "Prioridad",
+      "is_completed": "Está terminada",
+      "creation_date": "Fecha de creación",
+      "start_date": "Fecha de inicio",
+      "actual_duration": "Duración real",
+      "link_to_seance": "Añadir a la sesión activa"
+    },
+    "snackbar": {
+      "updating": "Actualizando la tarea...",
+      "updated": "¡Tarea actualizada!"
+    },
+    "errors": {
+      "title_required": "Se requiere el título de la tarea.",
+      "date_past": "La fecha de finalización no puede ser en el pasado.",
+      "update_failed": "Error al guardar",
+      "delete_failed": "Error al eliminar"
+    },
+    "delete": {
+      "title": "Eliminar la tarea",
+      "text": "¿Estás seguro de que quieres eliminar esta tarea? Esta acción es irreversible.",
+      "confirm": "Eliminar"
+    }
+  },
+  "task": {
+    "status": {
+      "pending": "Pendiente",
+      "in_progress": "En curso",
+      "completed": "Completada"
+    }
+  },
+  "general": {
+    "yes": "Sí",
+    "no": "No",
+    "cancel": "Cancelar",
+    "save": "Guardar"
+  },
+  "taskCard": {
+    "importance": "Importancia",
+    "viewDetails": "Ver detalles"
+  },
+  "taskBoard": {
+    "sort": "Ordenar por importancia",
+    "sortByImportance": "Ordenar por importancia ({{order}})",
+    "empty": "No hay tareas aquí.",
+    "columns": {
+      "todo": "Por hacer",
+      "inprogress": "En curso",
+      "done": "Completada"
+    }
+  },
+  "addTask": {
+    "title": "Añadir una nueva tarea",
+    "add": "Añadir tarea",
+    "fields": {
+      "title": "Título de la tarea",
+      "description": "Descripción",
+      "importance": "Importancia",
+      "status": "Estado",
+      "deadline": "Fecha límite (opcional)",
+      "addToSeance": "Añadir a la sesión activa"
+    }
+  },
+  "statuses": {
+    "pending": "Pendiente",
+    "in_progress": "En curso",
+    "completed": "Completada"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "confirmation": {
+    "deleteTaskTitle": "Eliminar la tarea",
+    "deleteTaskText": "¿Estás seguro de que quieres eliminar esta tarea? Esta acción es irreversible.",
+    "deleteTaskConfirm": "Eliminar"
+  },
+  "confirmationItem": {
+    "labels": {
+      "titre": "Título",
+      "description": "Descripción",
+      "importance": "Importancia",
+      "statut": "Estado",
+      "date_fin": "Fecha de finalización",
+      "add_to_active_seance": "Añadir a la sesión activa"
+    },
+    "values": {
+      "enabled": "Activado",
+      "disabled": "Desactivado"
+    }
+  },
+  "createSeance": {
+    "title": "Crear una nueva sesión",
+    "steps": {
+      "details": "Detalles de la sesión",
+      "config": "Configuración de Pomodoro",
+      "confirm": "Confirmación"
+    },
+    "confirmAndCreate": "Confirmar y crear",
+    "unknownStep": "Paso desconocido"
+  },
+  "pomodoro": {
+    "duration_study": "Duración de la sesión (min)",
+    "short_break": "Pausa corta (min)",
+    "long_break": "Pausa larga (min)",
+    "cycles_before_long_break": "Ciclos antes de la pausa larga",
+    "total_duration": "Duración total (min)",
+    "session_name": "Nombre de la sesión Pomodoro",
+    "theme": "Tema",
+    "preset_name": "Nombre de la preconfiguración",
+    "alerts_and_automation": "Alertas y automatización",
+    "auto_start": "Inicio automático",
+    "sound_alert": "Alerta sonora",
+    "notification": "Notificación",
+    "vibration": "Vibración",
+    "track_total_time": "Seguimiento del tiempo total",
+    "soon_available": "Estas opciones estarán disponibles próximamente."
+  },
+  "validation": {
+    "short_break_min": "La pausa corta debe ser de al menos 5 minutos.",
+    "long_break_ratio": "La pausa larga debe ser al menos 2 veces la pausa corta.",
+    "break_longer_than_study": "La pausa no puede ser más larga que la sesión.",
+    "total_duration_min": "La duración total debe ser ≥ {{min}} minutos."
+  },
+  "phaseDialog": {
+    "awaiting_break": {
+      "title": "🎓 Estudio completado",
+      "message": "Has completado tu sesión. ¿Quieres comenzar tu pausa?",
+      "button": "Comenzar la pausa"
+    },
+    "awaiting_study": {
+      "title": "🧘 Pausa completada",
+      "message": "¡Vuelve con fuerza! ¿Listo para la próxima sesión de estudio?",
+      "button": "Reanudar el estudio"
+    }
+  },
+  "errorBoundary": {
+    "title": "Algo salió mal",
+    "defaultMessage": "Error desconocido. Por favor, recarga la aplicación."
+  },
+  "timer": {
+    "elapsed": "Tiempo transcurrido",
+    "phase": {
+      "study": "🟪 Fase: Estudio",
+      "shortBreak": "🟦 Fase: Pausa corta",
+      "longBreak": "🟩 Fase: Pausa larga",
+      "awaitingBreak": "⏸ Fase: Esperando la pausa",
+      "awaitingStudy": "⏸ Fase: Esperando la reanudación",
+      "completed": "✅ Fase: Completada"
+    },
+    "nextShortBreakIn": "Próxima pausa en:",
+    "nextStudyIn": "Próxima sesión de estudio en:",
+    "noActiveSession": "Ninguna sesión activa. Haz clic para crear una.",
+    "actions": {
+      "create": "Crear una sesión",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "stop": "Detener la sesión"
+    },
+    "snackbar": {
+      "stopping": "Deteniendo la sesión en curso...",
+      "stopped": "¡Sesión detenida con éxito!",
+      "error": "Error al detener la sesión. Por favor, inténtalo de nuevo."
+    }
+  },
+  "seanceForm": {
+    "type_seance": "Tipo de sesión",
+    "nom": "Nombre de la sesión"
+  },
+   "seanceReview": {
+    "details": {
+      "title": "Detalles de la Sesión",
+      "type": "Tipo de sesión",
+      "nom": "Nombre de la sesión"
+    },
+    "durations": {
+      "title": "Duraciones",
+      "seance": "Sesión",
+      "courte": "Pausa corta",
+      "longue": "Pausa larga"
+    },
+    "config": {
+      "title": "Configuración",
+      "cycles": "Ciclos",
+      "theme": "Nombre del Tema",
+      "preconfig": "Preconfiguración"
+    },
+    "alertes": {
+      "title": "Alertas y Automatización",
+      "auto_demarrage": "Inicio automático",
+      "alerte_sonore": "Alerta sonora",
+      "notification": "Notificación",
+      "vibration": "Vibración",
+      "suivi_temps_total": "Seguimiento del tiempo total"
+    }
+  }
+}

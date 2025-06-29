@@ -1,19 +1,43 @@
-import React from 'react';
-import { Box, Typography, useTheme } from "@mui/material";
+// src/components/UserTasks/TaskBoard.jsx
+import React, { useState } from 'react';
+import { Box, Typography, IconButton, useTheme, Tooltip } from '@mui/material';
 import { Droppable } from '@hello-pangea/dnd';
-import TaskCard from './TaskCard'; // Import the new TaskCard component
+import SortIcon from '@mui/icons-material/Sort';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+
+import TaskCard from './TaskCard';
+import SkeletonTaskCard from '../../skeleton/SkeletonTaskCard';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
+import { useTranslation } from 'react-i18next';
 
-export default function TaskBoard({ displayedTasks, onViewDetailsClick, getImportanceDisplay, getStatusDisplay }) {
-
+export default function TaskBoard({
+  displayedTasks,
+  onViewDetailsClick,
+  getImportanceDisplay,
+  getStatusDisplay,
+  loading
+}) {
+  const { t } = useTranslation();
   const theme = useTheme();
-  const { innerBox, outerBox, middleBox, primaryColor, specialColor, secondaryColor, whiteColor, blackColor, specialText, secondaryText, primaryText, whiteBorder, blackBorder, specialBorder, softBoxShadow } = useCustomTheme();
+  const {
+    middleBox,
+    primaryText,
+    whiteBorder
+  } = useCustomTheme();
 
+  const [sortOrder, setSortOrder] = useState({});
 
-  const glassBorderColor = 'rgba(255, 255, 255, 0.1)';
+  const toggleSortOrder = (columnId) => {
+    setSortOrder(prev => {
+      const currentOrder = prev[columnId];
+      const newOrder = currentOrder === 'asc' ? 'desc' : currentOrder === 'desc' ? null : 'asc';
+      return { ...prev, [columnId]: newOrder };
+    });
+  };
 
   const getListStyle = (isDraggingOver) => ({
-    background: isDraggingOver ? 'rgba(255, 255, 255, 0.57)' : middleBox,
+    background: isDraggingOver ? 'rgba(255,255,255,0.57)' : middleBox,
     padding: '8px',
     borderRadius: '12px',
     border: `1px solid ${whiteBorder}`,
@@ -21,82 +45,108 @@ export default function TaskBoard({ displayedTasks, onViewDetailsClick, getImpor
     minHeight: '100px',
     overflowY: 'auto',
     scrollbarWidth: 'none',
-    '&::WebkitScrollbar': { display: 'none' },
     msOverflowStyle: 'none',
     display: 'flex',
     flexDirection: 'column',
   });
 
-return (
+  return (
     <>
-      {Object.entries(displayedTasks).map(([columnId, columnTasks]) => (
-        <Droppable key={columnId} droppableId={columnId}>
-          {(provided, snapshot) => (
-            <Box
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-              {...provided.droppableProps}
-              sx={{
-                // This is the outer flex container for the column.
-                // It contains a sticky header and a scrollable body.
-                border: `1px solid ${glassBorderColor}`,
-                boxShadow: '0 2px 15px rgba(0, 0, 0, 0.08)',
-                display: 'flex',
-                flexDirection: 'column', // This is essential for the layout
-                flexBasis: '33%',
-                minWidth: '200px',
-                p: 2,
-                position: 'relative', // --- ADDED: This is the scrolling context for the sticky element ---
-              }}
-            >
-              {/* --- NEW: This Box is the sticky header --- */}
-              <Box
-                sx={{
-                  position: 'sticky', // --- CHANGED: Use sticky position ---
-                  top: 0, // Stick to the top of the container
-                  zIndex: 10, // Ensure it sits on top of scrolling content
-                  mb: 2, // Margin below the header
-                  p: '0 16px 8px 16px', // Add padding to match the container's p: 2
-                  textAlign: 'center',
-                }}
-              >
-                <Typography variant="h6" fontWeight="bold" color={primaryText} sx={{ textTransform: 'capitalize' }}>
-                  {columnId.replace('en attente', 'En attente').replace('en cours', 'En cours').replace('terminée', 'Terminée')}
-                </Typography>
-              </Box>
+      {Object.entries(displayedTasks).map(([columnId, columnTasks]) => {
+        const columnSortOrder = sortOrder[columnId];
+        let sortedColumnTasks = [...columnTasks];
 
-              {/* --- NEW: This Box is the scrollable content container --- */}
+        if (columnSortOrder) {
+          sortedColumnTasks.sort((a, b) => {
+            const impA = a.importance ?? Infinity;
+            const impB = b.importance ?? Infinity;
+            return columnSortOrder === 'asc' ? impA - impB : impB - impA;
+          });
+        }
+
+        return (
+          <Droppable key={columnId} droppableId={columnId}>
+            {(provided, snapshot) => (
               <Box
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+                {...provided.droppableProps}
                 sx={{
-                  flexGrow: 1, // Allow this box to take up remaining vertical space
-                  overflowY: 'auto', // --- ADDED: The scrolling now happens here ---
-                  scrollbarWidth: 'none',
-                  '&::WebkitScrollbar': { display: 'none' },
-                  msOverflowStyle: 'none',
-                  // Ensure this box starts right after the sticky header
+                  flexBasis: '33%',
+                  minWidth: '200px',
+                  p: 2,
+                  position: 'relative',
                 }}
               >
-                {columnTasks.length === 0 && (
-                  <Typography variant="body2" color="#777" sx={{ textAlign: 'center', p: 2 }}>
-                    Aucune tâche ici.
+                {/* Column Header */}
+                <Box
+                  sx={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 10,
+                    mb: 2,
+                    p: '0 16px 8px 16px',
+                    textAlign: 'center',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography variant="h6" fontWeight="bold" color={primaryText} sx={{ textTransform: 'capitalize' }}>
+                    {t(`taskBoard.columns.${columnId}`, columnId)}
                   </Typography>
-                )}
-                {columnTasks.map((task, index) => (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    index={index}
-                    onViewDetailsClick={onViewDetailsClick}
-                    getImportanceDisplay={getImportanceDisplay}
-                    getStatusDisplay={getStatusDisplay}
-                  />
-                ))}
-                {provided.placeholder}
+                  <Tooltip
+                    title={
+                      columnSortOrder
+                        ? t('taskBoard.sortByImportance', { order: columnSortOrder })
+                        : t('taskBoard.sort')
+                    }
+                    placement="top"
+                  >
+                    <IconButton size="small" onClick={() => toggleSortOrder(columnId)} sx={{ color: primaryText }}>
+                      {columnSortOrder === 'asc' ? (
+                        <ArrowUpwardIcon />
+                      ) : columnSortOrder === 'desc' ? (
+                        <ArrowDownwardIcon />
+                      ) : (
+                        <SortIcon />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+
+                {/* Task list or skeletons */}
+                <Box sx={{ flexGrow: 1 }}>
+                  {loading ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <SkeletonTaskCard key={`skeleton-${columnId}-${i}`} />
+                    ))
+                  ) : (
+                    <>
+                      {sortedColumnTasks.length === 0 && (
+                        <Typography variant="body2" color="#777" sx={{ textAlign: 'center', p: 2 }}>
+                          {t('taskBoard.empty')}
+                        </Typography>
+                      )}
+                      {sortedColumnTasks.map((task, index) => (
+                        <TaskCard
+                          key={task.id}
+                          task={task}
+                          index={index}
+                          onViewDetailsClick={onViewDetailsClick}
+                          getImportanceDisplay={getImportanceDisplay}
+                          getStatusDisplay={getStatusDisplay}
+                        />
+                      ))}
+                    </>
+                  )}
+                  {provided.placeholder}
+                </Box>
               </Box>
-            </Box>
-          )}
-        </Droppable>
-      ))}
+            )}
+          </Droppable>
+        );
+      })}
     </>
   );
 }

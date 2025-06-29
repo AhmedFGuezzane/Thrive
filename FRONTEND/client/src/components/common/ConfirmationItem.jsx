@@ -1,10 +1,17 @@
 // src/components/UserHome/ConfirmationItem.jsx
 import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
+import { Box, Typography, useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export default function ConfirmationItem({ label, value }) {
-  // Use the global theme hook to access the palette
   const theme = useTheme();
+  const { t } = useTranslation();
+
+  const translatedLabel = t(`confirmationItem.labels.${label}`, label.replace(/_/g, ' '));
+  const translatedValue =
+    typeof value === 'boolean'
+      ? t(value ? 'confirmationItem.values.enabled' : 'confirmationItem.values.disabled')
+      : value;
 
   return (
     <Box>
@@ -13,13 +20,13 @@ export default function ConfirmationItem({ label, value }) {
         sx={{
           textTransform: 'capitalize',
           fontWeight: 'bold',
-          color: theme.palette.text.primary, // <-- Explicitly set the color from the theme
+          color: theme.palette.text.primary,
         }}
       >
-        {label.replace(/_/g, ' ')}
+        {translatedLabel}
       </Typography>
       <Typography variant="body1" color="text.secondary" gutterBottom>
-        {typeof value === 'boolean' ? (value ? 'Activé' : 'Désactivé') : value}
+        {translatedValue}
       </Typography>
     </Box>
   );
