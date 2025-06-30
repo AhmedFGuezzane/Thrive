@@ -7,10 +7,8 @@ export default function MetricCard({ label, value }) {
     return (
         <Box
             sx={{
-                // --- ADDED: Tell the box to grow and take equal space ---
                 flexGrow: 1,
-                flexBasis: 0, // Recommended to ensure equal distribution from a zero base
-                // ---
+                flexBasis: 0,
                 bgcolor: outerBox,
                 boxShadow: softBoxShadow,
                 border: `1px solid ${whiteBorder}`,

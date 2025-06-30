@@ -1,4 +1,4 @@
-// src/components/UserTasks/TaskCard.jsx
+
 import React from 'react';
 import { Box, Typography, IconButton, useTheme, Tooltip } from '@mui/material';
 import { Draggable } from '@hello-pangea/dnd';
@@ -44,7 +44,6 @@ export default function TaskCard({ task, index, onViewDetailsClick, getImportanc
           style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
         >
           <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" gap={1}>
-            {/* Importance Indicator */}
             <Tooltip title={`${t('taskCard.importance')}: ${importanceDisplay.label}`} placement="top">
               <Box
                 sx={{

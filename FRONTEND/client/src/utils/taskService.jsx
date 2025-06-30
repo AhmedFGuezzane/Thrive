@@ -1,9 +1,8 @@
-// src/utils/taskService.jsx
+
 import config from '../config';
 
 const BASE_URL = config.tacheMicroserviceBaseUrl;
 
-// Get token from localStorage
 function getAuthHeaders() {
   const token = localStorage.getItem("jwt_token");
   return {
@@ -12,7 +11,6 @@ function getAuthHeaders() {
   };
 }
 
-// ✅ Fetch all tasks for the authenticated user
 export async function fetchAllTasksForUser() {
   const response = await fetch(`${BASE_URL}/taches`, {
     method: "GET",
@@ -27,7 +25,6 @@ export async function fetchAllTasksForUser() {
   return await response.json();
 }
 
-// ✅ Fetch tasks by seance ID
 export async function fetchTasksBySeanceId(seanceId) {
   const response = await fetch(`${BASE_URL}/taches/seance/${seanceId}`, {
     method: "GET",
@@ -42,7 +39,6 @@ export async function fetchTasksBySeanceId(seanceId) {
   return await response.json();
 }
 
-// ✅ Fetch single task by ID
 export async function fetchTaskById(tacheId) {
   const response = await fetch(`${BASE_URL}/tache/${tacheId}`, {
     method: "GET",

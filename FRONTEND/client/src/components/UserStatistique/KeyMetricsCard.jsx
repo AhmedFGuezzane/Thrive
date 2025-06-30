@@ -1,19 +1,15 @@
 
 import React from 'react';
-import { Box, Typography, Grid, useTheme } from '@mui/material'; // <-- IMPORT useTheme hook
+import { Box, Typography, Grid, useTheme } from '@mui/material';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 import { formatDate } from '../../utils/StatisticsUtils';
 import MetricCard from './MetricCard';
 
 export default function KeyMetricsCard({ stats }) {
-    // --- CORRECTED: Use the useTheme hook to access the theme object ---
     const theme = useTheme();
-    // -------------------------------------------------------------------
     const { primaryText, secondaryText, softBoxShadow, outerBox, whiteBorder } = useCustomTheme();
 
     if (!stats) return null;
-
-    // Define the metrics you want to display in the new mini-cards
     const metrics = [
         { label: 'Tasks Completed', value: stats.nbre_taches_completees },
         { label: 'Completion Rate', value: `${(stats.taux_completion_taches * 100).toFixed(0)}%` },
@@ -41,7 +37,6 @@ export default function KeyMetricsCard({ stats }) {
                 {metrics.map((metric) => (
 
                         <MetricCard label={metric.label} value={metric.value} />
-
                 ))}
             </Box>
             <Box mt={3}>

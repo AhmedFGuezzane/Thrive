@@ -1,4 +1,4 @@
-// src/components/UserHome/DisplayCard.jsx
+
 import React from 'react';
 import { Box, Typography, Divider, useTheme } from '@mui/material';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
@@ -24,7 +24,7 @@ export default function DisplayCard({ title, icon, children }) {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        color: specialText, // Ensures consistent text coloring
+        color: specialText,
       }}
     >
       <Box display="flex" alignItems="center" mb={1.5}>

@@ -1,4 +1,4 @@
-// src/components/UserHome/SeanceReviewStep.jsx
+
 import React from 'react';
 import { Box, Grid, useTheme } from '@mui/material';
 import DisplayCard from './DisplayCard';

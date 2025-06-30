@@ -1,4 +1,3 @@
-// src/components/UserSeance/UrgentTasksCard.jsx
 
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, CircularProgress, Chip, useTheme } from '@mui/material';
@@ -75,7 +74,7 @@ export default function UrgentTasksCard() {
           sx={{
             flexGrow: 1,
             overflowY: 'auto',
-            pr: 1, // Add padding for scrollbar
+            pr: 1, 
             pt : 1.5,
           }}
         >

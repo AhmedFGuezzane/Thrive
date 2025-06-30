@@ -1,4 +1,4 @@
-// src/components/UserSeance/StopTimerConfirmDialog.jsx
+
 import React from 'react';
 import {
   Dialog,

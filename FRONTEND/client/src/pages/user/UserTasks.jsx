@@ -80,20 +80,20 @@ export default function UserTasks() {
     const { source, destination, draggableId } = result;
     if (!destination || (source.droppableId === destination.droppableId && source.index === destination.index)) return;
 
-   if (destination.droppableId === 'trash') {
-  showSnackbar(t('userTasks.snackbar_deleting'), 'info', true);
-  await handleDeleteTask(draggableId);
-  return;
-}
+    if (destination.droppableId === 'trash') {
+      showSnackbar(t('userTasks.snackbar_deleting'), 'info', true);
+      await handleDeleteTask(draggableId);
+      return;
+    }
 
-if (destination.droppableId === 'add_to_seance') {
-  const activeSeanceId = localStorage.getItem('active_seance_id');
-  if (activeSeanceId) {
-    showSnackbar(t('userTasks.snackbar_adding_to_seance'), 'info', true);
-    await handleUpdateTask(draggableId, { seance_etude_id: activeSeanceId });
-  }
-  return;
-}
+    if (destination.droppableId === 'add_to_seance') {
+      const activeSeanceId = localStorage.getItem('active_seance_id');
+      if (activeSeanceId) {
+        showSnackbar(t('userTasks.snackbar_adding_to_seance'), 'info', true);
+        await handleUpdateTask(draggableId, { seance_etude_id: activeSeanceId });
+      }
+      return;
+    }
 
 
     handleUpdateTaskStatus(draggableId, destination.droppableId);
@@ -208,66 +208,65 @@ if (destination.droppableId === 'add_to_seance') {
             />
           )}
 
-          {/* Floating Action Zones */}
-<Box sx={{ position: 'fixed', bottom: 24, left: 24, zIndex: 2100 }}>
-  <Tooltip title={t('userTasks.deleteTask')} placement="top" arrow>
-    <Box>
-      <Droppable droppableId="trash">
-        {(provided, snapshot) => (
-          <Box
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            sx={{
-              width: 50,
-              height: 50,
-              borderRadius: '50%',
-              bgcolor: snapshot.isDraggingOver ? 'error.main' : specialColor,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              boxShadow: 6,
-              transition: '0.2s',
-            }}
-          >
-            <DeleteIcon sx={{ fontSize: 28, color: 'white', pointerEvents: 'none' }} />
-            {provided.placeholder}
+          <Box sx={{ position: 'fixed', bottom: 24, left: 24, zIndex: 2100 }}>
+            <Tooltip title={t('userTasks.deleteTask')} placement="top" arrow>
+              <Box>
+                <Droppable droppableId="trash">
+                  {(provided, snapshot) => (
+                    <Box
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      sx={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: '50%',
+                        bgcolor: snapshot.isDraggingOver ? 'error.main' : specialColor,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        boxShadow: 6,
+                        transition: '0.2s',
+                      }}
+                    >
+                      <DeleteIcon sx={{ fontSize: 28, color: 'white', pointerEvents: 'none' }} />
+                      {provided.placeholder}
+                    </Box>
+                  )}
+                </Droppable>
+              </Box>
+            </Tooltip>
           </Box>
-        )}
-      </Droppable>
-    </Box>
-  </Tooltip>
-</Box>
 
-{activeSeanceExists && (
-  <Box sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2100 }}>
-    <Tooltip title={t('userTasks.addToSeance')} placement="top" arrow>
-      <Box>
-        <Droppable droppableId="add_to_seance">
-          {(provided, snapshot) => (
-            <Box
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              sx={{
-                width: 50,
-                height: 50,
-                borderRadius: '50%',
-                bgcolor: snapshot.isDraggingOver ? 'success.main' : secondaryColor,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                boxShadow: 6,
-                transition: '0.2s',
-              }}
-            >
-              <AddCircleOutlineIcon sx={{ fontSize: 28, color: 'white', pointerEvents: 'none' }} />
-              {provided.placeholder}
+          {activeSeanceExists && (
+            <Box sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2100 }}>
+              <Tooltip title={t('userTasks.addToSeance')} placement="top" arrow>
+                <Box>
+                  <Droppable droppableId="add_to_seance">
+                    {(provided, snapshot) => (
+                      <Box
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        sx={{
+                          width: 50,
+                          height: 50,
+                          borderRadius: '50%',
+                          bgcolor: snapshot.isDraggingOver ? 'success.main' : secondaryColor,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          boxShadow: 6,
+                          transition: '0.2s',
+                        }}
+                      >
+                        <AddCircleOutlineIcon sx={{ fontSize: 28, color: 'white', pointerEvents: 'none' }} />
+                        {provided.placeholder}
+                      </Box>
+                    )}
+                  </Droppable>
+                </Box>
+              </Tooltip>
             </Box>
           )}
-        </Droppable>
-      </Box>
-    </Tooltip>
-  </Box>
-)}
 
 
         </DragDropContext>

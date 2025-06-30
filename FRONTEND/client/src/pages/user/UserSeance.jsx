@@ -1,4 +1,3 @@
-// src/pages/user/UserSeance.jsx
 
 import React, { useState, useContext } from 'react';
 import { Box, useTheme } from '@mui/material';
@@ -114,7 +113,6 @@ export default function UserSeance() {
       >
         {activeSeanceId ? (
           <>
-            {/* Central section with Timer, TaskStatusTracker, and UrgentTasksCard */}
             <Box
               display="flex"
               flexDirection="column"
@@ -131,7 +129,6 @@ export default function UserSeance() {
               <TimerDisplayCard />
 
               <Box display="flex" width="100%" height="100%" gap={2}>
-                {/* Ensuring TaskStatusTracker and UrgentTasksCard use 33% width each */}
                 <TaskStatusTracker sx={{ flex: '1 1 33%' }} />
                 <UrgentTasksCard sx={{ flex: '1 1 33%' }} />
               </Box>
@@ -141,7 +138,6 @@ export default function UserSeance() {
               </Box>
             </Box>
 
-            {/* Details Section */}
             <Box
               width="25%"
               sx={{

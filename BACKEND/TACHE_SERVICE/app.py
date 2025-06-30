@@ -52,7 +52,6 @@ def add_tache():
     tache_data["client_id"] = user_id
     result = dao_client.add_tache(tache_data, user_id)
 
-    # ✅ Check if result has JSON, else fallback
     try:
         return jsonify(result.json()), result.status_code
     except Exception:

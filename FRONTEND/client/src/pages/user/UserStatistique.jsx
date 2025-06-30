@@ -17,7 +17,6 @@ import ActivityChart from '../../components/UserStatistique/ActivityChart';
 import TaskStatusProgressBar from '../../components/UserStatistique/TaskStatusProgressBar';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 
-// ⏳ Skeletons
 import SkeletonActivityChart from '../../skeleton/SkeletonActivityChart';
 import SkeletonKeyMetricsCard from '../../skeleton/SkeletonKeyMetricsCard';
 import SkeletonTaskStatusProgressBar from '../../skeleton/SkeletonTaskStatusProgressBar';

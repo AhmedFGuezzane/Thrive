@@ -23,7 +23,6 @@ import UserSeance from "./pages/user/UserSeance";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* 🌐 Public Routes */}
       <Route path="/" element={<ClientLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
@@ -32,14 +31,11 @@ export default function AppRoutes() {
         <Route path="contact" element={<Contact />} />
       </Route>
 
-      {/* 🔐 Admin-Protected Routes */}
       <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route path="/admin" element={<AdminLayout />}>
-          {/* your admin routes here */}
         </Route>
       </Route>
 
-      {/* 👤 Client-Protected Routes */}
       <Route element={<PrivateRoute allowedRoles={["client"]} />}>
         <Route path="/user" element={<UserLayout />}>
           <Route path="userHome" element={<UserHome />} />

@@ -6,6 +6,7 @@ from database import db
 class StatistiqueDAO:
     @staticmethod
     def creer_snapshot(data):
+        # Crée et enregistre un snapshot statistique dans la base de données
         snapshot = StatistiqueSnapshot(
             id=uuid.uuid4(),
             client_id=uuid.UUID(data["client_id"]),
@@ -25,6 +26,7 @@ class StatistiqueDAO:
 
     @staticmethod
     def get_recent_snapshots(client_id, limit=7):
+        # Récupère les X derniers snapshots d’un utilisateur (par défaut : 7)
         return (
             StatistiqueSnapshot.query
             .filter_by(client_id=uuid.UUID(client_id))
