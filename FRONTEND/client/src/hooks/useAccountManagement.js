@@ -1,4 +1,3 @@
-// src/hooks/useAccountManagement.js
 import { useState, useEffect } from 'react';
 import { useSnackbar } from './useSnackbar';
 import {
@@ -8,8 +7,10 @@ import {
   deactivateAccount,
   deleteAccount,
 } from '../utils/accountService';
+import { useTranslation } from 'react-i18next';
 
 export const useAccountManagement = () => {
+  const { t } = useTranslation();
   const [userInfo, setUserInfo] = useState({});
   const [editable, setEditable] = useState(false);
   const [nom, setNom] = useState('');
@@ -57,7 +58,7 @@ export const useAccountManagement = () => {
   const handleUpdateProfile = async () => {
     try {
       const result = await updateProfile({ nom, prenom, email });
-      showSnackbar(result.message || 'Profil mis à jour !', 'success');
+      showSnackbar(result.message || t('account.profile_updated'), 'success');
       setUserInfo(prev => ({ ...prev, nom, prenom, email }));
       setEditable(false);
     } catch (err) {
@@ -68,18 +69,18 @@ export const useAccountManagement = () => {
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmNewPassword) {
-      return showSnackbar('Veuillez remplir tous les champs.', 'warning');
+      return showSnackbar(t('account.fill_all_fields'), 'warning');
     }
     if (newPassword !== confirmNewPassword) {
-      return showSnackbar('Les mots de passe ne correspondent pas.', 'warning');
+      return showSnackbar(t('account.passwords_do_not_match'), 'warning');
     }
     if (currentPassword === newPassword) {
-      return showSnackbar('Le nouveau mot de passe doit être différent.', 'warning');
+      return showSnackbar(t('account.passwords_identical'), 'warning');
     }
 
     try {
       const result = await changePassword(currentPassword, newPassword);
-      showSnackbar(result.message || 'Mot de passe changé avec succès !', 'success');
+      showSnackbar(result.message || t('account.password_changed'), 'success');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmNewPassword('');
@@ -93,7 +94,7 @@ export const useAccountManagement = () => {
   const handleDeactivate = async () => {
     try {
       const result = await deactivateAccount();
-      showSnackbar(result.message || 'Compte désactivé.', 'success');
+      showSnackbar(result.message || t('account.deactivated'), 'success');
       logout();
     } catch (err) {
       console.error("Deactivation failed:", err);
@@ -105,7 +106,7 @@ export const useAccountManagement = () => {
     setConfirmDialogOpen(false);
     try {
       const result = await deleteAccount();
-      showSnackbar(result.message || 'Compte supprimé.', 'success');
+      showSnackbar(result.message || t('account.deleted'), 'success');
       logout();
     } catch (err) {
       console.error("Account deletion failed:", err);

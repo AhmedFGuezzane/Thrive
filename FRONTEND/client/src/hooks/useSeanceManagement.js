@@ -1,4 +1,3 @@
-// src/hooks/useSeanceManagement.js
 import { useState, useCallback } from "react";
 import {
   createSeance,
@@ -7,8 +6,11 @@ import {
   updateStatut,
   getUserSeances,
 } from "../utils/seanceService";
+import { useTranslation } from 'react-i18next';
 
 export const useSeanceManagement = () => {
+  const { t } = useTranslation();
+
   const [seances, setSeances] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,20 +22,17 @@ export const useSeanceManagement = () => {
       setSeances(data);
       setError(null);
     } catch (err) {
-      setError(err.message || "Erreur lors du chargement des séances.");
+      setError(err.message || t('seance.fetch_error'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
-  // ADD SEANCE HOOK - D.O.
   const addSeance = async (formData) => {
     try {
-
-      // APPELER METHODE CREATESEANCE DE SEANCESERVIE DANS (src/utils/seanceService), ENVOYER LES DONNEE DU FORMULAIRE ET STOCKER REPONSE DANS CONST NEWSEANCE
       const newSeance = await createSeance(formData);
-      setSeances((prev) => [...prev, newSeance]); // STOCKER LES INFORMATIONS DE LA SEANCE (TIMER, ETC) DANS LE LOCALSTORAGE
-      return newSeance; // RETOURNER LA SEANCE
+      setSeances((prev) => [...prev, newSeance]);
+      return newSeance;
     } catch (err) {
       throw err;
     }
@@ -63,7 +62,6 @@ export const useSeanceManagement = () => {
     }
   };
 
-  
   return {
     seances,
     loading,

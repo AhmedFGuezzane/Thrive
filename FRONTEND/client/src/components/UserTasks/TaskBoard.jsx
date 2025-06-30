@@ -1,4 +1,3 @@
-// src/components/UserTasks/TaskBoard.jsx
 import React, { useState } from 'react';
 import { Box, Typography, IconButton, useTheme, Tooltip } from '@mui/material';
 import { Droppable } from '@hello-pangea/dnd';
@@ -23,7 +22,15 @@ export default function TaskBoard({
   const {
     middleBox,
     primaryText,
-    whiteBorder
+    whiteBorder,
+    innerBox,
+    outterBox,
+    secondaryColor,
+    specialColor,
+    specialText,
+    secondaryText,
+    primaryColor,
+    softBoxShadow
   } = useCustomTheme();
 
   const [sortOrder, setSortOrder] = useState({});
@@ -35,20 +42,6 @@ export default function TaskBoard({
       return { ...prev, [columnId]: newOrder };
     });
   };
-
-  const getListStyle = (isDraggingOver) => ({
-    background: isDraggingOver ? 'rgba(255,255,255,0.57)' : middleBox,
-    padding: '8px',
-    borderRadius: '12px',
-    border: `1px solid ${whiteBorder}`,
-    flexGrow: 1,
-    minHeight: '100px',
-    overflowY: 'auto',
-    scrollbarWidth: 'none',
-    msOverflowStyle: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-  });
 
   return (
     <>
@@ -69,66 +62,82 @@ export default function TaskBoard({
             {(provided, snapshot) => (
               <Box
                 ref={provided.innerRef}
-                style={getListStyle(snapshot.isDraggingOver)}
                 {...provided.droppableProps}
                 sx={{
                   flexBasis: '33%',
                   minWidth: '200px',
-                  p: 2,
-                  position: 'relative',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  background: snapshot.isDraggingOver ? 'rgba(255,255,255,0.57)' : middleBox,
+                  borderRadius: '12px',
+                  border: `1px solid ${whiteBorder}`,
                 }}
               >
-                {/* Column Header */}
+                {/* Scrollable Column Body */}
                 <Box
                   sx={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 10,
-                    mb: 2,
-                    p: '0 16px 8px 16px',
-                    textAlign: 'center',
+                    flexGrow: 1,
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                    flexDirection: 'column',
+                    overflowY: 'auto',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    '&::-webkit-scrollbar': { display: 'none' },
                   }}
                 >
-                  <Typography variant="h6" fontWeight="bold" color={primaryText} sx={{ textTransform: 'capitalize' }}>
-                    {t(`taskBoard.columns.${columnId}`, columnId)}
-                  </Typography>
-                  <Tooltip
-                    title={
-                      columnSortOrder
-                        ? t('taskBoard.sortByImportance', { order: columnSortOrder })
-                        : t('taskBoard.sort')
-                    }
-                    placement="top"
+                  {/* Sticky Header */}
+                  <Box
+                    sx={{
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 10,
+                      px: 2,
+                      py: 1,
+                      backgroundColor: secondaryColor,
+                      borderBottom: `1px solid ${whiteBorder}`,
+                      boxShadow:softBoxShadow,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
                   >
-                    <IconButton size="small" onClick={() => toggleSortOrder(columnId)} sx={{ color: primaryText }}>
-                      {columnSortOrder === 'asc' ? (
-                        <ArrowUpwardIcon />
-                      ) : columnSortOrder === 'desc' ? (
-                        <ArrowDownwardIcon />
-                      ) : (
-                        <SortIcon />
-                      )}
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+                    <Typography variant="h6" fontWeight="bold" color={primaryText} sx={{ textTransform: 'capitalize' }}>
+                      {t(`taskBoard.columns.${columnId}`, columnId)}
+                    </Typography>
+                    <Tooltip
+                      title={
+                        columnSortOrder
+                          ? t('taskBoard.sortByImportance', { order: columnSortOrder })
+                          : t('taskBoard.sort')
+                      }
+                      placement="top"
+                    >
+                      <IconButton size="small" onClick={() => toggleSortOrder(columnId)} sx={{ color: primaryText }}>
+                        {columnSortOrder === 'asc' ? (
+                          <ArrowUpwardIcon />
+                        ) : columnSortOrder === 'desc' ? (
+                          <ArrowDownwardIcon />
+                        ) : (
+                          <SortIcon />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
 
-                {/* Task list or skeletons */}
-                <Box sx={{ flexGrow: 1 }}>
-                  {loading ? (
-                    Array.from({ length: 3 }).map((_, i) => (
-                      <SkeletonTaskCard key={`skeleton-${columnId}-${i}`} />
-                    ))
-                  ) : (
-                    <>
-                      {sortedColumnTasks.length === 0 && (
-                        <Typography variant="body2" color="#777" sx={{ textAlign: 'center', p: 2 }}>
-                          {t('taskBoard.empty')}
-                        </Typography>
-                      )}
-                      {sortedColumnTasks.map((task, index) => (
+                  {/* Task Cards */}
+                  <Box sx={{ px: 2, py: 1 }}>
+                    {loading ? (
+                      Array.from({ length: 3 }).map((_, i) => (
+                        <SkeletonTaskCard key={`skeleton-${columnId}-${i}`} />
+                      ))
+                    ) : sortedColumnTasks.length === 0 ? (
+                      <Typography variant="body2" color="#777" sx={{ textAlign: 'center', p: 2 }}>
+                        {t('taskBoard.empty')}
+                      </Typography>
+                    ) : (
+                      sortedColumnTasks.map((task, index) => (
                         <TaskCard
                           key={task.id}
                           task={task}
@@ -137,10 +146,10 @@ export default function TaskBoard({
                           getImportanceDisplay={getImportanceDisplay}
                           getStatusDisplay={getStatusDisplay}
                         />
-                      ))}
-                    </>
-                  )}
-                  {provided.placeholder}
+                      ))
+                    )}
+                    {provided.placeholder}
+                  </Box>
                 </Box>
               </Box>
             )}

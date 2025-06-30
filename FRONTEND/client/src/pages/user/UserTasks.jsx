@@ -1,17 +1,21 @@
-import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useContext, useMemo, useCallback } from 'react';
 import {
   Box,
   CircularProgress,
   useTheme,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
-import { DragDropContext } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import { useTranslation } from 'react-i18next';
 import { TimerContext } from '../../contexts/TimerContext';
 import TimerBar from '../../components/common/TimerBar';
 import CreateSeanceDialog from '../../components/common/CreateSeanceDialog';
 import SnackbarAlert from '../../components/common/SnackbarAlert';
-import AddTaskDialog from '../../components/common/AddTaskDialog';
+import AddTaskDialog from '../../components/common/AddTaskDialog.jsx'
 import TaskDetailsDialog from '../../components/UserTasks/TaskDetailsDialog';
 import { useTaskManagement } from '../../hooks/useTaskManagement.js';
 import { getImportanceDisplay, getStatusDisplay } from '../../utils/taskUtils.js';
@@ -25,8 +29,8 @@ import { createSeance } from '../../utils/seanceService.jsx';
 export default function UserTasks() {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { outerBox, softBoxShadow, whiteBorder } = useCustomTheme();
-  
+  const { outerBox, softBoxShadow, whiteBorder, specialColor, secondaryColor, primaryText } = useCustomTheme();
+
   const { activeSeanceId, startSeance } = useContext(TimerContext);
   const activeSeanceExists = !!activeSeanceId;
 
@@ -75,8 +79,24 @@ export default function UserTasks() {
   const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
     if (!destination || (source.droppableId === destination.droppableId && source.index === destination.index)) return;
-    const finishColumnId = destination.droppableId;
-    handleUpdateTaskStatus(draggableId, finishColumnId);
+
+   if (destination.droppableId === 'trash') {
+  showSnackbar(t('userTasks.snackbar_deleting'), 'info', true);
+  await handleDeleteTask(draggableId);
+  return;
+}
+
+if (destination.droppableId === 'add_to_seance') {
+  const activeSeanceId = localStorage.getItem('active_seance_id');
+  if (activeSeanceId) {
+    showSnackbar(t('userTasks.snackbar_adding_to_seance'), 'info', true);
+    await handleUpdateTask(draggableId, { seance_etude_id: activeSeanceId });
+  }
+  return;
+}
+
+
+    handleUpdateTaskStatus(draggableId, destination.droppableId);
   };
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -172,21 +192,85 @@ export default function UserTasks() {
         getImportanceDisplay={getImportanceDisplay}
       />
 
-      <Box flexGrow={1} width="100%" height="50%" display="flex" flexDirection="row" gap={2} pb={2} minHeight={0}>
-        {loading && Object.values(displayedTasks).flat().length === 0 ? (
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <CircularProgress sx={{ color: theme.palette.primary.main }} />
-          </Box>
-        ) : (
-          <DragDropContext onDragEnd={onDragEnd}>
+      <Box flexGrow={1} width="100%" display="flex" flexDirection="row" gap={2} pb={2} minHeight={0}>
+        <DragDropContext onDragEnd={onDragEnd}>
+          {loading && Object.values(displayedTasks).flat().length === 0 ? (
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <CircularProgress sx={{ color: theme.palette.primary.main }} />
+            </Box>
+          ) : (
             <TaskBoard
               displayedTasks={tasksForViewMode}
               onViewDetailsClick={handleViewDetailsClick}
               getImportanceDisplay={getImportanceDisplay}
               getStatusDisplay={getStatusDisplay}
+              loading={loading}
             />
-          </DragDropContext>
+          )}
+
+          {/* Floating Action Zones */}
+<Box sx={{ position: 'fixed', bottom: 24, left: 24, zIndex: 2100 }}>
+  <Tooltip title={t('userTasks.deleteTask')} placement="top" arrow>
+    <Box>
+      <Droppable droppableId="trash">
+        {(provided, snapshot) => (
+          <Box
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            sx={{
+              width: 50,
+              height: 50,
+              borderRadius: '50%',
+              bgcolor: snapshot.isDraggingOver ? 'error.main' : specialColor,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: 6,
+              transition: '0.2s',
+            }}
+          >
+            <DeleteIcon sx={{ fontSize: 28, color: 'white', pointerEvents: 'none' }} />
+            {provided.placeholder}
+          </Box>
         )}
+      </Droppable>
+    </Box>
+  </Tooltip>
+</Box>
+
+{activeSeanceExists && (
+  <Box sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2100 }}>
+    <Tooltip title={t('userTasks.addToSeance')} placement="top" arrow>
+      <Box>
+        <Droppable droppableId="add_to_seance">
+          {(provided, snapshot) => (
+            <Box
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              sx={{
+                width: 50,
+                height: 50,
+                borderRadius: '50%',
+                bgcolor: snapshot.isDraggingOver ? 'success.main' : secondaryColor,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: 6,
+                transition: '0.2s',
+              }}
+            >
+              <AddCircleOutlineIcon sx={{ fontSize: 28, color: 'white', pointerEvents: 'none' }} />
+              {provided.placeholder}
+            </Box>
+          )}
+        </Droppable>
+      </Box>
+    </Tooltip>
+  </Box>
+)}
+
+
+        </DragDropContext>
       </Box>
 
       <TimerBar onCreateClick={handleDialogOpen} config={formData.pomodoro} />
