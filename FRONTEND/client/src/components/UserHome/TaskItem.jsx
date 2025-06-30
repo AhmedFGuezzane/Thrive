@@ -63,7 +63,7 @@ export default function TaskItem({
           <Typography
             variant="subtitle1"
             fontWeight="bold"
-            color="primary"
+            color={primaryText}
           >
             {task.titre}
           </Typography>
@@ -93,7 +93,7 @@ export default function TaskItem({
                 height: '24px',
                 borderRadius: '50%',
                 bgcolor: importanceDisplay.color,
-                color: whiteColor,
+                color: primaryText,
                 p: 0.5,
               }}
             >
@@ -121,7 +121,7 @@ export default function TaskItem({
             </Tooltip>
           )}
 
-          <IconButton size="small" sx={{ color: theme.palette.text.primary, ml: 1 }}>
+          <IconButton size="small" sx={{ color: primaryText, ml: 1 }}>
             {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </IconButton>
         </Box>
@@ -131,7 +131,7 @@ export default function TaskItem({
         <Box sx={{ mt: 1, pt: 1, borderTop: `1px solid ${alpha(theme.palette.divider, 0.4)}` }}>
           {task.description && (
             <Typography variant="body2" color="textSecondary" sx={{ mb: 1, whiteSpace: 'pre-wrap' }}>
-              <Typography component="span" fontWeight="bold" sx={{ color: theme.palette.text.primary }}>
+              <Typography component="span" fontWeight="bold" sx={{ color: primaryText }}>
                 {t('taskItem.description')}:{' '}
               </Typography>
               {task.description}
@@ -139,7 +139,7 @@ export default function TaskItem({
           )}
 
           <Typography variant="body2" color="textSecondary">
-            <Typography component="span" fontWeight="bold" sx={{ color: theme.palette.text.primary }}>
+            <Typography component="span" fontWeight="bold" sx={{ color: primaryText }}>
               {t('taskItem.details')}:{' '}
             </Typography>
             {task.date_creation &&

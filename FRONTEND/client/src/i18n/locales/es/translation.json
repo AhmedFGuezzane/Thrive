@@ -59,7 +59,13 @@
     "snackbar_creating": "Creando tu sesión...",
     "snackbar_id_missing": "Sesión creada, pero no se recibió el ID. Por favor, actualiza.",
     "snackbar_created": "¡Sesión creada con éxito!",
-    "snackbar_error": "Error al crear la sesión"
+    "snackbar_error": "Error al crear la sesión",
+    "deleteTask": "Eliminar tarea",
+    "addToSeance": "Agregar a la sesión actual",
+    "snackbar_deleting": "Eliminando tarea...",
+    "snackbar_adding_to_seance": "Agregando a la sesión actual...",
+    "snackbar_updated": "¡Tarea actualizada con éxito!",
+    "snackbar_deleted": "¡Tarea eliminada con éxito!"
   },
   "activeSeance": {
     "no_active": "Ninguna sesión activa",
@@ -285,6 +291,9 @@
       "status": "Estado",
       "deadline": "Fecha límite (opcional)",
       "addToSeance": "Añadir a la sesión activa"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio."
     }
   },
   "statuses": {
@@ -394,7 +403,7 @@
     "type_seance": "Tipo de sesión",
     "nom": "Nombre de la sesión"
   },
-   "seanceReview": {
+  "seanceReview": {
     "details": {
       "title": "Detalles de la Sesión",
       "type": "Tipo de sesión",
@@ -420,5 +429,16 @@
       "vibration": "Vibración",
       "suivi_temps_total": "Seguimiento del tiempo total"
     }
+  },
+  "stopTimerDialog": {
+    "title": "¿Detener la sesión?",
+    "content": "¿Estás seguro de que deseas detener la sesión actual? El tiempo transcurrido se guardará.",
+    "cancel": "Cancelar",
+    "confirm": "Sí, detener"
+  },
+  "statistics": {
+    "error_unauthenticated": "Usuario no autenticado",
+    "error_fetch": "No se pudieron cargar las estadísticas",
+    "unexpected_error": "Error inesperado"
   }
 }

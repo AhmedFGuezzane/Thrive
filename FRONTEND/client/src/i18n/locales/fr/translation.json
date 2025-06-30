@@ -59,7 +59,10 @@
     "snackbar_creating": "Création de votre session...",
     "snackbar_id_missing": "Session créée, mais ID non reçu. Veuillez rafraîchir.",
     "snackbar_created": "Session créée avec succès !",
-    "snackbar_error": "Erreur lors de la création de la session"
+    "snackbar_error": "Erreur lors de la création de la session",
+    "snackbar_updated": "Tâche mise à jour avec succès !",
+    "snackbar_deleted": "Tâche supprimée avec succès !"
+    
   },
   "activeSeance": {
     "no_active": "Aucune séance active",
@@ -285,6 +288,9 @@
       "status": "Statut",
       "deadline": "Date de fin (optionnel)",
       "addToSeance": "Ajouter à la séance active"
+    },
+    "validation": {
+      "required": "Ce champ est requis."
     }
   },
   "statuses": {
@@ -366,59 +372,70 @@
     "defaultMessage": "Erreur inconnue. Veuillez recharger l’application."
   },
   "timer": {
-  "elapsed": "Temps écoulé",
-  "phase": {
-    "study": "🟪 Phase : étude",
-    "shortBreak": "🟦 Phase : pause courte",
-    "longBreak": "🟩 Phase : pause longue",
-    "awaitingBreak": "⏸ Phase : en attente de pause",
-    "awaitingStudy": "⏸ Phase : en attente de reprise",
-    "completed": "✅ Phase : terminée"
+    "elapsed": "Temps écoulé",
+    "phase": {
+      "study": "🟪 Phase : étude",
+      "shortBreak": "🟦 Phase : pause courte",
+      "longBreak": "🟩 Phase : pause longue",
+      "awaitingBreak": "⏸ Phase : en attente de pause",
+      "awaitingStudy": "⏸ Phase : en attente de reprise",
+      "completed": "✅ Phase : terminée"
+    },
+    "nextShortBreakIn": "Prochaine pause dans :",
+    "nextStudyIn": "Prochaine séance d’étude dans :",
+    "noActiveSession": "Aucune séance active. Cliquez pour en créer une.",
+    "actions": {
+      "create": "Créer une séance",
+      "pause": "Pause",
+      "resume": "Reprendre",
+      "stop": "Arrêter la séance"
+    },
+    "snackbar": {
+      "stopping": "Arrêt de la séance en cours...",
+      "stopped": "Séance arrêtée avec succès !",
+      "error": "Échec de l'arrêt de la séance. Veuillez réessayer."
+    }
   },
-  "nextShortBreakIn": "Prochaine pause dans :",
-  "nextStudyIn": "Prochaine séance d’étude dans :",
-  "noActiveSession": "Aucune séance active. Cliquez pour en créer une.",
-  "actions": {
-    "create": "Créer une séance",
-    "pause": "Pause",
-    "resume": "Reprendre",
-    "stop": "Arrêter la séance"
-  },
-  "snackbar": {
-    "stopping": "Arrêt de la séance en cours...",
-    "stopped": "Séance arrêtée avec succès !",
-    "error": "Échec de l'arrêt de la séance. Veuillez réessayer."
-  }
-},
   "seanceForm": {
     "type_seance": "Session type",
     "nom": "Session name"
   },
   "seanceReview": {
-  "details": {
-    "title": "Détails de la Séance",
-    "type": "Type de séance",
-    "nom": "Nom de la séance"
+    "details": {
+      "title": "Détails de la Séance",
+      "type": "Type de séance",
+      "nom": "Nom de la séance"
+    },
+    "durations": {
+      "title": "Durées",
+      "seance": "Séance",
+      "courte": "Pause courte",
+      "longue": "Pause longue"
+    },
+    "config": {
+      "title": "Configuration",
+      "cycles": "Cycles",
+      "theme": "Nom du Thème",
+      "preconfig": "Préconfiguration"
+    },
+    "alertes": {
+      "title": "Alertes et Automatisation",
+      "auto_demarrage": "Démarrage automatique",
+      "alerte_sonore": "Alerte sonore",
+      "notification": "Notification",
+      "vibration": "Vibration",
+      "suivi_temps_total": "Suivi du temps total"
+    }
   },
-  "durations": {
-    "title": "Durées",
-    "seance": "Séance",
-    "courte": "Pause courte",
-    "longue": "Pause longue"
+  "stopTimerDialog": {
+    "title": "Arrêter la séance ?",
+    "content": "Êtes-vous sûr de vouloir arrêter la séance en cours ? Le temps écoulé sera enregistré.",
+    "cancel": "Annuler",
+    "confirm": "Oui, arrêter"
   },
-  "config": {
-    "title": "Configuration",
-    "cycles": "Cycles",
-    "theme": "Nom du Thème",
-    "preconfig": "Préconfiguration"
-  },
-  "alertes": {
-    "title": "Alertes et Automatisation",
-    "auto_demarrage": "Démarrage automatique",
-    "alerte_sonore": "Alerte sonore",
-    "notification": "Notification",
-    "vibration": "Vibration",
-    "suivi_temps_total": "Suivi du temps total"
+  "statistics": {
+    "error_unauthenticated": "Utilisateur non authentifié",
+    "error_fetch": "Échec du chargement des statistiques",
+    "unexpected_error": "Erreur inattendue"
   }
-}
 }

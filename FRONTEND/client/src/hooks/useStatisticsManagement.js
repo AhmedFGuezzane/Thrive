@@ -1,58 +1,59 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchStatisticsFromAPI } from '../utils/statisticsService';
 import { useSnackbar } from './useSnackbar';
+import { useTranslation } from 'react-i18next';
 
 // Utility to decode client ID from JWT
 const getClientIdFromToken = () => {
-    const token = localStorage.getItem('jwt_token');
-    if (!token) return null;
-    try {
-        const payloadBase64 = token.split('.')[1];
-        const decodedPayload = JSON.parse(atob(payloadBase64));
-        return decodedPayload.sub; // Assuming 'sub' contains client ID
-    } catch (error) {
-        console.error("Failed to decode JWT token:", error);
-        return null;
-    }
+  const token = localStorage.getItem('jwt_token');
+  if (!token) return null;
+  try {
+    const payloadBase64 = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(payloadBase64));
+    return decodedPayload.sub;
+  } catch (error) {
+    console.error("Failed to decode JWT token:", error);
+    return null;
+  }
 };
 
 export const useStatisticsManagement = () => {
-    const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const { t } = useTranslation();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const { showSnackbar } = useSnackbar(); // Optional: show feedback
+  const { showSnackbar } = useSnackbar();
 
+  const fetchStatistics = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-    // FETCH STATS - A.G.
-    const fetchStatistics = useCallback(async () => {
-        setLoading(true);
-        setError(null);
+    const clientId = getClientIdFromToken();
+    if (!clientId) {
+      const authError = t('statistics.not_authenticated');
+      setError(authError);
+      setLoading(false);
+      return;
+    }
 
-        const clientId = getClientIdFromToken();
-        if (!clientId) {
-            setError("Utilisateur non authentifié.");
-            setLoading(false);
-            return;
-        }
+    try {
+      const data = await fetchStatisticsFromAPI();
+      setStats(data);
+    } catch (err) {
+      console.error("Error fetching statistics:", err);
+      const errorMsg = t('statistics.fetch_error', { error: err.message || '...' });
+      setError(errorMsg);
+      setStats(null);
+      showSnackbar?.(errorMsg, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [t, showSnackbar]);
 
-        try {
-            const data = await fetchStatisticsFromAPI();
-            setStats(data);
-        } catch (err) {
-            console.error("Error fetching statistics:", err);
-            const errorMsg = err.message || 'Erreur inattendue';
-            setError(errorMsg);
-            setStats(null);
-            showSnackbar?.(errorMsg, 'error');
-        } finally {
-            setLoading(false);
-        }
-    }, [showSnackbar]);
+  useEffect(() => {
+    fetchStatistics();
+  }, [fetchStatistics]);
 
-    useEffect(() => {
-        fetchStatistics();
-    }, [fetchStatistics]);
-
-    return { stats, loading, error, fetchStatistics };
+  return { stats, loading, error, fetchStatistics };
 };

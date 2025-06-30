@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   addTaskToBackend,
   fetchTasksBySeanceId,
@@ -13,6 +14,8 @@ const PREFETCH_TIME_KEY = "lastTaskPrefetch";
 const COOLDOWN_MS = 30000;
 
 export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks') => {
+  const { t } = useTranslation();
+
   const [allUserTasks, setAllUserTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,12 +48,12 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
       sessionStorage.setItem(PREFETCH_KEY, JSON.stringify(fetchedTasks));
       sessionStorage.setItem(PREFETCH_TIME_KEY, Date.now().toString());
     } catch (error) {
-      showSnackbar(`Erreur lors de la récupération des tâches: ${error.message}`, 'error');
+      showSnackbar(`${t('userTasks.snackbar_error_fetch')}: ${error.message}`, 'error');
       setAllUserTasks([]);
     } finally {
       setLoading(false);
     }
-  }, [fetchMode, seanceId, showSnackbar]);
+  }, [fetchMode, seanceId, showSnackbar, t]);
 
   const prefetchTasksIfAllowed = useCallback(async () => {
     const lastPrefetch = parseInt(sessionStorage.getItem(PREFETCH_TIME_KEY), 10) || 0;
@@ -114,8 +117,6 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     };
   }, [filteredTasks]);
 
-
- 
   const handleNewTaskChange = (e) => {
     const { name, value } = e.target;
     setNewTaskData(prev => ({ ...prev, [name]: value }));
@@ -124,88 +125,81 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
   const onToggleAddToActiveSeance = (e) => {
     setAddToActiveSeance(e.target.checked);
   };
-// ADD TASK - S.L.
+
   const handleAddTask = async () => {
     if (!newTaskData.titre) {
-      showSnackbar("Le titre de la tâche est requis.", 'warning'); //ALERT
+      showSnackbar(t('userTasks.snackbar_title_required'), 'warning');
       return;
     }
 
     setIsAddTaskDialogOpen(false);
-    showSnackbar("Ajout de la tâche...", 'info', true); // ALERT
+    showSnackbar(t('userTasks.snackbar_adding'), 'info', true);
 
     try {
-      const token = localStorage.getItem('jwt_token'); // WE GRAB TOKEN FROM LOCALSTORAGE
-      if (!token) throw new Error("Authentification requise pour ajouter une tâche."); // IF NO TOKEN , ERROR
+      const token = localStorage.getItem('jwt_token');
+      if (!token) throw new Error(t('userTasks.snackbar_auth_required'));
 
-      // DECODE TOKEN AND EXTRACT CLIENT_ID FROM THE TOKEN
       const payloadBase64 = token.split('.')[1]; 
       const decodedPayload = JSON.parse(atob(payloadBase64));
       const client_id = decodedPayload.sub;
 
-      // CREATE A PAYLOAD WITH THE INFO OF THE TASK 
       const payload = {
-        ...newTaskData, // TAKE THE DATA THAT WAS PREVIOUSLY SENT IN THE FORM AND ADD IT TO THIS PAYLOAD
+        ...newTaskData,
         client_id,
         date_fin: newTaskData.date_fin ? new Date(newTaskData.date_fin).toISOString() : null,
         priorite: newTaskData.importance === 1 ? 'Urgent' : newTaskData.importance === 2 ? 'Haute' : 'Moyenne',
         est_terminee: newTaskData.statut === 'terminée',
       };
 
-      // IF THE CHECK "ADD TO CURRENT SEANCE" WAS CHECKED AND THERE IS AN ACTIVE SEANCE
       if (addToActiveSeance && seanceId) {
-        payload.seance_etude_id = seanceId; // ADD THE SEANCE ID TO THE PAYLOAD
+        payload.seance_etude_id = seanceId;
       }
 
-      await addTaskToBackend(payload); // SEND THIS PAYLOAD TO ADDTASKTOBACKEND (src/utils/taskService.jsx) AND WAIT FOR A RESPONSE
+      await addTaskToBackend(payload);
 
-      showSnackbar('Tâche ajoutée avec succès!', 'success'); // AFFICHAGE DE L'ALERTE
+      showSnackbar(t('userTasks.snackbar_added'), 'success');
       setNewTaskData({ titre: '', description: '', importance: 3, statut: 'en attente', date_fin: '' });
       setAddToActiveSeance(false);
       primaryFetchTasks();
     } catch (error) {
-      console.error('Erreur lors de l\'ajout de la tâche:', error.message);
-      showSnackbar(`Erreur lors de l'ajout de la tâche: ${error.message}`, 'error');
+      console.error('Add task error:', error.message);
+      showSnackbar(`${t('userTasks.snackbar_error_adding')}: ${error.message}`, 'error');
       setIsAddTaskDialogOpen(true);
     }
   };
-
 
   const handleUpdateTaskStatus = async (taskId, newStatus) => {
     setAllUserTasks(prev =>
       prev.map(task => (task.id === taskId ? { ...task, statut: newStatus } : task))
     );
-    showSnackbar(`Mise à jour du statut...`, 'info', true);
+    showSnackbar(t('userTasks.snackbar_updating_status'), 'info', true);
     try {
       await updateTaskStatus(taskId, newStatus);
-      showSnackbar(`Statut de la tâche mis à jour !`, 'success');
+      showSnackbar(t('userTasks.snackbar_status_updated'), 'success');
     } catch (error) {
-      showSnackbar(`Erreur lors de la mise à jour du statut: ${error.message}`, 'error');
+      showSnackbar(`${t('userTasks.snackbar_status_error')}: ${error.message}`, 'error');
       primaryFetchTasks();
     }
   };
 
-
-  // UPDATE TASK - I.R.
   const handleUpdateTask = async (taskId, updatedData) => {
     try {
-      await updateTaskBackend(taskId, updatedData); // APPELE UPDATETASKBACKEND DANS (src/utils/taskService) ET ON PASSE EN PARAMETRE TASKID ET LE NOUVEAU DATA 
-      showSnackbar("Tâche mise à jour avec succès", "success"); 
+      await updateTaskBackend(taskId, updatedData);
+      showSnackbar(t('userTasks.snackbar_updated'), 'success');
       primaryFetchTasks();
     } catch (error) {
-      showSnackbar(`Erreur: ${error.message}`, "error");
+      showSnackbar(`${t('userTasks.snackbar_error')}: ${error.message}`, 'error');
     }
   };
 
-  // DELETE TASK - I.R.
   const handleDeleteTask = async (taskId) => {
-    showSnackbar("Suppression de la tâche...", "info", true);
+    showSnackbar(t('userTasks.snackbar_deleting'), 'info', true);
     try {
-      await deleteTaskBackend(taskId);  // APPELE DELETETASKBACKEND DANS (src/utils/taskService) ET ON PASSE EN PARAMETRE TASKID
-      showSnackbar("Tâche supprimée avec succès !", "success"); // TACHE SUPPRIME (ALERT)
+      await deleteTaskBackend(taskId);
+      showSnackbar(t('userTasks.snackbar_deleted'), 'success');
       primaryFetchTasks();
     } catch (error) {
-      showSnackbar(`Erreur lors de la suppression: ${error.message}`, "error"); // ERREUR TACHE SUPPRIME (ALERT)
+      showSnackbar(`${t('userTasks.snackbar_error_deleting')}: ${error.message}`, 'error');
     }
   };
 
@@ -246,6 +240,6 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     handleUpdateTaskStatus,
     handleUpdateTask,
     handleDeleteTask,
-    prefetchTasksIfAllowed, // added
+    prefetchTasksIfAllowed,
   };
 };

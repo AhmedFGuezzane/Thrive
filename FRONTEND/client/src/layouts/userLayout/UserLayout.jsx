@@ -2,14 +2,10 @@ import { Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 
 import UserSidebar from '../userLayout/UserSidebar';
-import { TimerProvider } from '../../contexts/TimerContext';
-import GlobalPhaseTransition from '../../components/common/GlobalPhaseTransition'; // ✅ add this
+
 
 export default function UserLayout() {
   return (
-    <TimerProvider>
-      {/* ✅ Global dialog rendered once for all user pages */}
-      <GlobalPhaseTransition />
 
       <Box
         width="100vw"
@@ -46,6 +42,6 @@ export default function UserLayout() {
           </Box>
         </Box>
       </Box>
-    </TimerProvider>
+
   );
 }

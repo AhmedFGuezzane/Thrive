@@ -1,14 +1,24 @@
 // src/components/common/PhaseTransitionDialog.jsx
 import React from 'react';
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Typography, Button, useTheme
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  Button,
+  useTheme
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useCustomTheme } from '../../hooks/useCustomeTheme';
 
 export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
   const theme = useTheme();
+    const {
+      innerBox, middleBox,outterBox, whiteBorder, softBoxShadow,
+      primaryText, secondaryColor, specialText
+    } = useCustomTheme();
   const { t } = useTranslation();
 
   const getDialogContent = () => {
@@ -35,38 +45,58 @@ export default function PhaseTransitionDialog({ open, phase, onConfirm }) {
     <Dialog
       open={open}
       onClose={onConfirm}
+      maxWidth="xs"
+      fullWidth
       PaperProps={{
         sx: {
-          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(14px)',
-          border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)'}`,
+          backgroundColor:
+            theme.palette.mode === outterBox,
+          backdropFilter: 'blur(3px)',
+          border: `1px solid ${whiteBorder
+          }`,
           borderRadius: '16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+          boxShadow: softBoxShadow,
           px: 3,
           py: 2
         }
       }}
     >
-      <DialogTitle sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>
+      <DialogTitle
+        sx={{
+          fontWeight: 'bold',
+          color: primaryText,
+          textAlign: 'center'
+        }}
+      >
         {title}
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="body1" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
+        <Typography
+          variant="body1"
+          sx={{
+            color: primaryText,
+            textAlign: 'center',
+            mb: 2
+          }}
+        >
           {message}
         </Typography>
       </DialogContent>
 
-      <DialogActions>
+      <DialogActions sx={{ justifyContent: 'center' }}>
         <Button
           onClick={onConfirm}
           variant="contained"
           sx={{
-            bgcolor: alpha(theme.palette.primary.main, 0.8),
-            '&:hover': { bgcolor: alpha(theme.palette.primary.main, 1) },
+            bgcolor: alpha(specialText, 1),
+            '&:hover': {
+              bgcolor: alpha(specialText, 0.8)
+            },
             borderRadius: '10px',
-            color: theme.palette.primary.contrastText,
-            fontWeight: 'bold'
+            color: secondaryColor,
+            fontWeight: 'bold',
+            px: 4
           }}
         >
           {button}

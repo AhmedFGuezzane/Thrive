@@ -59,7 +59,13 @@
     "snackbar_creating": "Creating your session...",
     "snackbar_id_missing": "Session created, but ID not received. Please refresh.",
     "snackbar_created": "Session created successfully!",
-    "snackbar_error": "Error creating the session"
+    "snackbar_error": "Error creating the session",
+    "deleteTask": "Delete task",
+    "addToSeance": "Add to current session",
+    "snackbar_deleting": "Deleting task...",
+    "snackbar_adding_to_seance": "Adding to current session...",
+    "snackbar_updated": "Task updated successfully!",
+    "snackbar_deleted": "Task deleted successfully!"
   },
   "activeSeance": {
     "no_active": "No active session",
@@ -286,6 +292,9 @@
       "status": "Status",
       "deadline": "Deadline (optional)",
       "addToSeance": "Add to active session"
+    },
+    "validation": {
+      "required": "This field is required."
     }
   },
   "statuses": {
@@ -421,5 +430,16 @@
       "vibration": "Vibration",
       "suivi_temps_total": "Total time tracking"
     }
+  },
+  "stopTimerDialog": {
+    "title": "Stop session?",
+    "content": "Are you sure you want to stop the current session? The elapsed time will be saved.",
+    "cancel": "Cancel",
+    "confirm": "Yes, stop"
+  },
+  "statistics": {
+    "error_unauthenticated": "User not authenticated",
+    "error_fetch": "Failed to load statistics",
+    "unexpected_error": "Unexpected error"
   }
 }
