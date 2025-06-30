@@ -66,8 +66,6 @@ export default function Navbar() {
         gap={3}
       >
         <Link href="/" underline="none" className="navBarLinks">Home</Link>
-        <Link href="/about" underline="none" className="navBarLinks">About</Link>
-        <Link href="#" underline="none" className="navBarLinks">Services</Link>
         <Link href="/contact" underline="none" className="navBarLinks">Contact</Link>
       </Box>
 
