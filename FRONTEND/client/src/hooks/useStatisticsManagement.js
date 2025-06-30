@@ -3,7 +3,6 @@ import { fetchStatisticsFromAPI } from '../utils/statisticsService';
 import { useSnackbar } from './useSnackbar';
 import { useTranslation } from 'react-i18next';
 
-// Utility to decode client ID from JWT
 const getClientIdFromToken = () => {
   const token = localStorage.getItem('jwt_token');
   if (!token) return null;

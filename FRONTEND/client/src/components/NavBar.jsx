@@ -17,7 +17,7 @@ export default function Navbar() {
         const now = Date.now() / 1000;
         if (decoded.exp > now) {
           setIsAuthenticated(true);
-          setUserRole(decoded.role); // "admin" or "client"
+          setUserRole(decoded.role);
         } else {
           localStorage.removeItem('jwt_token');
         }
@@ -48,7 +48,7 @@ export default function Navbar() {
         zIndex: 1000,
       }}
     >
-      {/* Logo */}
+
       <Box height="100%" width="25%" display="flex" alignItems="center">
         <img
           src="/assets/images/logo/navbar_logo.png"
@@ -57,7 +57,6 @@ export default function Navbar() {
         />
       </Box>
 
-      {/* Center Links */}
       <Box
         width="50%"
         height="100%"
@@ -72,7 +71,6 @@ export default function Navbar() {
         <Link href="/contact" underline="none" className="navBarLinks">Contact</Link>
       </Box>
 
-      {/* Right Side Auth / Role Links */}
       <Box
         height="100%"
         width="25%"

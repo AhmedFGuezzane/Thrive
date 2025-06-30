@@ -7,20 +7,20 @@ from datetime import datetime
 class TacheDAO:
     @staticmethod
     def get_by_seance_id(seance_etude_id):
-        """Gets all tasks for a specific study session."""
+        # Récupère toutes les tâches liées à une séance donnée
         taches = Tache.query.filter_by(seance_etude_id=seance_etude_id).all()
         return [t.to_dict() for t in taches]
 
     @staticmethod
     def get_by_id(tache_id):
-        """Gets a single task by its ID."""
+        # Récupère une tâche par son ID
         tache = Tache.query.get(tache_id)
         return tache.to_dict() if tache else None
 
     @staticmethod
     def add(data):
         try:
-            # CREER OBJET TACHE
+            # Crée et ajoute une nouvelle tâche à la base de données
             nouvelle_tache = Tache(
                 client_id=data['client_id'],
                 seance_etude_id=data.get('seance_etude_id'),
@@ -35,23 +35,21 @@ class TacheDAO:
                 duree_reelle=data.get('duree_reelle'),
                 priorite=data.get('priorite'),
             )
-            db.session.add(nouvelle_tache) # WITH SQL ALCHEMY, WE ADD THE NEW TASK TO THE DATABASE
-            db.session.commit() # COMMIT THE CHANGES TO THE DATABASE
-            return nouvelle_tache.to_dict() # WE RETURN THE NEW TASK
+            db.session.add(nouvelle_tache)
+            db.session.commit()
+            return nouvelle_tache.to_dict()
         except Exception as e:
-            db.session.rollback() # IF ANYTHING, WE ROLLBACK
+            db.session.rollback()  # Annule en cas d’erreur
             return {"error": str(e)}
-
-
 
     @staticmethod
     def update(tache_id, data):
-        """Updates an existing task with provided data."""
+        # Met à jour une tâche existante avec les données fournies
         tache = Tache.query.get(tache_id)
         if not tache:
             return None
 
-        # Update fields only if they are present in the data payload
+        # Met à jour uniquement les champs présents dans les données
         tache.titre = data.get("titre", tache.titre)
         tache.description = data.get("description", tache.description)
         tache.statut = data.get("statut", tache.statut)
@@ -61,31 +59,28 @@ class TacheDAO:
         tache.duree_estimee = data.get("duree_estimee", tache.duree_estimee)
         tache.duree_reelle = data.get("duree_reelle", tache.duree_reelle)
 
-        # Handle date_fin conversion if it's provided as a string (ISO format expected)
+        # Gère la conversion de date_fin si elle est fournie
         if "date_fin" in data:
-            # If date_fin is explicitly null, set to None
             if data["date_fin"] is None:
                 tache.date_fin = None
             else:
                 try:
-                    # Attempt to parse from ISO format string
                     tache.date_fin = datetime.fromisoformat(
-                        data["date_fin"].replace('Z', '+00:00'))  # Handle Z for Python 3.6+
+                        data["date_fin"].replace('Z', '+00:00'))
                 except ValueError:
-                    # Handle invalid date format if necessary, or log error
                     print(f"Warning: Invalid date_fin format for task {tache_id}: {data['date_fin']}")
-                    pass  # Keep existing date or set to None
+                    pass
 
-        # Handle seance_etude_id: allow setting to null or a new ID
+        # Met à jour ou supprime le lien avec une séance
         if "seance_etude_id" in data:
-            tache.seance_etude_id = data.get("seance_etude_id")  # This will set to None if data.get is None
+            tache.seance_etude_id = data.get("seance_etude_id")
 
         db.session.commit()
-        return tache.to_dict() # RETOURNER LA TACHE A TACHE_ROUTE
+        return tache.to_dict()
 
     @staticmethod
     def delete(tache_id):
-        """Deletes a task by its ID."""
+        # Supprime une tâche à partir de son ID
         tache = Tache.query.get(tache_id)
         if not tache:
             return False

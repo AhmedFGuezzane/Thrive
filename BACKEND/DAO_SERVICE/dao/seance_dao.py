@@ -16,12 +16,13 @@ import uuid
 class SeanceDAO:
     @staticmethod
     def creer_seance(data):
+        # Crée une nouvelle séance d’étude, avec ou sans configuration Pomodoro
         required_fields = ["client_id", "type_seance", "nom", "date_debut"]
         for field in required_fields:
             if field not in data:
                 raise ValueError(f"Missing required field: {field}")
 
-        # Create pomodoro settings first if provided
+        # Crée les paramètres Pomodoro s’ils sont fournis
         pomodoro_data = data.get("pomodoro")
         if pomodoro_data:
             pomodoro = PomodoroParametre(
@@ -43,11 +44,11 @@ class SeanceDAO:
                 utilisation_frequence=0
             )
             db.session.add(pomodoro)
-            db.session.flush()  # ensure we get pomodoro.id
+            db.session.flush()  # permet de récupérer pomodoro.id
         else:
             pomodoro = None
 
-        # WE CREATE AN OBJECT CALLED SEANCE
+        # Crée un objet séance avec les données fournies
         seance = SeanceEtude(
             id=uuid.uuid4(),
             client_id=uuid.UUID(data["client_id"]),
@@ -61,15 +62,17 @@ class SeanceDAO:
             nbre_pomodoro_effectues=data.get("nbre_pomodoro_effectues", 0),
             pomodoro_id=pomodoro.id if pomodoro else None
         )
-        # PUSH THAT OBJECT TO DATABASE
+
+        # Enregistre la séance dans la base de données
         db.session.add(seance)
         db.session.commit()
 
-        # RETURN THAT OBJECT
+        # Retourne la séance créée
         return seance
 
     @staticmethod
     def modifier_minuterie(seance_id, data):
+        # Met à jour les paramètres Pomodoro d'une séance
         seance = SeanceEtude.query.get(seance_id)
         if not seance:
             return None
@@ -84,6 +87,7 @@ class SeanceDAO:
 
     @staticmethod
     def changer_statut(seance_id, statut):
+        # Change le statut d'une séance (ex. : terminée)
         seance = SeanceEtude.query.get(seance_id)
         if seance:
             seance.statut = statut
@@ -95,10 +99,12 @@ class SeanceDAO:
 
     @staticmethod
     def get_seances_by_user(client_id):
+        # Récupère toutes les séances d’un utilisateur
         return SeanceEtude.query.filter_by(client_id=uuid.UUID(client_id)).all()
 
     @staticmethod
     def terminer_seance(seance_id, data):
+        # Marque une séance comme terminée avec les données finales
         seance = SeanceEtude.query.get(seance_id)
         if not seance:
             return None

@@ -1,4 +1,4 @@
-// src/components/common/SnackbarAlert.jsx
+
 import React from 'react';
 import {
   Snackbar,

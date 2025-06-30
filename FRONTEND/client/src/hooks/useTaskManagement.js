@@ -126,6 +126,9 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     setAddToActiveSeance(e.target.checked);
   };
 
+  /** ADD TASK - S.L. */
+  /** ----------------------------------------------------------------------------------- */
+  /** ----------------------------------------------------------------------------------- */
   const handleAddTask = async () => {
     if (!newTaskData.titre) {
       showSnackbar(t('userTasks.snackbar_title_required'), 'warning');
@@ -168,6 +171,10 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     }
   };
 
+  /** UPDATE TASK - I.R. */
+  /** ----------------------------------------------------------------------------------- */
+  /** ----------------------------------------------------------------------------------- */
+
   const handleUpdateTaskStatus = async (taskId, newStatus) => {
     setAllUserTasks(prev =>
       prev.map(task => (task.id === taskId ? { ...task, statut: newStatus } : task))
@@ -181,6 +188,8 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
       primaryFetchTasks();
     }
   };
+  /** ----------------------------------------------------------------------------------- */
+  /** ----------------------------------------------------------------------------------- */
 
   const handleUpdateTask = async (taskId, updatedData) => {
     try {
@@ -192,6 +201,10 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
     }
   };
 
+  /** DELETE TASK - I.R. */
+  /** ----------------------------------------------------------------------------------- */
+  /** ----------------------------------------------------------------------------------- */
+
   const handleDeleteTask = async (taskId) => {
     showSnackbar(t('userTasks.snackbar_deleting'), 'info', true);
     try {
@@ -202,6 +215,8 @@ export const useTaskManagement = (seanceId, showSnackbar, fetchMode = 'all_tasks
       showSnackbar(`${t('userTasks.snackbar_error_deleting')}: ${error.message}`, 'error');
     }
   };
+  /** ----------------------------------------------------------------------------------- */
+  /** ----------------------------------------------------------------------------------- */
 
   const handleViewDetailsClick = (task) => {
     setSelectedTaskDetails(task);

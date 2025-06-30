@@ -1,4 +1,4 @@
-// src/contexts/ThemeContext.jsx
+
 import React, { createContext, useMemo, useState, useContext, useEffect } from 'react';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,10 +10,9 @@ export function useColorMode() {
 }
 
 export function ThemeContextProvider({ children }) {
-  // Initialize from localStorage or default to 'light'
+
   const [mode, setMode] = useState(() => localStorage.getItem('themeMode') || 'light');
 
-  // Save to localStorage whenever mode changes
   useEffect(() => {
     localStorage.setItem('themeMode', mode);
   }, [mode]);

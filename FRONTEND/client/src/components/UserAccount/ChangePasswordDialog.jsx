@@ -12,19 +12,6 @@ import {
 import { alpha } from '@mui/material/styles';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 
-/**
- * A dialog for changing a user's password.
- * @param {object} props
- * @param {boolean} props.open - Controls whether the dialog is visible.
- * @param {function} props.onClose - Function to call when the dialog is closed.
- * @param {function} props.onSave - Function to call to save the new password.
- * @param {string} props.currentPassword - Current password state.
- * @param {function} props.setCurrentPassword - Setter for current password.
- * @param {string} props.newPassword - New password state.
- * @param {function} props.setNewPassword - Setter for new password.
- * @param {string} props.confirmNewPassword - Confirm new password state.
- * @param {function} props.setConfirmNewPassword - Setter for confirm new password.
- */
 export default function ChangePasswordDialog({
     open,
     onClose,

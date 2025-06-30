@@ -20,17 +20,14 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import { TimerContext } from '../../contexts/TimerContext';
 import TimerBar from '../../components/common/TimerBar';
-// CORRECTED IMPORT: Ensure fetchAllTasksForUser and updateTaskStatus are from .jsx
 import { fetchAllTasksForUser, updateTaskStatus } from '../../utils/taskService.jsx'
 import SnackbarAlert from '../../components/common/SnackbarAlert';
 import AddTaskDialog from '../../components/common/AddTaskDialog';
 import TaskDetailsDialog from '../../components/UserTasks/TaskDetailsDialog';
-// CORRECTED IMPORT: Ensure useTaskManagement is from .jsx
 import { useTaskManagement } from '../../hooks/useTaskManagement.js';
 
 import { updateTask } from '../../utils/taskService.jsx';
 
-// Helper functions for importance and status display (remain unchanged)
 const getImportanceDisplay = (importance) => {
   switch (importance) {
     case 1:
@@ -89,7 +86,6 @@ export default function UserTasks() {
     }
   };
 
-  // State for Task Details Dialog
   const [isTaskDetailsDialogOpen, setIsTaskDetailsDialogOpen] = useState(false);
   const [selectedTaskDetails, setSelectedTaskDetails] = useState(null);
 
@@ -263,7 +259,6 @@ export default function UserTasks() {
         position: 'relative',
       }}
     >
-      {/* Search and Filter Bar */}
       <Box
         sx={{
           width: '100%',
@@ -329,7 +324,6 @@ export default function UserTasks() {
           </Select>
         </FormControl>
 
-        {/* Add Task Button */}
         <IconButton
           onClick={() => setIsAddTaskDialogOpen(true)}
           sx={{
@@ -344,21 +338,19 @@ export default function UserTasks() {
         >
           <AddIcon fontSize="small" />
         </IconButton>
-        {/* Refresh Button */}
         <IconButton onClick={primaryFetchTasks} disabled={loading} sx={{ color: 'rgba(128, 0, 128, 0.9)', bgcolor: 'rgba(255,255,255,0.1)', borderRadius: '8px', p: '8px', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' }, }}>
           {loading ? (<CircularProgress size={20} sx={{ color: 'rgba(128, 0, 128, 0.7)' }} />) : (<RefreshIcon fontSize="small" />)}
         </IconButton>
       </Box>
 
-      {/* Main content area for DragDropContext (tasks) */}
       <Box flexGrow={1} width="100%" display="flex" flexDirection="row" gap={2} pb={2} minHeight={0}>
-        {loading && !Object.values(displayedTasks).flat().length ? ( // Check displayedTasks for loading state
+        {loading && !Object.values(displayedTasks).flat().length ? (
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <CircularProgress sx={{ color: 'rgba(128, 0, 128, 0.7)' }} />
           </Box>
         ) : (
           <DragDropContext onDragEnd={onDragEnd}>
-            {Object.entries(displayedTasks).map(([columnId, columnTasks]) => ( // Iterate over displayedTasks
+            {Object.entries(displayedTasks).map(([columnId, columnTasks]) => (
               <Droppable key={columnId} droppableId={columnId}>
                 {(provided, snapshot) => (
                   <Box
@@ -382,12 +374,12 @@ export default function UserTasks() {
                     <Typography variant="h6" fontWeight="bold" color="#333" mb={2} sx={{ textTransform: 'capitalize' }}>
                       {columnId.replace('en attente', 'En attente').replace('en cours', 'En cours').replace('terminée', 'Terminée')}
                     </Typography>
-                    {columnTasks.length === 0 && ( // Check columnTasks length
+                    {columnTasks.length === 0 && ( 
                       <Typography variant="body2" color="#777" sx={{ textAlign: 'center', p: 2 }}>
                         Aucune tâche ici.
                       </Typography>
                     )}
-                    {columnTasks.map((task, index) => ( // Iterate over columnTasks
+                    {columnTasks.map((task, index) => (
                       <Draggable key={task.id} draggableId={task.id} index={index}>
                         {(provided, snapshot) => (
                           <Box
@@ -402,7 +394,7 @@ export default function UserTasks() {
                               </Typography>
                               <IconButton
                                 size="small"
-                                onClick={(event) => handleViewDetailsClick(event, task)} // On click, show details
+                                onClick={(event) => handleViewDetailsClick(event, task)}
                                 sx={{ color: 'rgba(0,0,0,0.6)' }}
                               >
                                 <VisibilityIcon fontSize="small" />
@@ -449,7 +441,6 @@ export default function UserTasks() {
         )}
       </Box>
 
-      {/* Integrate the common TimerBar component here */}
       <TimerBar />
 
       <SnackbarAlert
@@ -459,7 +450,6 @@ export default function UserTasks() {
         onClose={handleSnackbarClose}
       />
 
-      {/* Add Task Dialog Component */}
       <AddTaskDialog
         open={isAddTaskDialogOpen}
         onClose={() => setIsAddTaskDialogOpen(false)}
@@ -473,12 +463,11 @@ export default function UserTasks() {
         onToggleAddToActiveSeance={onToggleAddToActiveSeance}
       />
 
-      {/* Task Details Dialog */}
       <TaskDetailsDialog
         open={isTaskDetailsDialogOpen}
         onClose={handleCloseTaskDetailsDialog}
         taskDetails={selectedTaskDetails}
-        onUpdateTask={handleUpdateTask} // Pass the handleUpdateTask callback
+        onUpdateTask={handleUpdateTask} 
         getImportanceDisplay={getImportanceDisplay}
         getStatusDisplay={getStatusDisplay}
       />

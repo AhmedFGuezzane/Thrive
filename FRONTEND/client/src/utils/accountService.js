@@ -1,4 +1,4 @@
-// src/utils/accountService.js
+
 import config from "../config";
 
 const BASE_URL = config.authMicroserviceBaseUrl;

@@ -1,4 +1,3 @@
-// src/components/UserSeance/TaskStatusTracker.jsx
 
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, CircularProgress, Grid, useTheme } from '@mui/material';

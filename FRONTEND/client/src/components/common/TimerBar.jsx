@@ -1,4 +1,4 @@
-// src/components/common/TimerBar.jsx
+
 import React, { useContext, useState } from 'react';
 import { Box, Typography, IconButton, Tooltip, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
@@ -100,7 +100,6 @@ export default function TimerBar({ onCreateClick, config }) {
           color: primaryText
         }}
       >
-        {/* Left Info */}
         <Box>
           {!isIdle ? (
             <>
@@ -128,7 +127,6 @@ export default function TimerBar({ onCreateClick, config }) {
           )}
         </Box>
 
-        {/* Controls */}
         <Box display="flex" alignItems="center">
           {isIdle && (
             <Tooltip title={t('timer.actions.create')}>

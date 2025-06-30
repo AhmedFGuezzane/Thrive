@@ -1,4 +1,4 @@
-// src/utils/seanceService.jsx
+
 import config from '../config';
 
 const SEANCE_BASE_URL = config.seanceMicroserviceBaseUrl;

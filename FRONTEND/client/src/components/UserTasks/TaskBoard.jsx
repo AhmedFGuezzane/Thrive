@@ -75,7 +75,6 @@ export default function TaskBoard({
                   border: `1px solid ${whiteBorder}`,
                 }}
               >
-                {/* Scrollable Column Body */}
                 <Box
                   sx={{
                     flexGrow: 1,
@@ -87,7 +86,6 @@ export default function TaskBoard({
                     '&::-webkit-scrollbar': { display: 'none' },
                   }}
                 >
-                  {/* Sticky Header */}
                   <Box
                     sx={{
                       position: 'sticky',
@@ -125,8 +123,6 @@ export default function TaskBoard({
                       </IconButton>
                     </Tooltip>
                   </Box>
-
-                  {/* Task Cards */}
                   <Box sx={{ px: 2, py: 1 }}>
                     {loading ? (
                       Array.from({ length: 3 }).map((_, i) => (

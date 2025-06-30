@@ -1,4 +1,4 @@
-// src/pages/user/UserHome.jsx
+
 import React, { useState, useContext } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';

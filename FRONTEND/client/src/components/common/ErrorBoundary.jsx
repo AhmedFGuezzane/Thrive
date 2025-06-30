@@ -1,4 +1,4 @@
-// src/components/common/ErrorBoundary.jsx
+
 import React from "react";
 import { Alert, AlertTitle } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,6 @@ class ErrorBoundaryInner extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error("ErrorBoundary caught:", error, errorInfo);
-    // Optional: send error to logging server here
   }
 
   render() {

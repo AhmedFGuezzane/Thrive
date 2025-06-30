@@ -1,4 +1,4 @@
-// src/components/common/GlobalPhaseTransition.jsx
+
 import React, { useContext } from 'react';
 import { TimerContext } from '../../contexts/TimerContext';
 import PhaseTransitionDialog from './PhaseTransitionDialog';
@@ -6,7 +6,6 @@ import PhaseTransitionDialog from './PhaseTransitionDialog';
 export default function GlobalPhaseTransition() {
   const timer = useContext(TimerContext);
 
-  // SAFETY CHECK: If TimerContext is not available yet, return nothing
   if (!timer) return null;
 
   const { phase, startBreak, resumeStudy, loaded } = timer;

@@ -28,6 +28,9 @@ export const useSeanceManagement = () => {
     }
   }, [t]);
 
+  /* ADD SEANCE - D.O. */ 
+  /*----------------------------------------------------------------*/
+  /*----------------------------------------------------------------*/
   const addSeance = async (formData) => {
     try {
       const newSeance = await createSeance(formData);
@@ -37,6 +40,8 @@ export const useSeanceManagement = () => {
       throw err;
     }
   };
+  /*----------------------------------------------------------------*/
+  /*----------------------------------------------------------------*/
 
   const updateSeanceMinuterie = async (seanceId, data) => {
     try {

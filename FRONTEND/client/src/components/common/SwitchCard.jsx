@@ -1,4 +1,4 @@
-// src/components/UserHome/SwitchCard.jsx
+
 import React from 'react';
 import { Box, Typography, Switch, useTheme } from '@mui/material';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';

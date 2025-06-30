@@ -12,14 +12,6 @@ import { alpha } from '@mui/material/styles';
 import { useCustomTheme } from '../../hooks/useCustomeTheme';
 import { useTranslation } from 'react-i18next';
 
-/**
- * A reusable confirmation dialog component.
- * @param {object} props
- * @param {boolean} props.open - Controls whether the dialog is visible.
- * @param {function} props.onClose - Function to call when the dialog is closed.
- * @param {function} props.onConfirm - Function to call when the confirm button is clicked.
- * @param {object} props.content - An object containing dialog content (title, text, button text, color).
- */
 export default function ConfirmationDialog({ open, onClose, onConfirm, content }) {
   const {
     whiteBorder,

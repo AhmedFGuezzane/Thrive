@@ -1,4 +1,3 @@
-// src/contexts/TimerContext.jsx
 
 import React, { createContext, useState, useEffect, useRef, useCallback } from 'react';
 import { endSeance } from '../utils/seanceService';
@@ -17,9 +16,8 @@ export const TimerProvider = ({ children }) => {
   const [upcomingBreakType, setUpcomingBreakType] = useState('courte');
   const [loaded, setLoaded] = useState(false);
 
-  // --- CORRECTED: Read activeSeanceId from localStorage on initial render ---
   const [activeSeanceId, setActiveSeanceId] = useState(() => {
-    // This function runs only once during the initial render.
+
     return localStorage.getItem("active_seance_id") || null;
   });
   
@@ -66,7 +64,6 @@ export const TimerProvider = ({ children }) => {
     setIsPaused(pausedState);
   };
 
-  // --- MODIFIED: startSeance now saves the ID to localStorage ---
   const startSeance = useCallback((config, seanceId) => {
     setPomodoroConfig(config);
     setPomodoroCount(0);
@@ -105,8 +102,6 @@ export const TimerProvider = ({ children }) => {
 
     beginPhase('study', pomodoroConfig.duree_seance);
   };
-
-  // --- MODIFIED: stopSeance now removes the ID from localStorage ---
   const stopSeance = async () => {
     if (activeSeanceId) {
       try {
@@ -133,7 +128,7 @@ export const TimerProvider = ({ children }) => {
     setInterruptions(0);
     setUpcomingBreakType('courte');
     setActiveSeanceId(null);
-    localStorage.removeItem('active_seance_id'); // <-- REMOVE JUST THE ID KEY
+    localStorage.removeItem('active_seance_id'); 
   };
 
   const pauseTimer = () => {
@@ -149,7 +144,6 @@ export const TimerProvider = ({ children }) => {
 
   const incrementInterruptions = () => setInterruptions(prev => prev + 1);
 
-  // --- MODIFIED: This useEffect now ONLY handles the general timer state, not the seance ID ---
   useEffect(() => {
     const saved = localStorage.getItem('timerState');
     if (saved) {
@@ -162,7 +156,7 @@ export const TimerProvider = ({ children }) => {
         setPomodoroCount(data.pomodoroCount || 0);
         setPomodoroConfig(data.pomodoroConfig || null);
         setUpcomingBreakType(data.upcomingBreakType || 'courte');
-        // We no longer load activeSeanceId from here, as it's handled on initial state.
+
         setInterruptions(data.interruptions || 0);
       } catch (e) {
         console.error('Failed to parse timerState from localStorage', e);
@@ -170,9 +164,8 @@ export const TimerProvider = ({ children }) => {
       }
     }
     setLoaded(true);
-  }, []); // Empty dependency array to run only on mount
+  }, []); 
 
-  // This useEffect saves the entire state, including the ID, which is fine for consistency.
   useEffect(() => {
     if (loaded) {
       const data = {
@@ -183,7 +176,7 @@ export const TimerProvider = ({ children }) => {
         pomodoroCount,
         pomodoroConfig,
         upcomingBreakType,
-        activeSeanceId, // The ID is included here when saving.
+        activeSeanceId,
         interruptions,
       };
       localStorage.setItem('timerState', JSON.stringify(data));
@@ -201,7 +194,7 @@ export const TimerProvider = ({ children }) => {
       upcomingBreakType,
       loaded,
       activeSeanceId,
-      startSeance, // Do not expose setActiveSeanceId, use startSeance/stopSeance
+      startSeance, 
       stopSeance,
       startBreak,
       resumeStudy,

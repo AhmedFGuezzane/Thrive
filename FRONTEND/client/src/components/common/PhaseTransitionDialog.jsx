@@ -1,4 +1,4 @@
-// src/components/common/PhaseTransitionDialog.jsx
+
 import React from 'react';
 import {
   Dialog,

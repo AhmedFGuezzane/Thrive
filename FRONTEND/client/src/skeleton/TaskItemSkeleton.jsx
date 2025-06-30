@@ -1,4 +1,4 @@
-// src/skeleton/TaskItemSkeleton.jsx
+
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
 import { useCustomTheme } from '../hooks/useCustomeTheme';

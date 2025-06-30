@@ -1,11 +1,10 @@
-// src/components/UserSeance/SeanceInactiveState.jsx
+
 import React from 'react';
-import { Box, Typography, Button, useTheme } from '@mui/material'; // <-- ADDED useTheme hook
+import { Box, Typography, Button, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { alpha } from '@mui/material/styles'; // <-- ADDED alpha utility for translucent colors
+import { alpha } from '@mui/material/styles'; 
 
 export default function SeanceInactiveState({ onCreateSeanceClick }) {
-  // Use the global theme hook to access the palette
   const theme = useTheme();
 
   return (
@@ -16,12 +15,11 @@ export default function SeanceInactiveState({ onCreateSeanceClick }) {
         alignItems: 'center',
         justifyContent: 'center',
         height: '80vh',
-        width: '65%', // Adjusted to be 65% of the parent width
-        maxWidth: '800px', // Added a maximum width to prevent it from getting too wide on large screens
+        width: '65%', 
+        maxWidth: '800px', 
         margin: 'auto',
         gap: 3,
         p: 5,
-        // --- UPDATED: Refined Glassmorphism styles for dynamic theming ---
         bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.5)',
         backdropFilter: 'blur(25px) saturate(180%)',
         border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.2)'}`,
@@ -38,7 +36,6 @@ export default function SeanceInactiveState({ onCreateSeanceClick }) {
         variant="h3"
         fontWeight={800}
         sx={{
-          // --- UPDATED: Use dynamic text color ---
           color: theme.palette.text.primary,
           textShadow: `0 1px 3px ${alpha(theme.palette.text.primary, 0.6)}`,
         }}
@@ -48,7 +45,6 @@ export default function SeanceInactiveState({ onCreateSeanceClick }) {
       <Typography
         variant="h5"
         sx={{
-          // --- UPDATED: Use dynamic text color ---
           color: theme.palette.text.secondary,
           textAlign: 'center',
           mb: 2,
@@ -60,14 +56,13 @@ export default function SeanceInactiveState({ onCreateSeanceClick }) {
         variant="contained"
         onClick={onCreateSeanceClick}
         sx={{
-          // --- UPDATED: Dynamic gradient and colors from the theme ---
           background: `linear-gradient(145deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
           color: theme.palette.primary.contrastText,
           fontWeight: 'bold',
           borderRadius: '12px',
-          px: 2.5, // Reduced horizontal padding
-          py: 1, // Reduced vertical padding
-          fontSize: '1rem', // Further reduced font size
+          px: 2.5, 
+          py: 1, 
+          fontSize: '1rem', 
           boxShadow: `0 4px 15px ${alpha(theme.palette.primary.main, 0.4)}`,
           transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
           '&:hover': {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Tooltip, useTheme } from '@mui/material'; // Import useTheme
+import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import SchoolIcon from '@mui/icons-material/School';
@@ -9,27 +9,22 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseIcon from '@mui/icons-material/Close';
-import LanguageIcon from '@mui/icons-material/Language'; // <-- IMPORT LANGUAGE ICON
+import LanguageIcon from '@mui/icons-material/Language';
 import { useNavigate } from 'react-router-dom';
 
-// Import the global color mode context hook
 import { useColorMode } from '../../contexts/ThemeContext2';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { useTaskManagement } from '../../hooks/useTaskManagement';
 
-// --- IMPORT useTranslation HOOK AND LANGUAGE DIALOG ---
 import { useTranslation } from 'react-i18next';
 import LanguageSelectionDialog from '../../components/common/LanguageSelectionDialog';
 
 export default function UserSidebar() {
-  // Use the global theme hooks instead of local state
   const { toggleColorMode } = useColorMode();
   const theme = useTheme();
-  // --- USE THE TRANSLATION HOOK ---
   const { i18n } = useTranslation();
 
   const [showUtilityIcons, setShowUtilityIcons] = useState(false);
-  // --- ADDED STATE FOR LANGUAGE DIALOG ---
   const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -45,13 +40,11 @@ export default function UserSidebar() {
     prefetchTasksIfAllowed();
   };
 
-  // --- HANDLERS FOR LANGUAGE DIALOG ---
   const handleLanguageDialogOpen = () => setIsLanguageDialogOpen(true);
   const handleLanguageDialogClose = () => setIsLanguageDialogOpen(false);
   const handleLanguageChange = (lng) => {
     i18n.changeLanguage(lng);
   };
-  // ------------------------------------
 
   const outerBox = theme.palette.custom.box.outer;
   const innerBox = theme.palette.custom.box.inner;
@@ -67,7 +60,6 @@ export default function UserSidebar() {
 
   const softBoxShadow = theme.palette.custom.boxShadow.soft;
 
-  // Helper for consistent button styling
   const iconButtonSx = {
     width: '3.5rem',
     height: '3.5rem',
@@ -102,7 +94,6 @@ export default function UserSidebar() {
         justifyContent: 'space-between',
       }}
     >
-      {/* Top Section: Main Navigation Buttons */}
       <Box display="flex" flexDirection="column" alignItems="center">
         <Tooltip title="Home" placement="right">
           <IconButton onClick={() => navigate('/user/userHome')} onMouseEnter={handleHover} sx={iconButtonSx}>
@@ -123,7 +114,6 @@ export default function UserSidebar() {
         </Tooltip>
       </Box>
 
-      {/* Bottom Section: Collapsible Utility Icons and Toggle Button */}
       <Box display="flex" flexDirection="column" alignItems="center" mt="auto" >
         {showUtilityIcons && (
           <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
@@ -139,14 +129,12 @@ export default function UserSidebar() {
               </IconButton>
             </Tooltip>
 
-            {/* The theme toggle button now uses the global context */}
             <Tooltip title={theme.palette.mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'} placement="right">
               <IconButton onClick={toggleColorMode} sx={{ ...iconButtonSx, mb: 2 }}>
                 {theme.palette.mode === 'dark' ? <Brightness7Icon fontSize="large" /> : <Brightness4Icon fontSize="large" />}
               </IconButton>
             </Tooltip>
             
-            {/* --- ADDED LANGUAGE BUTTON --- */}
             <Tooltip title="Change Language" placement="right">
                 <IconButton onClick={handleLanguageDialogOpen} sx={{ ...iconButtonSx, mb: 0 }}>
                     <LanguageIcon fontSize="large" />
@@ -155,7 +143,6 @@ export default function UserSidebar() {
           </Box>
         )}
 
-        {/* Toggle Button for Utility Icons */}
         <Tooltip title={showUtilityIcons ? 'Hide Options' : 'More Options'} placement="right">
           <IconButton
             onClick={toggleUtilityIcons}
@@ -179,7 +166,6 @@ export default function UserSidebar() {
         </Tooltip>
       </Box>
 
-        {/* --- ADDED LANGUAGE SELECTION DIALOG --- */}
         <LanguageSelectionDialog
             open={isLanguageDialogOpen}
             onClose={handleLanguageDialogClose}

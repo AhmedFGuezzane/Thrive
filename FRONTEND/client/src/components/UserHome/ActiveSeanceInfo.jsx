@@ -1,4 +1,4 @@
-// src/components/UserHome/ActiveSeanceInfo.jsx
+
 import React, { useContext, useState } from 'react';
 import {
   Box,
